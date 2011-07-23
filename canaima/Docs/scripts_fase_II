@@ -1,4 +1,4 @@
-CREATE  TABLE ``.`colegio` (
+CREATE  TABLE `canaima`.`colegio` (
   `idcolegio` INT NOT NULL AUTO_INCREMENT,
   `idestado` INT NOT NULL DEFAULT 0 ,
   `idmunicipio` INT NOT NULL DEFAULT 0 ,
@@ -6,7 +6,7 @@ CREATE  TABLE ``.`colegio` (
   `activo` TINYINT(1)  NOT NULL DEFAULT true ,
   `nombre` TINYTEXT NOT NULL ,
   PRIMARY KEY (`idcolegio`) )
-COMMENT = 'colegios registrados en la aplicacion canaima' ;
+ENGINE = InnoDB;
 
 
 
