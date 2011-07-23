@@ -15,3 +15,14 @@ CREATE  TABLE ``.`colegio` (
   PRIMARY KEY (`idcolegio`) )
 
 COMMENT = 'colegios registrados en la aplicacion canaima' ;
+
+
+
+CREATE TABLE `canaima`.`parroquia` (
+  `idparroquia` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idmunicipio` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `nombre` TINYTEXT NOT NULL,
+  `activo` BOOLEAN NOT NULL DEFAULT true,
+  PRIMARY KEY (`idparroquia`)
+)
+ENGINE = InnoDB;
