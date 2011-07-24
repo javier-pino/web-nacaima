@@ -5,6 +5,7 @@ CREATE  TABLE `canaima`.`colegio` (
   `idparroquia` INT NOT NULL DEFAULT 0 ,
   `activo` TINYINT(1)  NOT NULL DEFAULT true ,
   `nombre` TINYTEXT NOT NULL ,
+  `codigo_dea` TINYTEXT NOT NULL ,
   PRIMARY KEY (`idcolegio`) )
 ENGINE = InnoDB;
 
