@@ -14,6 +14,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
+import org.apache.poi.hssf.extractor.ExcelExtractor;
+
 import beans.Contrato;
 import beans.Donatario;
 import beans.DonatarioContrato;
@@ -373,6 +375,52 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 				doncon.setContrato(contrato);
 			}							
 			return doncon;			
+		} finally {
+			getPoolConexiones().cerrarConexion(con, ps, rs);;
+		}
+	}	
+	
+	/** Retorna los ids de los estados y municipios dados
+	 * @throws SQLException */
+	public int[] buscarIDsEstadoMunicipio (String estado, String municipio) throws SQLException {
+				
+		int[] par = new int[2];
+		
+		//Buscar por nombre de estado y municipio
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+			
+		//Crear la conexion y si hubo error cerrarla
+		Connection con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		if (!Conexion.esValida(con)) {
+			getPoolConexiones().cerrarConexion(con, ps, rs);
+			throw new SQLException("No se ha iniciado conexion");
+		}			
+		//Realizar la busqueda
+		try {
+			String sql = " select m.idestado, m.idmunicipio from municipio m left join estado e on (m.idestado = e.idestado) where m.activo and m.idestado > 0 " ;			
+			if (estado != null)
+				sql += " and m.nombre = ?";
+			if (municipio != null)
+				sql += " and e.nombre = ? ";
+			
+			if(estado == null || municipio == null)
+				throw new SQLException("ESTADO/MUNICIPIO NULL");
+			
+			ps = con.prepareStatement(sql);
+			ps.setString(1, estado);
+			ps.setString(2, municipio);			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				par[0] = rs.getInt(1);
+				par[1] = rs.getInt(2);			
+			}
+			else
+				throw new SQLException("NO ENCONTRO ESTADO/MUNICIPIO (" + estado +", " + municipio +")" );
+										
+			return par;			
+		
 		} finally {
 			getPoolConexiones().cerrarConexion(con, ps, rs);;
 		}
