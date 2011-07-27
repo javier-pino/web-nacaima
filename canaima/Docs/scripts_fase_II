@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS canaima.colegio;
 CREATE  TABLE `canaima`.`colegio` (
   `idcolegio` INT NOT NULL AUTO_INCREMENT,
   `idestado` INT NOT NULL DEFAULT 0 ,
@@ -10,7 +11,7 @@ CREATE  TABLE `canaima`.`colegio` (
 ENGINE = InnoDB;
 
 
-
+DROP TABLE IF EXISTS canaima.parroquia;
 CREATE TABLE `canaima`.`parroquia` (
   `idparroquia` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `idmunicipio` INTEGER UNSIGNED NOT NULL DEFAULT 0,
@@ -19,3 +20,53 @@ CREATE TABLE `canaima`.`parroquia` (
   PRIMARY KEY (`idparroquia`)
 )
 ENGINE = InnoDB;
+
+
+
+INSERT INTO MUNICIPIO (IDESTADO, NOMBRE) VALUES (4, 'JOSE ANGEL LAMAS');
+
+
+insert into parroquia (idmunicipio, nombre) values
+(146, upper('Aguedo Felipe Alvarado')),
+(146, upper('Buena Vista')),
+(146, upper('Catedral')),
+(146, upper('El Cují')),
+(146, upper('Juan de Villegas')),
+(146, upper('Juárez')),
+(146, upper('La Concepción')),
+(146, upper('Santa Rosa')),
+(146, upper('Tamaca')),
+(146, upper('Unión'));
+
+update municipio set nombre = 'PAO DE SAN JUAN BAUTISTA' where idmunicipio = 92;
+
+update municipio set nombre = 'SAN CARLOS' where idmunicipio = 98;
+
+update municipio set nombre = 'PÁEZ' where idmunicipio = 228;
+
+update municipio set nombre = 'CAJIGAL' where idmunicipio = 241;
+
+update municipio set nombre = 'JUAN VICENTE CAMPO ELÍAS' where idmunicipio = 286;
+
+update municipio set nombre = 'JESÚS ENRIQUE LOSSADA' where idmunicipio = 320;
+
+update municipio set nombre = substring(nombre, 11)  where nombre like 'MUNICIPIO%';
+
+update municipio set nombre = 'FRANCISCO DEL CARMEN CARVAJAL' where idmunicipio = 12;
+
+update municipio set nombre = 'SIR ARTUR MC GREGOR' where idmunicipio = 28;
+
+--set max_allowed_packet = 32M
+
+select e.nombre, m.nombre, coalesce(p.nombre,''), count(*)
+from
+colegio c
+left join estado e on (c.idestado = e.idestado)
+left join municipio m on (c.idmunicipio = m.idmunicipio)
+left join parroquia p on (c.idparroquia = p.idparroquia)
+group by e.nombre, m.nombre, coalesce(p.nombre,'');
+
+select m.nombre, coalesce(p.nombre,'')
+from
+municipio m join parroquia p on (m.idmunicipio = p.idmunicipio)
+group by m.idestado, m.nombre, coalesce(p.nombre,'')
