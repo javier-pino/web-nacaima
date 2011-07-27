@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import aplicacion.ExcepcionValidaciones;
 
 public class Parroquia extends ObjetoPersistente implements Serializable {
@@ -88,7 +90,7 @@ public class Parroquia extends ObjetoPersistente implements Serializable {
 		String sql_insercion = "insert into parroquia (idmunicipio, nombre) values (?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		ps.setInt(1, getIdmunicipio());
-		ps.setString(2, getNombre());				
+		ps.setString(2, (getNombre() == null ? ""  : StringEscapeUtils.unescapeHtml(getNombre().toUpperCase())));				
 		ps.executeUpdate();
 		ResultSet rs = ps.getGeneratedKeys();
 		if (rs.next()) {
