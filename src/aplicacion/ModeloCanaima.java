@@ -396,22 +396,21 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			getPoolConexiones().cerrarConexion(con, ps, rs);
 			throw new SQLException("No se ha iniciado conexion");
 		}			
+		
 		//Realizar la busqueda
 		try {
-			String sql = " select m.idestado, m.idmunicipio from municipio m left join estado e on (m.idestado = e.idestado) where m.activo and m.idestado > 0 " ;			
+			String sql = " select m.idestado, m.idmunicipio from municipio m join estado e on (m.idestado = e.idestado) where m.activo and m.idestado > 0 " ;			
 			if (estado != null)
-				sql += " and m.nombre = ?";
+				sql += " and e.nombre = ?";
 			if (municipio != null)
-				sql += " and e.nombre = ? ";
-			
+				sql += " and m.nombre = ? ";			
 			if(estado == null || municipio == null)
 				throw new SQLException("ESTADO/MUNICIPIO NULL");
 			
 			ps = con.prepareStatement(sql);
 			ps.setString(1, estado);
 			ps.setString(2, municipio);			
-			rs = ps.executeQuery();
-			
+			rs = ps.executeQuery();			
 			if (rs.next()) {
 				par[0] = rs.getInt(1);
 				par[1] = rs.getInt(2);			
