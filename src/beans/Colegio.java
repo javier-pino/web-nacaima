@@ -117,7 +117,7 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	public void guardar(Connection con) throws SQLException,
 			ExcepcionValidaciones {
 		
-		String sql_insercion = "insert into colegio (idestado, idmunicipio, idparroquia, nombre, codigo_dea) values (?, ?, ?, ?)";			
+		String sql_insercion = "insert into colegio (idestado, idmunicipio, idparroquia, nombre, codigo_dea) values (?, ?, ?, ?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		ps.setInt(1, getIdestado());
