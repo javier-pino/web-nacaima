@@ -3,6 +3,8 @@
 -- ------------------------------------------------------
 -- Server version	5.5.11
 
+set names 'utf8';
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
