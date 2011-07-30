@@ -136,7 +136,8 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	}
 
 	@Override
-	public synchronized void actualizar(Connection con) throws SQLException, ExcepcionValidaciones {
+	public synchronized void actualizar(Connection con) throws SQLException, ExcepcionValidaciones 
+	{
 		
 		//Se esta actualizando un colegio previamente existente
 		validarColegioUnico(con);
@@ -166,7 +167,8 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	/** Verifica que la restriccion de integridad de codigo dea unico se mantenga 
 	 * @throws SQLException 
 	 * @throws ExcepcionValidaciones */
-	public void validarColegioUnico (Connection con) throws SQLException, ExcepcionValidaciones {
+	public void validarColegioUnico (Connection con) throws SQLException, ExcepcionValidaciones 
+	{
 		
 		if (getIdcolegio() == 0)
 			return;
@@ -206,4 +208,28 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		}
 	}
 	
+	public static ArrayList<Colegio> listarColegio (Connection con) throws SQLException {
+		ArrayList<Colegio> resultado = new ArrayList<Colegio>();
+		
+		String sql = "select * from `canaima`.`colegio` order by nombre asc";
+		PreparedStatement ps = null;
+		ResultSet rs = null;		
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			Colegio colegio = null;
+			while (rs.next()) {
+				colegio = new Colegio();
+				colegio.recargar(rs);
+				resultado.add(colegio);
+			}
+		}
+		finally {			
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return resultado; 
+	}
 }
