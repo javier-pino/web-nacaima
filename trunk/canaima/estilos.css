@@ -1,7 +1,7 @@
 @CHARSET "ISO-8859-1";
 
 #scroll{ 
-	width:815px; 
+	width:98%; 
 	height:138px; 
 	background-color:#F2F2F2; 
 	overflow:auto; 
@@ -13,7 +13,7 @@
     margin-left: 10px;
 }	
 #scroll1{ 
-	width:815px; 
+	width:98%; 
 	height:210px; 
 	background-color:#F2F2F2; 
 	overflow:auto; 
@@ -51,7 +51,7 @@
 }
 
 #filtro{ 
-	width:815px; 
+	width:98%; 
 	height:150px; 
 	background-color:#F2F2F2;
 	border-top-style: solid; 
@@ -63,7 +63,7 @@
 }
 
 #busqueda{ 
-	width:815px; 
+	width:98%; 
 	height:220px; 
 	background-color:#F2F2F2; 
 	overflow:auto; 
@@ -89,7 +89,7 @@
 }
 
 .largo{
-	width: 100px;
+	width: 160px;
 	text-align: center; 
 	border: 1px grey;
 	border-bottom-style: solid;
@@ -139,7 +139,7 @@ body {
 }
 
 .a {
-	FONT: 12.0pt Arial; 
+	FONT: 13.0pt Arial; 
 	background-color: #5c9510;
 	TEXT-DECORATION: none; 
 	text-align: left;

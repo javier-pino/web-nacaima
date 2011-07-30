@@ -7,13 +7,14 @@ body
 
 #WholePage
 {
-	width: 1024px;	
+	width: 1440px;	
     background-color: white;
+    float: center;
 }
 
 #Container
 {
-	width: 1024px;
+	width: 1440px;
 	margin: 0px auto;	
 }
 
@@ -150,12 +151,12 @@ float: left;
 }
 #Left
 {
-width: 174px;
+width: 12%;
 position: relative;
 }
 #Middle
 {
-width: 850px;
+width: 88%;
 }
 
 .Part,.TopPart,#LeftMenu
@@ -167,7 +168,7 @@ background: #e4ece3;
 #LeftMenu
 {
 
-font-size: 12px;
+font-size: 14px;
 font-family: arial;
 padding-bottom: 8px;
 }
@@ -243,7 +244,7 @@ list-style-type: none;
 {
 text-decoration: underline;
 color: #446d07;
-font-size: 15px;
+font-size: 18px;
 }
 #LeftMenu a
 {
@@ -302,7 +303,7 @@ font-weight: normal;
 .Part h2
 {
 font-family: arial;
-font-size: 16px;
+font-size: 18px;
 color: white;
 line-height: 37px;
 padding-left: 10px;

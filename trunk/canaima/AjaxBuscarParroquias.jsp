@@ -1,6 +1,6 @@
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.util.*" %>
-<%@page import="beans.Municipio"%>
+<%@page import="beans.Parroquia"%>
 <%@page import="beans.Donatario"%>
 <%@page import="enums.NACIONALIDAD"%>
 <%@page import="java.util.ArrayList"%>
@@ -9,30 +9,30 @@
 <!-- Iniciar Modelo -->
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 <% 
-	String estado = "";
-	int idestado = 0;
-    if (request.getParameter("idestado") != null) {
-	   estado = (request.getParameter("idestado"));
+	String municipio = "";
+	int idmunicipio = 0;
+    if (request.getParameter("idmunicipio") != null) {
+    	municipio = (request.getParameter("idmunicipio"));
 	   try {
-		 	idestado = Integer.parseInt(estado);  
+		 	idmunicipio = Integer.parseInt(municipio);  
 	   } catch (Exception e) {
 		   e.printStackTrace();
 		   
 	   } 
     }	
 %>
-<td width="15" id= "municipios">
-	<SELECT tabindex="2" name="idmunicipio" title="municipio" onchange="javascript:mostrarParroquias(this.value);">
+<td width="15" id= "parroquias">
+	<SELECT tabindex="3" name="parroquias" title="parroquia">
 	<%
-		int idMunicipio;
+		int idParroquia;
 		String nombreMunicipio = null;  
 		Donatario ultimo = canaima.getUltimo();
 		Connection con = canaima.solicitarConexion(); 				   				
-		ArrayList<Municipio> listaMunicipio = Municipio.listarMunicipiosPorEstado(idestado, con);
+		ArrayList<Parroquia> listaParroquia = Parroquia.listarParroquiasPorMunicipios(idmunicipio, con);
 		canaima.getPoolConexiones().cerrarConexion(con);
 		out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
-		for (int i=0; i < listaMunicipio.size(); i++) {				
-			out.write("<option value=\"" + listaMunicipio.get(i).getID() + "\">" + listaMunicipio.get(i).getNombre()  + "</option>");
+		for (int i=0; i < listaParroquia.size(); i++) {				
+			out.write("<option value=\"" + listaParroquia.get(i).getID() + "\">" + listaParroquia.get(i).getNombre()  + "</option>");
 		}
 	%>
 	</select>

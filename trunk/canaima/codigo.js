@@ -90,6 +90,16 @@ function mostrarMunicipios(idestado){
 		ajax.send(null);	
 }
 
+function mostrarParroquias(idmunicipio){	
+	ajax = nuevoAjax();
+	ajax.open("GET", "AjaxBuscarParroquias.jsp?idmunicipio="+idmunicipio, true);
+	ajax.onreadystatechange = function() {
+		document.getElementById("parroquias").innerHTML = ajax.responseText;
+	};
+	ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	ajax.send(null);	
+}
+
 function eliminarDonatario(iddonatario){	
 	ajax = nuevoAjax();
 	ajax.open("GET", "AjaxEliminarDonatario.jsp?iddonatario="+iddonatario, true);
