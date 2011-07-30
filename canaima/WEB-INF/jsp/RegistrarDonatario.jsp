@@ -9,6 +9,7 @@
 <%@page import="beans.Estado"%>
 <%@page import="enums.NACIONALIDAD"%>
 <%@page import="beans.Municipio"%>
+<%@page import="beans.Parroquia"%>
 
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 
@@ -66,12 +67,13 @@
 	<tr class="a">
 		<td>Estado</td>
 		<td>Municipio</td>
+		<td>Parroquia</td>
 		<td>Ciudad</td>		
-		<td>Serial Eq.*</td>
+		<td>Serial Equipo</td>
 	</tr>	
 	<tr >
 		<td>			
-			<SELECT tabindex="1" name="idestado" title="estado" onchange="javascript:mostrarMunicipios(this.value);">
+			<SELECT tabindex="1" name="idestado" title="estado" style="width: 150px;"  onchange="javascript:mostrarMunicipios(this.value);">
 			<%
 				int idEstado;
 				String nombreEstado = null;
@@ -90,7 +92,7 @@
 			</SELECT>
 		</td>
 		<td id= "municipios">
-			<SELECT tabindex="2" name="idmunicipio" title="municipio" >
+			<SELECT tabindex="2" name="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
 			<%					
 			if (ultimo.getID() > 0 && ultimo.getIdestado() > 0) {
 				con = canaima.solicitarConexion();				
@@ -109,11 +111,31 @@
 			%>			
 			</SELECT>
 		</td>
-		<td>
-			<input tabindex="3" name="ciudad" size="20" value="<%= (ultimo.getCiudad() != null) ? ultimo.getCiudad() : ""%>">
+		<td id= "parroquias">
+			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px; " >
+			<%					
+			if (ultimo.getID() > 0 && ultimo.getIdestado() > 0) {
+				con = canaima.solicitarConexion();				
+				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(ultimo.getIdmunicipio(), con);
+				canaima.getPoolConexiones().cerrarConexion(con);
+				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
+				for (int i=0; i < parroquias.size(); i++) {
+					if (ultimo.getIdmunicipio() > 0 && ultimo.getIdmunicipio() == parroquias.get(i).getID())
+						out.write("<option value=\"" + parroquias.get(i).getID() + "\" selected=\"selected\" >" + parroquias.get(i).getNombre()  + "</option>");
+					else 
+						out.write("<option value=\"" + parroquias.get(i).getID() + "\" >" + parroquias.get(i).getNombre()  + "</option>");
+	   			}		
+			} else {
+				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
+			}			
+			%>			
+			</SELECT>
 		</td>
-		<td class="b" height="19" width="90">
-			<input tabindex="4" type="text" name="equipo_serial" size="10"></td>
+		<td>
+			<input tabindex="4" name="ciudad" size="36" value="<%= (ultimo.getCiudad() != null) ? ultimo.getCiudad() : ""%>">
+		</td>
+		<td class="b">
+			<input tabindex="5" type="text" name="equipo_serial" size="28"></td>
 		</tr>
 </table>
 <br>
@@ -127,10 +149,10 @@
 		<td>Direccion</td>
 	</tr>
 	<tr>
-		<td><input tabindex="5" size="20" name="codigo_dea" size="10" value="<%= (ultimo.getCodigo_dea() != null) ? ultimo.getCodigo_dea() : ""%>"></td>
-		<td><input tabindex="6" name="colegio" size="20" value="<%= (ultimo.getColegio() != null) ? ultimo.getColegio() : ""%>"></td>
+		<td><input tabindex="6" size="25" name="codigo_dea" value="<%= (ultimo.getCodigo_dea() != null) ? ultimo.getCodigo_dea() : ""%>"></td>
+		<td><input tabindex="7" name="colegio" size="30" value="<%= (ultimo.getColegio() != null) ? ultimo.getColegio() : ""%>"></td>
 		<td>
-			<select tabindex="7" name="grado">
+			<select tabindex="8" name="grado">
 				<option value =0 > -- </option>
 				<option value =1 <%= (ultimo.getGrado() == 1 ? " selected = \"selected\"" : "")%> > 1&deg; </option> 	
 				<option value =2 <%= (ultimo.getGrado() == 2 ? " selected = \"selected\"" : "")%> > 2&deg; </option> 	
@@ -141,10 +163,10 @@
 			</select>
 		</td>
 		<td>
-			<input tabindex="8" name="seccion" size="10" value="<%= (ultimo.getSeccion() != null) ? ultimo.getSeccion() : ""%>">
+			<input tabindex="9" name="seccion" size="15" value="<%= (ultimo.getSeccion() != null) ? ultimo.getSeccion() : ""%>">
 		</td>
 		<td>
-			<select tabindex="9" name="ano_escolar">
+			<select tabindex="10" name="ano_escolar">
 				<option value =0 > --Seleccione--	</option>
 		<%
 			int ini = 2009;			
@@ -161,46 +183,46 @@
 			</select>
 		</td>
 		<td>
-			<input tabindex="10" name="direccion" size="35" maxlength="255" value="<%= (ultimo.getDireccion() != null) ? ultimo.getDireccion() : ""%>">
+			<input tabindex="11" name="direccion" size="50" maxlength="255" value="<%= (ultimo.getDireccion() != null) ? ultimo.getDireccion() : ""%>">
 		</td>
 	</tr>
 </table>
 <br>
 <table>
 	<tr class="a">
-		<td class="b" height="10" width="90">Nombre</td>
+		<td class="b">Nombre</td>
 		<td class="b" height="10" width="80">Nac. Rep.</td>
 		<td class="b" height="10" width="80">Cédula. Rep.</td>
-		<td class="b" height="19" width="90">Nombre. Rep.</td>
-		<td class="b" height="19" width="90">Nro. Teléfono</td>
-		<td class="b" height="19" width="90">Nombre. Dir</td>
-		<td class="b" height="19" width="90">Proveedor</td>
+		<td class="b">Nombre. Rep.</td>
+		<td class="b">Nro. Teléfono</td>
+		<td class="b">Nombre. Director</td>
+		<td class="b">Proveedor</td>
 	</tr>
 	<tr>
 		<td class="b" height="15" width="90">
-			<input tabindex="11" type="text"  size="17"	name="nombre">
+			<input tabindex="12" type="text"  size="28"	name="nombre">
 		</td>
 		<td align="center">
-			<select tabindex="12" name="representante_nac">
+			<select tabindex="13" name="representante_nac">
 				<option value ="<%= NACIONALIDAD.V %>"> V </option>
 				<option value ="<%= NACIONALIDAD.E %>"> E </option>
 			</select></td>
-		<td class="b" height="19" width="80">
-			<input tabindex="13" maxlength="10" size="10" type="text" name="representante_ci" size="8" onKeypress="validarNumero(this)"></td>
-		<td class="b" height="19" width="90">
-			<input tabindex="14" type="text" size="17" name="representante_nombre"></td>
-		<td class="b" height="19" width="90">
-			<input tabindex="15" type="text" maxlength="12" name="representante_tlf" size="10" value="<%= (ultimo.getRepresentante_tlf() != null) ? ultimo.getRepresentante_tlf() : ""%>" onKeypress="validarNumero(this)"></td>
-		<td class="b" height="19" width="90">
-		<input tabindex="16" type="text" name="director_nombre" size="17" value="<%= (ultimo.getDirector_nombre() != null) ? ultimo.getDirector_nombre() : ""%>" ></td>
-		<td class="b" height="19" width="90">
-		<input tabindex="17" type="text" name="proveedor" size="17" value="<%= (ultimo.getProveedor() != null) ? ultimo.getProveedor() : ""%>"></td>
+		<td class="b">
+			<input tabindex="14" maxlength="10" size="15" type="text" name="representante_ci" size="8" onKeypress="validarNumero(this)"></td>
+		<td class="b">
+			<input tabindex="15" type="text" size="28" name="representante_nombre"></td>
+		<td class="b">
+			<input tabindex="16" type="text" maxlength="12" name="representante_tlf" size="15" value="<%= (ultimo.getRepresentante_tlf() != null) ? ultimo.getRepresentante_tlf() : ""%>" onKeypress="validarNumero(this)"></td>
+		<td class="b">
+		<input tabindex="17" type="text" name="director_nombre" size="25" value="<%= (ultimo.getDirector_nombre() != null) ? ultimo.getDirector_nombre() : ""%>" ></td>
+		<td class="b">
+		<input tabindex="18" type="text" name="proveedor" size="25" value="<%= (ultimo.getProveedor() != null) ? ultimo.getProveedor() : ""%>"></td>
 		
 	</tr>
 	<tr>
 		<td align="center">
 		<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
-		<INPUT tabindex="18" type="submit" value="Aceptar" name="aceptar">
+		<INPUT tabindex="19" type="submit" value="Aceptar" name="aceptar">
 		</td>
 	</tr>
 </table>
@@ -223,7 +245,7 @@ $(document).ready(function() {
 });
 </script>
 
-<div align="center" id="scroll">
+<div id="scroll">
 <table id="fila_donatario">
 	<tr>
 		<td class="a" colspan="12" >&Uacute;LTIMOS <%= ModeloCanaima.TAM_RECIENTES%> DONATARIOS REGISTRADOS</td>

@@ -701,14 +701,16 @@ public class Donatario extends ObjetoPersistente {
 		String nombreDonatario, 
 		String cedulaRepresentante,
 		int idDonatario,
-		int idCreadoPor
+		int idCreadoPor,
+		int idColegio,
+		int idParroquia
 		
 	) throws SQLException, ExcepcionValidaciones {
 		
 		final int ESTADO = 0, MUNICIPIO = 1, CIUDAD = 2, COLEGIO = 3,
-			GRADO = 4, NOMBREDONATARIO = 5, CEDULAREP = 6, IDDONATARIO = 7, IDCREADOPOR = 8;		
+			GRADO = 4, NOMBREDONATARIO = 5, CEDULAREP = 6, IDDONATARIO = 7, IDCREADOPOR = 8, IDCOLEGIO = 9, IDPARROQUIA = 10;		
 		boolean [] parametrosPresentes = {false, false, false, false,
-				false, false, false, false, true};
+				false, false, false, false, true, false, false};
 		
 		if (estado > 0)
 			parametrosPresentes[ESTADO] = true;
@@ -726,6 +728,10 @@ public class Donatario extends ObjetoPersistente {
 			parametrosPresentes[CEDULAREP] = true;
 		if (idDonatario > 0)
 			parametrosPresentes[IDDONATARIO] = true;
+		if (idColegio > 0)
+			parametrosPresentes[IDCOLEGIO] = true;
+		if (idParroquia > 0)
+			parametrosPresentes[IDPARROQUIA] = true;
 		
 		ArrayList<Donatario> resultado = new ArrayList<Donatario>();		
 		int parametrosUsados = 1;
@@ -760,6 +766,12 @@ public class Donatario extends ObjetoPersistente {
 		if (parametrosPresentes[IDCREADOPOR]) {
 			//sqlDonatarios += " and idcreadopor = ?";			
 			//Los usuarios solicitaron que esta restricción se eliminara.
+		}
+		if (parametrosPresentes[IDCOLEGIO]) {
+			sqlDonatarios += " and idcolegio = ?";
+		}
+		if (parametrosPresentes[IDPARROQUIA]) {
+			sqlDonatarios += " and idparroquia = ?";
 		}
 		
 		
@@ -797,6 +809,13 @@ public class Donatario extends ObjetoPersistente {
 				//ps.setInt(parametrosUsados++, idCreadoPor);
 				//Los usuarios solicitaron que esta restricción se eliminara
 			}
+			if (parametrosPresentes[IDCOLEGIO]) {
+				ps.setInt(parametrosUsados++, idColegio);
+			}
+			if (parametrosPresentes[IDPARROQUIA]) {
+				ps.setInt(parametrosUsados++, idParroquia);
+			}
+			
 			rs = ps.executeQuery();
 			Donatario retornado = null;
 			while (rs.next()) {

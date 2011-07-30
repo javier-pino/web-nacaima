@@ -110,4 +110,30 @@ public class Parroquia extends ObjetoPersistente implements Serializable {
 	public int getID() {
 		return getIdparroquia();
 	}
+	
+public static ArrayList<Parroquia> listarParroquiasPorMunicipios (int idestado, Connection con) throws SQLException {
+		
+		ArrayList<Parroquia> resultado = new ArrayList<Parroquia>();		
+		String sql = "select * from `canaima`.`parroquia` where activo and idmunicipio = ? order by nombre asc";
+		PreparedStatement ps = null;
+		ResultSet rs = null;		
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, idestado);
+			rs = ps.executeQuery();
+			Parroquia parroquia = null;
+			while (rs.next()) {
+				parroquia = new Parroquia();
+				parroquia.recargar(rs);
+				resultado.add(parroquia);
+			}
+		}
+		finally {			
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return resultado; 
+	}
 }
