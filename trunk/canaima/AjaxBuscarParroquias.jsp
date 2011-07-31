@@ -22,7 +22,7 @@
     }	
 %>
 <td width="15" id= "parroquias">
-	<SELECT tabindex="3" name="parroquias" title="parroquia">
+	<SELECT tabindex="3" name="idparroquia" title="parroquia">
 	<%
 		int idParroquia;
 		String nombreMunicipio = null;  
