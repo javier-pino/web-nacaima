@@ -63,6 +63,7 @@
 					donatario.setRepresentante_tlf(request.getParameter("representante_tlf"));
 					donatario.setIdestado(Integer.valueOf(request.getParameter("idestado")));					  					
 					donatario.setIdmunicipio(Integer.valueOf(request.getParameter("idmunicipio")));
+					donatario.setIdparroquia(Integer.valueOf(request.getParameter("idparroquia")));
 					donatario.setCiudad(request.getParameter("ciudad"));
 					donatario.setDireccion(request.getParameter("direccion"));
 					donatario.setColegio(request.getParameter("colegio"));					
@@ -120,7 +121,7 @@
 
     	<tr>
     		<td class = "a"> Nombre Donatario:</td>
-    		<td><input tabindex="2" size="20" name = "nombre" value="<%= (donatario.getNombre() != null) ? donatario.getNombre() : ""%>" ></td>
+    		<td><input tabindex="2" size="28" name = "nombre" value="<%= (donatario.getNombre() != null) ? donatario.getNombre() : ""%>" ></td>
     		<td class = "a"> ID Donatario</td>
     		<td><%= idDonatario %></td> 
     	</tr>
@@ -134,17 +135,17 @@
 				</select>
 			</td>
     		<td class = "a">Cédula:</td>
-    		<td><input tabindex="4" maxlength="10" type="text" name="representante_ci" size="20" value="<%= (donatario.getRepresentante_ci() != null) ? donatario.getRepresentante_ci() : ""%>" onKeypress="validarNumero(this)"></td>
+    		<td><input tabindex="4" maxlength="10" type="text" name="representante_ci" size="28" value="<%= (donatario.getRepresentante_ci() != null) ? donatario.getRepresentante_ci() : ""%>" onKeypress="validarNumero(this)"></td>
     	</tr>
     	<tr>
     		<td class = "a">Nombre Rep.</td>
-    		<td><input tabindex="5" size="20" name = "representante_nombre" value="<%= (donatario.getRepresentante_nombre() != null) ? donatario.getRepresentante_nombre() : ""%>"></td>
+    		<td><input tabindex="5" size="28" name = "representante_nombre" value="<%= (donatario.getRepresentante_nombre() != null) ? donatario.getRepresentante_nombre() : ""%>"></td>
     		<td class = "a">Teléfono:</td>
-    		<td><input tabindex="6" maxlength="10" type="text" name="representante_tlf" size="20" value="<%= (donatario.getRepresentante_tlf() != null) ? donatario.getRepresentante_tlf() : ""%>" onKeypress="validarNumero(this)"/></td>
+    		<td><input tabindex="6" maxlength="10" type="text" name="representante_tlf" size="28" value="<%= (donatario.getRepresentante_tlf() != null) ? donatario.getRepresentante_tlf() : ""%>" onKeypress="validarNumero(this)"/></td>
     	</tr>
     	<tr>
     		<td class = "a">Estado:</td>
-    		<td><SELECT tabindex="7" name="idestado" title="estado" onchange="javascript:mostrarMunicipios(this.value);">
+    		<td><SELECT tabindex="7" name="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
 			<%
 				int idEstado;
 				String nombreEstado = null;
@@ -164,7 +165,7 @@
 			</td>
     		<td class = "a">Municipio:</td>
     		<td id= "municipios"> 
-    			<SELECT tabindex="8" name="idmunicipio" title="municipio">
+    			<SELECT tabindex="8" name="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
 				<%					
 					if (donatario.getIdestado() > 0) {
 						con = canaima.solicitarConexion();				
@@ -185,16 +186,42 @@
 			</td>
     	</tr>
     	<tr>
-    		<td class = "a">Ciudad:</td>
-    		<td><input tabindex="9" size="20" name = "ciudad" value="<%= (donatario.getCiudad() != null) ? donatario.getCiudad() : ""%>"></td>
+    		<td class = "a">Parroquia:</td>
+    		<td id= "parroquias">
+			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+			<%					
+			if (donatario.getIdmunicipio() > 0) {
+				con = canaima.solicitarConexion();				
+				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(donatario.getIdmunicipio(), con);
+				canaima.getPoolConexiones().cerrarConexion(con);
+				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
+				for (int i=0; i < parroquias.size(); i++) {
+					if (donatario.getIdparroquia() > 0 && donatario.getIdparroquia() == parroquias.get(i).getID())
+						out.write("<option value=\"" + parroquias.get(i).getID() + "\" selected=\"selected\" >" + parroquias.get(i).getNombre()  + "</option>");
+					else 
+						out.write("<option value=\"" + parroquias.get(i).getID() + "\" >" + parroquias.get(i).getNombre()  + "</option>");
+	   			}		
+			} else {
+				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
+			}			
+			%>			
+			</SELECT>
+			</td>
+			<td class = "a">Ciudad:</td>
+    		<td><input tabindex="9" size="28" name = "ciudad" value="<%= (donatario.getCiudad() != null) ? donatario.getCiudad() : ""%>"></td>
+    	</tr>
+    	<tr>
+    		<td class = "a">Colegio N:</td>
+    		<td><input tabindex="11" size="28" name="colegio" value="<%= (donatario.getColegio() != null) ? donatario.getColegio() : ""%>"></td>
     		<td class = "a">Dirección:</td>
-    		<td><input tabindex="10" size="20" name = "direccion" value="<%= (donatario.getDireccion() != null) ? donatario.getDireccion() : ""%>"></td>
+    		<td><input tabindex="10" size="28" name = "direccion" value="<%= (donatario.getDireccion() != null) ? donatario.getDireccion() : ""%>"></td>
+    	
     	</tr>
     	<tr>
     		<td class = "a">Colegio:</td>
-    		<td><input tabindex="11" size="20" name="colegio" value="<%= (donatario.getColegio() != null) ? donatario.getColegio() : ""%>"></td>
+    		<td><input tabindex="11" size="28" name="colegio" value="<%= (donatario.getColegio() != null) ? donatario.getColegio() : ""%>"></td>
     		<td class = "a">Ano Escolar</td>
-    		<td><select tabindex="12" name="ano_escolar">
+    		<td><select tabindex="12" name="ano_escolar" style="width: 150px;">
 				<option value =0 > --Seleccione--	</option>
 					<%
 						int ini = 2009;			
@@ -222,23 +249,23 @@
 				<option value="6" <%= (donatario.getGrado() == 6 ? " selected = \"selected\"" : "")%>=""> 6° </option>
 			</select></td>
     		<td class = "a">Sección:</td>
-    		<td><input tabindex="14" name="seccion" size="20" value="<%= (donatario.getSeccion() != null) ? donatario.getSeccion() : ""%>"></td>
+    		<td><input tabindex="14" name="seccion" size="28" value="<%= (donatario.getSeccion() != null) ? donatario.getSeccion() : ""%>"></td>
     	</tr>
     	<tr>
     		<td class = "a">Serial Equipo:</td>
-    		<td> <input tabindex="15" name="equipo_serial" size="20" value="<%= (donatario.getEquipo_serial() != null) ? donatario.getEquipo_serial() : ""%>"></td>
+    		<td> <input tabindex="15" name="equipo_serial" size="28" value="<%= (donatario.getEquipo_serial() != null) ? donatario.getEquipo_serial() : ""%>"></td>
     		<td class = "a">Código DEA:</td>
-    		<td><input tabindex="16" name="codigo_dea" size="20" value="<%= (donatario.getCodigo_dea() != null) ? donatario.getCodigo_dea() : ""%>"></td>
+    		<td><input tabindex="16" name="codigo_dea" size="28" value="<%= (donatario.getCodigo_dea() != null) ? donatario.getCodigo_dea() : ""%>"></td>
     	</tr>
     	<tr>
     		<td class = "a">Nombre Director:</td>
-    		<td> <input tabindex="17" name="director_nombre" size="20" value="<%= (donatario.getDirector_nombre() != null) ? donatario.getDirector_nombre() : ""%>"></td>
+    		<td> <input tabindex="17" name="director_nombre" size="28" value="<%= (donatario.getDirector_nombre() != null) ? donatario.getDirector_nombre() : ""%>"></td>
     		<td class = "a">Proveedor:</td>
-    		<td><input tabindex="18" name="proveedor" size="20" value="<%= (donatario.getProveedor() != null) ? donatario.getProveedor() : ""%>"></td>
+    		<td><input tabindex="18" name="proveedor" size="28" value="<%= (donatario.getProveedor() != null) ? donatario.getProveedor() : ""%>"></td>
     	</tr>
     	<tr>
     		<td class = "a">Observaciones:</td>
-    		<td colspan="4"> <input tabindex="19" name="observacion" size="60" value="<%= (donatario.getObservacion() != null) ? donatario.getObservacion() : ""%>"></td>
+    		<td colspan="4"> <input tabindex="19" name="observacion" size="75" value="<%= (donatario.getObservacion() != null) ? donatario.getObservacion() : ""%>"></td>
     	</tr>
     	<tr>
     		<td colspan="4" align="center">
