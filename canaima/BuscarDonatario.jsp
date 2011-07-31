@@ -43,11 +43,28 @@
 						<td>ID Donatario</td>
 						<td>Nombre. Donatario</td>
 						<td>C&eacute;dula. Rep. </td>
+						<td>Colegio</td>
 					</tr>				
 					<tr>
-						<td><input size="20" maxlength="10" name = "iddonatario" onKeypress="validarNumero(this)"></td>
-						<td><input size="20" name = "nombre" onkeypress="validarLetras(this)"></td>
+						<td><input size="28" maxlength="10" name = "iddonatario" onKeypress="validarNumero(this)"></td>
+						<td><input size="28" name = "nombre" onkeypress="validarLetras(this)"></td>
 						<td><input size="20" maxlength="10" name = "representante_ci" onKeypress="validarNumero(this)"></td>
+						<td>
+							<SELECT tabindex="1" name="idcolegio" title="colegio" style="width: 150px;">
+						<%
+							int idColegio;
+							String nombreColegio = null;
+							Colegio colegio = new Colegio();
+							Connection conn = canaima.solicitarConexion();				
+							ArrayList<Colegio> colegios = Colegio.listarColegio(conn);
+							canaima.getPoolConexiones().cerrarConexion(conn);
+							out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
+							for (int i=0; i < colegios.size(); i++) {
+								out.write("<option value=\"" + colegios.get(i).getID() + "\" >" + colegios.get(i).getNombre()  + "</option>");
+				   			}
+			        	%>
+							</SELECT>
+						</td>				
 					</tr>
 					<tr><td colspan="4" style="height: 12px; "></td></tr>
 					</table>
@@ -55,12 +72,13 @@
 					<tr class="a">
 						<td>Estado</td>
 						<td>Municipio</td>
+						<td>Parroquias</td>
 						<td>Ciudad</td>
 						<td>Colegio</td>
 					</tr>
 					<tr>
 						<td>			
-						<SELECT tabindex="1" name="idestado" title="estado" onchange="javascript:mostrarMunicipios(this.value);">
+						<SELECT tabindex="1" name="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
 						<%
 							int idEstado;
 							String nombreEstado = null;
@@ -76,12 +94,17 @@
 						</SELECT>
 					</td>
 					<td id= "municipios">
-						<SELECT tabindex="2" name="idmunicipio" title="municipio" >
+						<SELECT tabindex="2" name="idmunicipio" title="municipio" style="width: 150px;" >
 							<option value="0">--Seleccione--</option>
 						</SELECT>
 					</td>
-					<td><input size="20" name = "ciudad"></td>
-					<td><input size="20" name = "colegio"></td>
+					<td id= "parroquias">
+						<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+							<option value="0">--Seleccione--</option>
+						</SELECT>
+					</td>
+					<td><input size="30" name = "ciudad"></td>
+					<td><input size="30" name = "colegio"></td>
 					</tr>
 					<tr><td colspan="4" style="height: 8px; "></td></tr>
 					<tr align="center">
@@ -132,7 +155,9 @@
 			con = canaima.solicitarConexion();		
 			
 			int idestado =  request.getParameter("idestado") != null && !(request.getParameter("idestado").equals("")) ? Integer.parseInt(request.getParameter("idestado")) : 0;
-			int idMunicip = request.getParameter("idmunicipio") != null && !(request.getParameter("idmunicipio").equals("")) ?	Integer.parseInt(request.getParameter("idmunicipio")) : 0;			
+			int idMunicip = request.getParameter("idmunicipio") != null && !(request.getParameter("idmunicipio").equals("")) ?	Integer.parseInt(request.getParameter("idmunicipio")) : 0;	
+			int idParroquia = request.getParameter("idparroquia") != null && !(request.getParameter("idparroquia").equals("")) ?	Integer.parseInt(request.getParameter("idparroquia")) : 0;	
+			idColegio = request.getParameter("idcolegio") != null && !(request.getParameter("idcolegio").equals("")) ?	Integer.parseInt(request.getParameter("idcolegio")) : 0;		
 			int grado = request.getParameter("grado") != null && !(request.getParameter("grado").equals("")) ? Integer.parseInt(request.getParameter("grado")) : 0;			
 			int idDonatario = request.getParameter("iddonatario") != null && !(request.getParameter("iddonatario").equals("")) ?	Integer.parseInt(request.getParameter("iddonatario")) : 0;			
 			Iterator<Donatario> donatarios = Donatario.listarDonatarios(
@@ -145,7 +170,9 @@
 				request.getParameter("nombre"),
 				request.getParameter("representante_ci"),
 				idDonatario,
-				canaima.getUsuarioActual().getID()
+				canaima.getUsuarioActual().getID(),
+				idColegio,
+				idParroquia
 			).iterator();
 			Donatario donatario = null;
 			Estado estadoBuscado = new Estado();

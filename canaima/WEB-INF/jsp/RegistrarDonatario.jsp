@@ -112,15 +112,15 @@
 			</SELECT>
 		</td>
 		<td id= "parroquias">
-			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px; " >
+			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
 			<%					
-			if (ultimo.getID() > 0 && ultimo.getIdestado() > 0) {
+			if (ultimo.getID() > 0 && ultimo.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();				
 				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(ultimo.getIdmunicipio(), con);
 				canaima.getPoolConexiones().cerrarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < parroquias.size(); i++) {
-					if (ultimo.getIdmunicipio() > 0 && ultimo.getIdmunicipio() == parroquias.get(i).getID())
+					if (ultimo.getIdparroquia() > 0 && ultimo.getIdparroquia() == parroquias.get(i).getID())
 						out.write("<option value=\"" + parroquias.get(i).getID() + "\" selected=\"selected\" >" + parroquias.get(i).getNombre()  + "</option>");
 					else 
 						out.write("<option value=\"" + parroquias.get(i).getID() + "\" >" + parroquias.get(i).getNombre()  + "</option>");

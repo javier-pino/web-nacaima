@@ -33,7 +33,9 @@ public class Donatario extends ObjetoPersistente {
 	private int idestado; 
 	private int idmunicipio;
 	private String ciudad; 
-	
+	private int idparroquia;
+	private int idcolegio;
+
 	//Datos escolares	
 	private String colegio;
 	private String codigo_dea; 
@@ -379,6 +381,23 @@ public class Donatario extends ObjetoPersistente {
 	public void setTienepartida(boolean tienepartida) {
 		this.tienepartida = tienepartida;
 	}
+	
+	public int getIdparroquia() {
+		return idparroquia;
+	}
+
+	public void setIdparroquia(int idparroquia) {
+		this.idparroquia = idparroquia;
+	}
+
+	public int getIdcolegio() {
+		return idcolegio;
+	}
+
+	public void setIdcolegio(int idcolegio) {
+		this.idcolegio = idcolegio;
+	}
+
 
 	/**
 	 *	@see beans.ObjetoPersistente#recargar(java.sql.ResultSet)
@@ -402,6 +421,9 @@ public class Donatario extends ObjetoPersistente {
 		  ano_escolar = rs.getInt("ano_escolar");
 		  grado = rs.getInt("grado");
 		  seccion = StringEscapeUtils.escapeHtml(rs.getString("seccion"));
+		  
+		  idparroquia = rs.getInt("idparroquia");
+		  idcolegio = rs.getInt("idcolegio");
 		  
 		  if (rs.getString("representante_nac") != "")
 			  representante_nac = NACIONALIDAD.valueOf(rs.getString("representante_nac"));			
@@ -450,8 +472,9 @@ public class Donatario extends ObjetoPersistente {
 			"`ano_escolar`, `grado`, " +
 			"`seccion`, `representante_nac`, `representante_ci`, `representante_nombre`, `representante_tlf`, `idcontrato`, " +
 			"`equipo_serial`, `fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
-			"`tienefirma`, `tienecedula`, `tienepartida`,`codigo_dea`, `director_nombre`, `proveedor`, `fecha_act`, `activo`) " +
-			" values (?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?)";			
+			"`tienefirma`, `tienecedula`, `tienepartida`,`codigo_dea`, `director_nombre`, `proveedor`, `fecha_act`, `activo`, " +
+			"`idparroquia`, `idcolegio`) " +
+			" values (?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		ps.setInt(1, idcreadopor); 	
 		ps.setString(2, (nombre == null ? ""  : StringEscapeUtils.unescapeHtml(nombre.toUpperCase())));
@@ -482,7 +505,9 @@ public class Donatario extends ObjetoPersistente {
 		ps.setString(27, (director_nombre == null ? "" : StringEscapeUtils.unescapeHtml(director_nombre.toUpperCase())));
 		ps.setString(28, (proveedor == null ? "" : StringEscapeUtils.unescapeHtml(proveedor.toUpperCase())));
 		ps.setDate(29, fecha_act);
-		ps.setBoolean(30, activo);		  
+		ps.setBoolean(30, activo);
+		ps.setInt(31, idparroquia);
+		ps.setInt(32, idcolegio);
 		ps.executeUpdate();
 		ResultSet rs = ps.getGeneratedKeys();
 		if (rs.next()) {
@@ -513,7 +538,7 @@ public class Donatario extends ObjetoPersistente {
 				"`seccion`, `representante_nac`, `representante_ci`, `representante_nombre`, `representante_tlf`, `idcontrato`, " +
 				"`equipo_serial`, `fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
 				"`tienefirma`, `tienecedula`, `tienepartida`,`codigo_dea`, `director_nombre`, " +				
-				"`proveedor`, `fecha_act`, `activo`, `iddonatario` FROM `canaima`.`donatario` where iddonatario = ?";
+				"`proveedor`, `fecha_act`, `activo`, `idparroquia`, `idcolegio`, `iddonatario` FROM `canaima`.`donatario` where iddonatario = ?";
 		PreparedStatement ps = con.prepareStatement(update, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 		ps.setInt(1, getIddonatario());
 		ResultSet rs = ps.executeQuery();
@@ -548,6 +573,8 @@ public class Donatario extends ObjetoPersistente {
 			rs.updateString(28, (proveedor == null ? "" : proveedor.toUpperCase()));
 			rs.updateDate(29, fecha_act);
 			rs.updateBoolean(30, activo);
+			rs.updateInt(31, idparroquia);
+			rs.updateInt(32, idcolegio);
 			rs.updateRow();
 		}
 		rs.close();
