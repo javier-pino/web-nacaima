@@ -232,4 +232,29 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		}
 		return resultado; 
 	}
+	
+	public static ArrayList<Colegio> listarColegioPorNombre (Connection con, String nombre) throws SQLException {
+		ArrayList<Colegio> resultado = new ArrayList<Colegio>();
+		
+		String sql = "select * from `canaima`.`colegio` where nombre like '%"+ nombre +"%' order by nombre asc";
+		PreparedStatement ps = null;
+		ResultSet rs = null;		
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			Colegio colegio = null;
+			while (rs.next()) {
+				colegio = new Colegio();
+				colegio.recargar(rs);
+				resultado.add(colegio);
+			}
+		}
+		finally {			
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return resultado; 
+	}
 }
