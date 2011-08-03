@@ -1,3 +1,4 @@
+<%@page import="beans.Colegio"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="aplicacion.ModeloCanaima"%>
 <%@page import="java.sql.SQLException"%>
@@ -13,6 +14,29 @@
 
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
+<link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
+
+		<script type="text/javascript">
+		$().ready(function() {;
+		
+		$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+				width: 260,
+				height: 500,
+				matchContains: true,
+				max: 30,
+				//mustMatch: true,
+				minChars: 2,
+				multiple: false
+				//highlight: false,
+				//multipleSeparator: ",",
+				//selectFirst: false
+			});
+		});
+		
+		</script>
+
 <%!
 	public enum ESTADO {
 		LISTADO,	
@@ -27,10 +51,19 @@
 	if (actual.equals(ESTADO.POR_GUARDAR)) {
 		try {
 %> 
+
 			<jsp:useBean id="donatario" class = "beans.Donatario" scope="request">
 				<jsp:setProperty property="*" name = "donatario"/> </jsp:useBean>
-<% 						
-			donatario.setIdcreadopor(canaima.getUsuarioActual().getID());								
+<% 					
+			if (donatario.getIdcolegio() > 0) {
+				Colegio col = new Colegio();
+				canaima.buscarPorID(donatario.getIdcolegio(), col);
+				donatario.setIdestado(col.getIdestado());
+				donatario.setIdmunicipio(col.getIdmunicipio());
+				donatario.setIdparroquia(col.getIdparroquia());
+			}
+			
+			donatario.setIdcreadopor(canaima.getUsuarioActual().getID());		
 			donatario.setRepresentante_nac(request.getParameter("representante_nac"));
 			
 			if (donatario.getRepresentante_ci() != null && !donatario.getRepresentante_ci().isEmpty()) {
@@ -62,7 +95,7 @@
 <h2>Registrar</h2>
 &nbsp;  
 <div align="left" id="scroll1">
-<form name="lista" action="agregarDonatario.jsp" method="post">
+<form name="lista" action="agregarDonatario.jsp" method="post" autocomplete="off">
 <table id="fila_direccion">
 	<tr class="a">
 		<td>Estado</td>
@@ -92,7 +125,7 @@
 			</SELECT>
 		</td>
 		<td id= "municipios">
-			<SELECT tabindex="2" name="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
+			<SELECT tabindex="2" id="idmunicipio" name="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
 			<%					
 			if (ultimo.getID() > 0 && ultimo.getIdestado() > 0) {
 				con = canaima.solicitarConexion();				
@@ -142,7 +175,7 @@
 <table id="fila_colegio">		
 	<tr class="a"> 
 		<td>DEA</td>
-		<td>Colegio</td>
+		<td> Colegio</td>
 		<td>Grado</td>
 		<td>Sección</td>
 		<td>Año Escolar</td>
@@ -150,7 +183,12 @@
 	</tr>
 	<tr>
 		<td><input tabindex="6" size="25" name="codigo_dea" value="<%= (ultimo.getCodigo_dea() != null) ? ultimo.getCodigo_dea() : ""%>"></td>
-		<td><input tabindex="7" name="colegio" size="30" value="<%= (ultimo.getColegio() != null) ? ultimo.getColegio() : ""%>"></td>
+	
+		<td>
+				<input type="text" name="colegio" id="colegio" />
+				<input type="hidden" name="idcolegio" id="idcolegio" />
+		</td>
+		
 		<td>
 			<select tabindex="8" name="grado">
 				<option value =0 > -- </option>
