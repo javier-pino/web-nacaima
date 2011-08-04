@@ -237,7 +237,7 @@ $.Autocompleter = function(input, options) {
 		$input.trigger("result", [selected.data, selected.value]);
 		var idcolegio = selected.data.toString().substring(selected.value.length+1);
 		document.getElementById("idcolegio").value = idcolegio;
-				
+		
 		return true;
 	}
 	

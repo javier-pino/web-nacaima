@@ -14,28 +14,23 @@
 
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 
-<script type="text/javascript" src="js/jquery.js"></script>
 <script type='text/javascript' src='js/jquery.autocomplete.js'></script>
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
-		<script type="text/javascript">
+<script type="text/javascript">
 		$().ready(function() {;
 		
 		$("#colegio").autocomplete("autocompletar_colegio.jsp", {
-				width: 260,
+				width: 460,
 				height: 500,
 				matchContains: true,
 				max: 30,
-				//mustMatch: true,
 				minChars: 2,
 				multiple: false
-				//highlight: false,
-				//multipleSeparator: ",",
-				//selectFirst: false
 			});
 		});
 		
-		</script>
+</script>
 
 <%!
 	public enum ESTADO {
@@ -174,18 +169,16 @@
 <br>
 <table id="fila_colegio">		
 	<tr class="a"> 
-		<td>DEA</td>
-		<td> Colegio</td>
+		<td>Colegio</td>
 		<td>Grado</td>
 		<td>Sección</td>
 		<td>Año Escolar</td>
 		<td>Direccion</td>
 	</tr>
 	<tr>
-		<td><input tabindex="6" size="25" name="codigo_dea" value="<%= (ultimo.getCodigo_dea() != null) ? ultimo.getCodigo_dea() : ""%>"></td>
-	
+
 		<td>
-				<input type="text" name="colegio" id="colegio" />
+				<input type="text" size="71" name="colegiotexto" id="colegio" />
 				<input type="hidden" name="idcolegio" id="idcolegio" />
 		</td>
 		
@@ -235,6 +228,7 @@
 		<td class="b">Nro. Teléfono</td>
 		<td class="b">Nombre. Director</td>
 		<td class="b">Proveedor</td>
+		<td class="b"></td>
 	</tr>
 	<tr>
 		<td class="b" height="15" width="90">
@@ -255,13 +249,10 @@
 		<input tabindex="17" type="text" name="director_nombre" size="25" value="<%= (ultimo.getDirector_nombre() != null) ? ultimo.getDirector_nombre() : ""%>" ></td>
 		<td class="b">
 		<input tabindex="18" type="text" name="proveedor" size="25" value="<%= (ultimo.getProveedor() != null) ? ultimo.getProveedor() : ""%>"></td>
-		
-	</tr>
-	<tr>
 		<td align="center">
 		<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
 		<INPUT tabindex="19" type="submit" value="Aceptar" name="aceptar">
-		</td>
+		</td>		
 	</tr>
 </table>
 </form>
@@ -302,17 +293,33 @@ $(document).ready(function() {
 	</tr>
 	<% 	
 	Donatario d = null;
+	Colegio cole = null;
+		
 	ListIterator<Donatario> recientes = canaima.getRecientes().listIterator(canaima.getRecientes().size());
 	while (recientes.hasPrevious()) {
-		d = recientes.previous();		
+		d = recientes.previous();
+		cole = new Colegio();
+		canaima.buscarPorID(d.getIdcolegio(),cole);
 		if (!d.isActivo()) 
 			continue;
 	%>
 	<tr class = "largo">
 		<td class = "largo"><%=aFancyBox(response, "" + d.getID(), d.getID())%> </td>
 		<td class = "largo"><%=aFancyBox(response, d.getNombre(), d.getID())%> </td>
-		<td class = "largo"><%=aFancyBox(response, d.getCodigo_dea(), d.getID())%> </td>
-		<td class = "largo"><%=aFancyBox(response, d.getColegio(), d.getID())%> </td>
+		
+		<%
+			if (cole.getID() > 0)	{			
+		%>		
+		<td class = "largo"><%=aFancyBox(response,cole.getCodigo_dea(), cole.getID())%> </td>
+		<td class = "largo"><%=aFancyBox(response, cole.getNombre(), cole.getID())%> </td>
+		<%
+			} else {
+		%>	
+		<td class = "largo"> </td>
+		<td class = "largo"> </td>
+		<%
+			}
+		%>
 		<%
 			if (d.getGrado() > 0)	{			
 		%>		
