@@ -236,7 +236,7 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	public static ArrayList<Colegio> listarColegioPorNombre (Connection con, String nombre) throws SQLException {
 		ArrayList<Colegio> resultado = new ArrayList<Colegio>();
 		
-		String sql = "select * from `canaima`.`colegio` where nombre like '%"+ nombre +"%' order by nombre asc";
+		String sql = "select * from `canaima`.`colegio` where nombre like '%"+ nombre +"%' order by nombre asc LIMIT 0, 30";
 		PreparedStatement ps = null;
 		ResultSet rs = null;		
 		try {
