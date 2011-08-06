@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-
-import org.apache.poi.hssf.extractor.ExcelExtractor;
-
 import beans.Contrato;
 import beans.Donatario;
 import beans.DonatarioContrato;
@@ -209,6 +206,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		
 	public int MAX_LOTES_X_CAJA, MAX_CONTRATOS_X_LOTE;
 	public String DIRECTORIO_TEMPORAL, DIRECTORIO_GUARDADO;
+	public String DIRECTORIO_TEMPORAL_SUFIJO =  "/canaima/temp/";
 	
 	/*** Verifica si se puede hacer login */
 	public Usuario iniciarSesion(String login, String contrasena) throws SQLException {
@@ -288,20 +286,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		}
 		return con;
 	}
-		
-	/**
-	<td class = "largo">&Uacute;ltimo Donatario Registrado</td>									
-	<td class = "largo">&Uacute;ltimo Contrato Registrado</td>
-	<td class = "largo"></td>
-	<td class = "largo">Lote Actual</td>
-	<td class = "largo">#Contratos en Lote</td>
-	<td class = "largo">M&aacute;ximo</td>
-	<td class = "largo"></td>
-	<td class = "largo">Caja Actual</td>
-	<td class = "largo">#Lotes en Caja</td>
-	<td class = "largo">M&aacute;ximo</td>
-	*/
-	
+			
 	public static final int TAM_RECIENTES = 20;
 	private final ArrayList<Donatario> recientes = new ArrayList<Donatario>();
 	private Donatario ultimo = new Donatario();
@@ -434,4 +419,5 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	public void setArchivoTemporal(String archivoTemporal) {
 		this.archivoTemporal = archivoTemporal;
 	} 
+	
 }

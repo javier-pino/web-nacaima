@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -86,6 +85,12 @@ public class Utilidades {
 		calendario.set(Calendar.MONTH, mes - 1);
 		calendario.set(Calendar.DAY_OF_MONTH, dia_del_mes);
 		calendario.set(Calendar.YEAR, año);
+		return (new Date(calendario.getTimeInMillis()));
+	}
+	
+	/** Crear una fecha dado unos parametros */
+	public static Date nuevaFecha() {
+		Calendar calendario = Calendar.getInstance();		
 		return (new Date(calendario.getTimeInMillis()));
 	}
 	
