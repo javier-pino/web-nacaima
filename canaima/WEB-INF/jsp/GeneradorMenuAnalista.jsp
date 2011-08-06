@@ -17,12 +17,26 @@
 			<ul>
 				<li><a href="consultarContrato.jsp">Consultar</a></li>																								
 				<li><a href="BuscarDonatario.jsp">Registrar</a></li>					
+			</ul>			
+			<span>Profesores</span>
+			<ul>
+				<li><a href="consultarProfesor.jsp">Consultar</a></li>																								
+				<li><a href="agregarProfesor.jsp">Registrar</a></li>					
 			</ul>
+			<span>Escuelas</span>
+			<ul>
+				<li><a href="consultarColegio.jsp">Consultar</a></li>																								
+				<li><a href="agregarColegio.jsp">Registrar</a></li>					
+			</ul>			
 			<span>Cajas</span>
 			<ul>
 				<li><a href="cerrarCaja.jsp">Cerrar Caja</a></li>									
+			</ul>
+			<span>Reportes</span>
+			<ul>
+				<li><a href="reporteDesempeno.jsp">Rep. Desempe&ntilde;o</a></li>									
 			</ul>			
-			<span> </span>
-        	</div> 
-        	<p>&nbsp;</p>    
+			<span> </span>        
+        	<p>&nbsp;</p>
+        </div>     
    </div>

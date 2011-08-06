@@ -9,8 +9,7 @@
 			<li><a href="cambiarContrasena.jsp">Cambiar Contrase&ntilde;a</a></li>
 		</ul>
 		<span>Reportes</span>
-		<ul>
-			<li><a href="reporteDesempeno.jsp">Rep. Desempe&ntilde;o</a></li>
+		<ul>			
 			<li><a href="reporteCanaima.jsp">Rep. Canaima</a></li>
 		</ul>
 		<span> </span>
