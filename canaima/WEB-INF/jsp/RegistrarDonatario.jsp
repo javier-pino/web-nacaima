@@ -310,8 +310,8 @@ $(document).ready(function() {
 		<%
 			if (cole.getID() > 0)	{			
 		%>		
-		<td class = "largo"><%=aFancyBox(response,cole.getCodigo_dea(), cole.getID())%> </td>
-		<td class = "largo"><%=aFancyBox(response, cole.getNombre(), cole.getID())%> </td>
+		<td class = "largo"><%=aFancyBox(response,cole.getCodigo_dea(), d.getID())%> </td>
+		<td class = "largo"><%=aFancyBox(response, cole.getNombre(), d.getID())%> </td>
 		<%
 			} else {
 		%>	
