@@ -13,6 +13,8 @@ import aplicacion.ExcepcionValidaciones;
 
 public class Profesor extends ObjetoPersistente {
 
+	private static final long serialVersionUID = 723342237982751857L;
+	
 	//Identificacion del profesor
 	private int idprofesor;
 	private int idcreadopor;
@@ -31,7 +33,6 @@ public class Profesor extends ObjetoPersistente {
 	private Date fecha_entrega;  
 	private Date fecha_llegada;
 	private Timestamp fecha_carga;
-	 
 	
 	//Datos del contrato	
 	private int numero = 0;
@@ -202,9 +203,7 @@ public class Profesor extends ObjetoPersistente {
 	}
 
 	private boolean activo = true;
-	
-	private static final long serialVersionUID = -7896956557589201232L;
-
+		
 	@Override
 	public ArrayList<String> validarCondiciones() {
 		ArrayList<String> resultado = new ArrayList<String>();		
