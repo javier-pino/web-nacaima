@@ -35,14 +35,14 @@
 		actual = ESTADO.valueOf(request.getParameter("estado"));
 	} 
 %>
-<jsp:include page="/WEB-INF/jsp/GeneradorMenuVisitante.jsp" flush="true"></jsp:include>
+<jsp:include page="/WEB-INF/jsp/GeneradorMenuAnalista.jsp" flush="true"></jsp:include>
 <div id="Middle">
 	<div id="Page">
 		<div id="Content">			
 			<div class="Part">
 				<h2>Reporte de Desempeño</h2>							
 				&nbsp; 
-				<div id = "estadisticas">				
+				<div id="DesempeñoFiltro" >				
 				<form method="post">
 				<table align="left"">				
 					<tr class="a">
