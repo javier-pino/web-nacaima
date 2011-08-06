@@ -22,10 +22,6 @@ CREATE TABLE `canaima`.`parroquia` (
 ENGINE = InnoDB;
 
 
-
-INSERT INTO MUNICIPIO (IDESTADO, NOMBRE) VALUES (4, 'JOSE ANGEL LAMAS');
-
-
 insert into parroquia (idmunicipio, nombre) values
 (146, upper('Aguedo Felipe Alvarado')),
 (146, upper('Buena Vista')),
