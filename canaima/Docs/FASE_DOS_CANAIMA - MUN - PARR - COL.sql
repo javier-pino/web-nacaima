@@ -33776,7 +33776,7 @@ INSERT INTO `municipio` (`idmunicipio`,`nombre`,`idestado`,`activo`) VALUES
 
  (334,'VALMORE RODRÍGUEZ',23,1),
 
- (335,'LIBERTADOR',24,1),
+ (335,'LIBERTADOR',24,1);
 
 /*!40000 ALTER TABLE `municipio` ENABLE KEYS */;
 
@@ -33820,7 +33820,7 @@ CREATE TABLE `parroquia` (
 
 /*!40000 ALTER TABLE `parroquia` DISABLE KEYS */;
 
-INSERT INTO `parroquia` (`idparroquia`,`idmunicipio`,`nombre`,`activo`) VALUES 
+INSERT INTO `parroquia` (`idparroquia`,`idmunicipio`,`nombre`,`activo`) VALUES
 
  (1,146,'AGUEDO FELIPE ALVARADO',1),
 
@@ -35870,38 +35870,16 @@ INSERT INTO `parroquia` (`idparroquia`,`idmunicipio`,`nombre`,`activo`) VALUES
 
 /*!40000 ALTER TABLE `parroquia` ENABLE KEYS */;
 
-
-
-
-
 ALTER TABLE `donatario` ADD COLUMN `idparroquia` INTEGER (11) AFTER idmunicipio;
 
 ALTER TABLE `donatario` ADD COLUMN `idcolegio` INTEGER (11) AFTER idparroquia;
 
+ALTER TABLE `canaima`.`caja` ADD COLUMN `tipo` CHAR(3) NOT NULL DEFAULT 'DON' AFTER `creacion`;
 
-DROP TABLE IF EXISTS `canaima`.`profesor`;
-CREATE TABLE  `canaima`.`profesor` (
-  `idprofesor` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `numero` int(10) unsigned NOT NULL,
-  `direccion` text NOT NULL,
-  `pdf` longblob NOT NULL,
-  `idcolegio` int(10) unsigned NOT NULL DEFAULT '0',
-  `idestado` int(10) unsigned NOT NULL DEFAULT '0',
-  `idmunicipio` int(10) unsigned NOT NULL DEFAULT '0',
-  `idparroquia` int(10) unsigned NOT NULL DEFAULT '0',
-  `ciudad` tinytext NOT NULL,
-  `nacionalidad` char(1) NOT NULL,
-  `cedula` tinytext NOT NULL,
-  `nombre` tinytext NOT NULL,
-  `fecha_entrega` date NOT NULL,
-  `fecha_llegada` date NOT NULL,
-  `observacion` tinytext NOT NULL,
-  `proveedor` tinytext NOT NULL,
-  `idcreadopor` int(10) unsigned NOT NULL,
-  `nro_equipos` int(10) unsigned NOT NULL,
-  `fecha_carga` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`idprofesor`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+UPDATE `contrato` set `direccion` = concat(substr(`direccion`, 1, 15 ),'Donatario', substr(`direccion`, 24));
+
+ALTER TABLE `canaima`.`colegio` ADD COLUMN `idcreadopor` INTEGER UNSIGNED NOT NULL AFTER `codigo_dea`,
+ADD COLUMN `direccion` TINYTEXT NOT NULL AFTER `idcreadopor`;
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
