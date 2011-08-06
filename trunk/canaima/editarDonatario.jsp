@@ -19,6 +19,25 @@
 <link rel="stylesheet" type="text/css" href="css.css" >
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.5.2.js"></script>
 <script language="JavaScript" type="text/javascript" src="codigo.js"></script>
+
+<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
+<link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
+
+<script type="text/javascript">
+		$().ready(function() {;
+		
+		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
+				width: 460,
+				height: 500,
+				matchContains: true,
+				max: 30,
+				minChars: 2,
+				multiple: false
+			});
+		});
+		
+</script>
+
 </head>
 
 <%
@@ -66,12 +85,18 @@
 					donatario.setIdparroquia(Integer.valueOf(request.getParameter("idparroquia")));
 					donatario.setCiudad(request.getParameter("ciudad"));
 					donatario.setDireccion(request.getParameter("direccion"));
-					donatario.setColegio(request.getParameter("colegio"));					
+					donatario.setIdcolegio(Integer.valueOf(request.getParameter("idcolegio")));
+						
+					/* Se puede guardar asi pero se corre el riesgo de perder la data original
+					donatario.setColegio("");
+					donatario.setCodigo_dea("");
+					*/
+					donatario.setColegio(request.getParameter("colegio"));
+					donatario.setCodigo_dea(request.getParameter("codigo_dea"));
 					donatario.setAno_escolar(Integer.valueOf(request.getParameter("ano_escolar")));
 					donatario.setGrado(Integer.valueOf(request.getParameter("grado")));
 					donatario.setSeccion(request.getParameter("seccion"));
 					donatario.setEquipo_serial(request.getParameter("equipo_serial"));
-					donatario.setCodigo_dea(request.getParameter("codigo_dea"));
 					donatario.setDirector_nombre(request.getParameter("director_nombre"));
 					donatario.setProveedor(request.getParameter("proveedor"));
 					donatario.setObservacion(request.getParameter("observacion"));
@@ -191,7 +216,7 @@
 			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
 			<%					
 			if (donatario.getIdmunicipio() > 0) {
-				con = canaima.solicitarConexion();				
+				con = canaima.solicitarConexion();
 				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(donatario.getIdmunicipio(), con);
 				canaima.getPoolConexiones().cerrarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
@@ -211,8 +236,26 @@
     		<td><input tabindex="9" size="28" name = "ciudad" value="<%= (donatario.getCiudad() != null) ? donatario.getCiudad() : ""%>"></td>
     	</tr>
     	<tr>
-    		<td class = "a">Colegio N:</td>
-    		<td><input tabindex="11" size="28" name="colegio" value="<%= (donatario.getColegio() != null) ? donatario.getColegio() : ""%>"></td>
+    		<td class = "a">Colegio N:</td> 		
+    		<td>
+ 			
+			<%					
+			
+			if (donatario.getIdcolegio() > 0) {
+				
+				Colegio cole = new Colegio();
+				canaima.buscarPorID(donatario.getIdcolegio(), cole);
+				
+				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"" + cole.getNombre() + "\">");
+	    		out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\" value=\"" + cole.getIdcolegio() + "\">");
+				
+			} else {
+				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"\">");
+				out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\">");
+			}			
+			%>			
+    		
+    		</td>
     		<td class = "a">Dirección:</td>
     		<td><input tabindex="10" size="28" name = "direccion" value="<%= (donatario.getDireccion() != null) ? donatario.getDireccion() : ""%>"></td>
     	

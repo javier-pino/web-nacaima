@@ -47,6 +47,7 @@ function validarValores(form){
 				&&(form.idestado.value == 0)
 				&&(form.idmunicipio.value == 0)
 				&&(form.ciudad.value=="" || form.ciudad.value == null)
+				&&(form.idcolegio.value=="" || form.idcolegio.value == null
 				&&(form.colegio.value=="" || form.colegio.value == null)
 		   )
 		{
@@ -54,21 +55,6 @@ function validarValores(form){
 		return false;
 		} 
 	
-}
-
-function validarValores(form){
-	if ( (form.iddonatario.value=="" || form.iddonatario.value == null) 
-			&&(form.nombre.value=="" || form.nombre.value == null)
-			&&(form.representante_ci.value=="" || form.representante_ci.value == null)
-			&&(form.idestado.value == 0)
-			&&(form.idmunicipio.value == 0)
-			&&(form.ciudad.value=="" || form.ciudad.value == null)
-			&&(form.colegio.value=="" || form.colegio.value == null)
-	   )
-	{
-	alert("Introduzca al menos un campo");
-	return false;
-	} 
 }
 
 function buscarContrato(form){
