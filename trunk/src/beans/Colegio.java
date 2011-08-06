@@ -6,9 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import org.apache.commons.lang.StringEscapeUtils;
-
 import aplicacion.ExcepcionValidaciones;
 
 public class Colegio extends ObjetoPersistente implements Serializable {	
@@ -236,11 +234,16 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	public static ArrayList<Colegio> listarColegioPorNombre (Connection con, String nombre) throws SQLException {
 		ArrayList<Colegio> resultado = new ArrayList<Colegio>();
 		
-		String sql = "select * from `canaima`.`colegio` where nombre like '%"+ nombre +"%' order by nombre asc LIMIT 0, 30";
+		String sql = "select * from `canaima`.`colegio` " +
+				     "where nombre like ? " +
+				     "OR codigo_dea like ? and activo " +
+				     "order by nombre asc LIMIT 0, 30";
 		PreparedStatement ps = null;
 		ResultSet rs = null;		
 		try {
 			ps = con.prepareStatement(sql);
+			ps.setString(1, "%"+nombre+"%");
+			ps.setString(2, "%"+nombre+"%");
 			rs = ps.executeQuery();
 			Colegio colegio = null;
 			while (rs.next()) {
