@@ -47,7 +47,7 @@
 		caja.cerrarCaja(con);
 		ultimaCaj = 0;
 	}
-	canaima.getPoolConexiones().cerrarConexion(con);
+	canaima.liberarConexion(con);
 %> 
 	   <jsp:include page="/WEB-INF/jsp/GeneradorMenuAnalista.jsp" flush="true"></jsp:include>
 <form>	    

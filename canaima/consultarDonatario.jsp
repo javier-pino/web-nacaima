@@ -91,7 +91,7 @@
 							Estado estado = new Estado();
 							Connection con = canaima.solicitarConexion();				
 							ArrayList<Estado> estados = Estado.listarEstados(con);
-							canaima.getPoolConexiones().cerrarConexion(con);
+							canaima.liberarConexion(con);
 							out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 							for (int i=0; i < estados.size(); i++) {
 								out.write("<option value=\"" + estados.get(i).getID() + "\" >" + estados.get(i).getNombre()  + "</option>");
@@ -222,7 +222,7 @@
 			request.setAttribute("excepcion", exc);
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		} finally {
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 		}
 	}	
 %>			

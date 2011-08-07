@@ -13,9 +13,10 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+
+import joins.DonatarioContrato;
 import beans.Contrato;
 import beans.Donatario;
-import beans.DonatarioContrato;
 import beans.ObjetoPersistente;
 import beans.Usuario;
 
@@ -63,8 +64,8 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	public void valueUnbound(HttpSessionBindingEvent arg0) {
 		
 		//Finalizar 
-		if (getPoolConexiones() != null)
-			getPoolConexiones().finalizar();
+		if (poolConexiones != null)
+			poolConexiones.finalizar();
 	} 
 
 	/** Se deben tomar en cuenta los parámetros de inicializacion que corresponden al negocio, max lotes y max contratos */ 
@@ -101,9 +102,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		Connection con = null;
 	
 		//Crear la conexion y si hubo error rla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con);
+			liberarConexion(con);
 			throw new SQLException("No se ha iniciado conexion");
 		}		
 		try {			
@@ -113,7 +114,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			} else 
 				throw new ExcepcionValidaciones("No se insertó el objeto deseado");
 		} finally {
-			getPoolConexiones().cerrarConexion(con, null, null);
+			liberarConexion(con, null, null);
 		}	
 	}
 	
@@ -125,15 +126,15 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		Connection con = null;
 		
 		//Crear la conexion y si hubo error cerrarla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con);
+			liberarConexion(con);
 			throw new SQLException("No se ha iniciado conexion");
 		}		
 		try {			
 			ObjetoPersistente.actualizar(con, obj);
 		} finally {
-			getPoolConexiones().cerrarConexion(con, null, null);
+			liberarConexion(con, null, null);
 		}	
 	}
 	
@@ -150,9 +151,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		ResultSet rs = null;
 			
 		//Crear la conexion y si hubo error cerrarla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con, ps, rs);
+			liberarConexion(con, ps, rs);
 			throw new SQLException("No se ha iniciado conexion");
 		}			
 		//Realizar la busqueda
@@ -168,7 +169,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 				obj.recargar(rs);					
 			} else return;
 		} finally {
-			getPoolConexiones().cerrarConexion(con, ps, rs);;
+			liberarConexion(con, ps, rs);;
 		}		
 	}
 	
@@ -187,9 +188,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		PreparedStatement ps = null;		
 			
 		//Crear la conexion y si hubo error cerrarla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con, ps, null);
+			liberarConexion(con, ps, null);
 			throw new SQLException("No se ha iniciado conexion");
 		}			
 		//Realizar la busqueda
@@ -200,7 +201,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			ps.setInt(1, obj.getID());		
 			ps.executeUpdate();			
 		} finally {
-			getPoolConexiones().cerrarConexion(con, ps, null);
+			liberarConexion(con, ps, null);
 		}		
 	}
 		
@@ -217,9 +218,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		ResultSet rs = null;	
 		
 		//Crear la conexion y si hubo error cerrarla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con, ps, rs);
+			liberarConexion(con, ps, rs);
 			throw new SQLException("No se ha iniciado conexion");
 		}
 		
@@ -247,17 +248,11 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			}			
 			return null;			
 		} finally {
-			getPoolConexiones().cerrarConexion(con, ps, rs);
+			liberarConexion(con, ps, rs);
 		}
 	}
 	
 	//********************  Los getters y setters  	
-	/**
-	 * @return the poolConexiones
-	 */
-	public Conexion getPoolConexiones() {
-		return poolConexiones;
-	}
 	
 	/**
 	 * @param poolConexiones el poolConexiones a modificar
@@ -279,12 +274,22 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	public Connection solicitarConexion () throws SQLException {
 		Connection con = null;		
 		//Crear la conexion y si hubo error cerrarla
-		con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		con = poolConexiones.obtenerConexion(TIMEOUT);
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con);
+			liberarConexion(con);
 			throw new SQLException("No se ha iniciado conexion");
 		}
 		return con;
+	}
+	
+	/** Solicita al modelo cerrar su conexion, y la devuelve*/
+	public void liberarConexion (Connection con) throws SQLException {
+		poolConexiones.cerrarConexion(con);
+	}
+	
+	/** Solicita al modelo cerrar su conexion, statement y resultado y la devuelve al pool*/
+	public void liberarConexion (Connection con, PreparedStatement ps, ResultSet rs) throws SQLException {
+		poolConexiones.cerrarConexion(con, ps, rs);
 	}
 			
 	public static final int TAM_RECIENTES = 20;
@@ -322,9 +327,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		ResultSet rs = null;
 			
 		//Crear la conexion y si hubo error cerrarla
-		Connection con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		Connection con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con, ps, rs);
+			liberarConexion(con, ps, rs);
 			throw new SQLException("No se ha iniciado conexion");
 		}			
 		//Realizar la busqueda
@@ -361,7 +366,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			}							
 			return doncon;			
 		} finally {
-			getPoolConexiones().cerrarConexion(con, ps, rs);;
+			liberarConexion(con, ps, rs);;
 		}
 	}	
 	
@@ -376,9 +381,9 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		ResultSet rs = null;
 			
 		//Crear la conexion y si hubo error cerrarla
-		Connection con = getPoolConexiones().obtenerConexion(TIMEOUT);
+		Connection con = solicitarConexion();
 		if (!Conexion.esValida(con)) {
-			getPoolConexiones().cerrarConexion(con, ps, rs);
+			liberarConexion(con, ps, rs);
 			throw new SQLException("No se ha iniciado conexion");
 		}			
 		
@@ -406,7 +411,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 			return par;			
 		
 		} finally {
-			getPoolConexiones().cerrarConexion(con, ps, rs);;
+			liberarConexion(con, ps, rs);;
 		}
 	}	
 	
@@ -419,5 +424,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	public void setArchivoTemporal(String archivoTemporal) {
 		this.archivoTemporal = archivoTemporal;
 	} 
+	
+	
 	
 }

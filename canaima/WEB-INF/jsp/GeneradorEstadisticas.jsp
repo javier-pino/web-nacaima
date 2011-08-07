@@ -44,7 +44,7 @@
 				int numeroCon = 0;
 				if (ultimoLot > 0)
 					numeroCon = Contrato.getNumeroDeContratos(con,ultimoLot);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 			%>
 			
 			

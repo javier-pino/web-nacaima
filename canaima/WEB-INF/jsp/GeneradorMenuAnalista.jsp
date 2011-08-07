@@ -18,7 +18,7 @@
 				<li><a href="consultarContrato.jsp">Consultar</a></li>																								
 				<li><a href="BuscarDonatario.jsp">Registrar</a></li>					
 			</ul>			
-			<span>Profesores</span>
+			<span>Docente</span>
 			<ul>
 				<li><a href="consultarProfesor.jsp">Consultar</a></li>																								
 				<li><a href="agregarProfesor.jsp">Registrar</a></li>					

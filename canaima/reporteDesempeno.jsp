@@ -57,7 +57,7 @@
 							Date fecha_hoy = new Date(calendario.getTimeInMillis());
 							Connection con = canaima.solicitarConexion();							
 							Donatario primer = Donatario.primerDonatarioRegistrado(con);							
-							canaima.getPoolConexiones().cerrarConexion(con);
+							canaima.liberarConexion(con);
 						%>
 						<td>
 							<input tabindex="1" size="20" name="fechaInicial" onclick="scwShow(this, event)"  

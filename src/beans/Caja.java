@@ -10,10 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-
+import org.apache.commons.lang.StringEscapeUtils;
+import enums.CAJA_TIPO;
 import aplicacion.ExcepcionRoles;
 import aplicacion.ExcepcionValidaciones;
-
 
 /**
  * Descripción: 
@@ -22,13 +22,13 @@ import aplicacion.ExcepcionValidaciones;
 public class Caja extends ObjetoPersistente {
 
 	private static final long serialVersionUID = 8675300290975676028L;
-	int idcaja;
-	int idusuario;
-	int numero = 0;	
-	boolean cerrada = false;
-	String incidencia = null;
-	Timestamp creacion;
-	
+	private int idcaja;
+	private int idusuario;
+	private int numero = 0;	
+	private CAJA_TIPO tipo = CAJA_TIPO.DON;
+	private boolean cerrada = false;	
+	private String incidencia = null;	
+	private Timestamp creacion;
 	
 	public int getNumero() {
 		return numero;
@@ -46,6 +46,14 @@ public class Caja extends ObjetoPersistente {
 		this.cerrada = cerrada;
 	}
   
+	public CAJA_TIPO getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(CAJA_TIPO tipo) {
+		this.tipo = tipo;
+	}
+
 	private static String [] validacion = {
 		"Error en el modelo: Usuario es Obligatorio",
 		"La longitud de Incidencia no puede exceder los " + TINYTEXT + "caracteres",
@@ -80,8 +88,9 @@ public class Caja extends ObjetoPersistente {
 		setIdusuario(rs.getInt("idusuario"));		
 		setCreacion(rs.getTimestamp("creacion"));
 		setCerrada(rs.getBoolean("cerrada"));
-		setIncidencia(rs.getString("incidencia"));
+		setIncidencia(StringEscapeUtils.escapeHtml(rs.getString("incidencia")));
 		setNumero(rs.getInt("numero"));
+		setTipo(CAJA_TIPO.valueOf(rs.getString("tipo")));
 	}
 
 	public String getIncidencia() {
@@ -102,12 +111,13 @@ public class Caja extends ObjetoPersistente {
 	public synchronized void guardar(Connection con) throws SQLException {
 		
 		//Se debe asignar un nuevo numero a la caja
-		asignarNuevoNumeroACaja(con);
+		asignarNuevoNumeroACaja(con, (getTipo() != null) ? getTipo() : CAJA_TIPO.DON);
 		
-		String sql_insercion = "insert into `canaima`.`caja` (`idusuario`, `numero`) values (?, ?)";			
+		String sql_insercion = "insert into `canaima`.`caja` (`idusuario`, `numero`, `tipo`) values (?, ?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		ps.setInt(1, getIdusuario());
 		ps.setInt(2, getNumero());
+		ps.setString(3, (getTipo() != null) ? getTipo().toString() : CAJA_TIPO.DON.toString());
 		ps.executeUpdate();
 		ResultSet rs = ps.getGeneratedKeys();
 		if (rs.next()) {
@@ -134,7 +144,8 @@ public class Caja extends ObjetoPersistente {
 		if (rs.next()) {		
 			rs.updateInt("idusuario", getIdusuario());			
 			rs.updateBoolean("cerrada", isCerrada());
-			rs.updateString("incidencia", getIncidencia());			
+			rs.updateString("incidencia", (incidencia == null ? "" : StringEscapeUtils.unescapeHtml(incidencia.toUpperCase())));
+			rs.updateString("tipo", (getTipo() != null) ? getTipo().toString() : CAJA_TIPO.DON.toString());
 			rs.updateRow();
 		}
 		rs.close();
@@ -169,7 +180,6 @@ public class Caja extends ObjetoPersistente {
 		this.idusuario = idusuario;
 	}
 
-
 	/**
 	 * @return the creacion
 	 */
@@ -187,8 +197,9 @@ public class Caja extends ObjetoPersistente {
 	@Override
 	public String toString() {
 		return "Caja [idcaja=" + idcaja + ", idusuario=" + idusuario
-				+ ", numero=" + numero + ", cerrada=" + cerrada
-				+ ", incidencia=" + incidencia + ", creacion=" + creacion + "]";
+				+ ", numero=" + numero + ", tipo=" + tipo + ", cerrada="
+				+ cerrada + ", incidencia=" + incidencia + ", creacion="
+				+ creacion + "]";
 	}
 
 	@Override
@@ -198,12 +209,15 @@ public class Caja extends ObjetoPersistente {
 	
 	/** Asigna el numero que corresponde a la caja automaticamente 
 	 * @throws SQLException */
-	public void asignarNuevoNumeroACaja(Connection con) throws SQLException {		
+	public void asignarNuevoNumeroACaja(Connection con, CAJA_TIPO caja) throws SQLException {		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {			
-			String sqlMaxCaja = "select coalesce(max(numero) + 1, 1) as NUMERO from `canaima`.`caja`";
+			String sqlMaxCaja = 
+				"select coalesce(max(numero) + 1, 1) as NUMERO from `canaima`.`caja` " +
+				" where tipo = ? ";
 			ps = con.prepareStatement(sqlMaxCaja);
+			ps.setString(1, (getTipo() != null) ? getTipo().toString() : CAJA_TIPO.DON.toString());
 			rs = ps.executeQuery();
 			rs.next();
 			setNumero(rs.getInt("NUMERO"));		
@@ -229,15 +243,18 @@ public class Caja extends ObjetoPersistente {
 	
 	/** Obtiene la ultimo caja registrada por el usuario 
 	 * @throws SQLException 
-	 * @throws ExcepcionValidaciones */
-	public static int getUltimaCajaRegistrada (Connection con, Usuario actual) throws SQLException, ExcepcionValidaciones {		
+	 * @throws ExcepcionValidaciones
+	 */
+	public static int getUltimaCajaRegistrada (Connection con, Usuario actual, CAJA_TIPO tipo) 
+		throws SQLException, ExcepcionValidaciones {				
 		
-		String sql = " select coalesce(max(c.idcaja),0) from caja c where not c.cerrada and idusuario = ? " ;
+		String sql = " select coalesce(max(c.idcaja),0) from caja c where not c.cerrada and idusuario = ? and tipo = ?" ;
 		PreparedStatement ps =  null; 
 		ResultSet rs = null;
-		try {			
-			ps = con.prepareStatement(sql);		
-			ps.setInt(1, actual.getID());		
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, actual.getID());
+			ps.setString(2, (tipo != null) ? tipo.toString() : CAJA_TIPO.DON.toString());					
 			rs = ps.executeQuery();
 			rs.next();
 			return rs.getInt(1);
@@ -250,4 +267,3 @@ public class Caja extends ObjetoPersistente {
 		}		
 	}
 }
-

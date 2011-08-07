@@ -11,7 +11,7 @@
 	String nombre = request.getParameter("q");
 	Connection con = canaima.solicitarConexion();
 	ArrayList<Colegio> colegios = Colegio.listarColegioPorNombre(con, nombre);
-	canaima.getPoolConexiones().cerrarConexion(con);
+	canaima.liberarConexion(con);
 	
 	Estado estado = new Estado();
 	Municipio municipio = new Municipio();

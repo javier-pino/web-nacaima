@@ -26,9 +26,7 @@ java.awt.*" %>
 <%@ page import="org.apache.poi.hssf.util.*"%>
 <%@ page import="org.apache.poi.util.IOUtils"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
-
 <%
 	String fechaInicial = request.getParameter("fechaInicial");
 	String fechaFinal = request.getParameter("fechaFinal");	
@@ -126,6 +124,12 @@ java.awt.*" %>
 			usuarios.add(nuevo);			
 		}
 	}
+%>
+
+
+<%	
+	
+	
 	
 	DefaultCategoryDataset series = new DefaultCategoryDataset();
 	iterador = usuarios.iterator();
@@ -138,13 +142,13 @@ java.awt.*" %>
 	JFreeChart grafico = ChartFactory.createBarChart
 		("Estadísticas de Desempeño","Usuario","Cantidad", series, PlotOrientation.HORIZONTAL, true,true,false);
 	
-	File imagen = new File(canaima.DIRECTORIO_TEMPORAL, 
-				"GraficoDeDesempeno_" + Calendar.getInstance().getTimeInMillis() + ".png"); 
+	String nombreImagen = "GraficoDeDesempeno_" + Calendar.getInstance().getTimeInMillis() + ".png";
+	File imagen = new File(canaima.DIRECTORIO_TEMPORAL, nombreImagen); 
 	
 	FileOutputStream salidaImagen = new FileOutputStream(imagen);	
 	ChartUtilities.writeChartAsPNG(salidaImagen,grafico,800, 800);
 	salidaImagen.close();
-	canaima.getPoolConexiones().cerrarConexion(con, ps, rs);
+	canaima.liberarConexion(con, ps, rs);
 	
 	HSSFWorkbook wb = new HSSFWorkbook();
 	HSSFSheet sheet = wb.createSheet("Estadísticas de Desempeño");		
@@ -215,7 +219,7 @@ java.awt.*" %>
     byte[] bytes = IOUtils.toByteArray(is);
     int pictureIdx = wb.addPicture(bytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
     is.close();    
-    imagen.delete();
+    
 
     HSSFClientAnchor anchor = new HSSFClientAnchor(0,0,0,0, (short)0, i, (short)8, i + 45 );
     
@@ -224,31 +228,105 @@ java.awt.*" %>
     anchor.setAnchorType(HSSFClientAnchor.MOVE_DONT_RESIZE);
     
   	//Crear reporte en excel
-	String nombre = "EstadisticasDeDesempeno" + Calendar.getInstance().getTimeInMillis() + ".xls";
-	File file = new File(canaima.DIRECTORIO_TEMPORAL, nombre);	
+	String nombreExcel = "EstadisticasDeDesempeno" + Calendar.getInstance().getTimeInMillis() + ".xls";
+	File file = new File(canaima.DIRECTORIO_TEMPORAL, nombreExcel);	
 	FileOutputStream fileOut = new FileOutputStream(file);
 	wb.write(fileOut);
 	fileOut.close();
+	Date actualDate = Utilidades.nuevaFecha();
 %>		
 
-	<div id = scroll align="center">
+	<div id="DesempeñoFecha">
+		<table align="left">
+			<tr class="a">
+				<td>Fecha Inicio</td>
+				<td>Fecha Fin</td>
+				<td>Fecha de Solicitud</td>				
+			</tr>
+			<tr>
+				<td><%= Utilidades.mostrarFecha(inicialDate) %></td>
+				<td><%= Utilidades.mostrarFecha(finalDate) %></td>
+				<td><%= Utilidades.mostrarFecha(actualDate)%>
+			</tr>				
+			<tr align="center">				
+				<td><input value = "Reporte Tabulado" id="botonTabla" type="button" ></td>				
+				<td><input value = "Exportar a Excel" id="botonExcel" type="button" ></td>
+				<td><input value = "Graficar Reporte" id="botonImagen" type="button" ></td>				
+			</tr>		
+		</table>	
+	</div>
+
+	<div id="DesempeñoTabla">
+				<table align="left">			
+			<tr class="a">
+				<td>Usuario</td>
+				<td>Donatarios Registrados</td>
+				<td>Contratos Registrados </td>
+				<td>Total</td>
+			</tr>
+	<%
+		iterador = usuarios.iterator();
+		while (iterador.hasNext()) {
+			aux = iterador.next();
+	%>
+			<tr>
+				<td> <%= aux.nombre%></td>		
+				<td> <%= aux.donatarios.longValue() %></td>
+				<td> <%= aux.contratos.longValue() %></td>
+				<td> <%= (aux.contratos.longValue() + aux.donatarios.longValue()) %></td>				
+			</tr>	
+	<% 	}	
+	%>
+		</table>		
+	</div>
+
+	<div id="DesempeñoImagen" >
+		<img alt="" src="<%=canaima.DIRECTORIO_TEMPORAL_SUFIJO + nombreImagen%>">		
+	</div>
+	
+	<div id="DesempeñoExcel">
 		<br> 
 		<h1>El reporte fue generado exitosamente</h1>
 		<br>
 		<p> Puede descargarlo en este link:</p>
 		<br>
-		<p><a href="/canaima/temp/<%=nombre%>">Descargue aqu&iacute;</a> </p>	
+		<p><a href="/canaima/temp/<%=nombreExcel%>">Descargue aqu&iacute;</a> </p>	
 	</div>
+	
+	<script>
+		$('#botonTabla').click(function() {
+			$('#DesempeñoTabla').hide('fast');
+			$('#DesempeñoExcel').hide('fast');
+			$('#DesempeñoImagen').show('fast');
+			
+		});
+	</script>
+	<script>
+		$('#botonImagen').click(function() {
+			$('#DesempeñoImagen').show('fast');
+			$('#DesempeñoTabla').hide('fast');
+			$('#DesempeñoExcel').hide('fast');
+		});
+	</script>
+	<script>
+		$('#botonExcel').click(function() {
+			$('#DesempeñoExcel').show('fast');
+			$('#DesempeñoTabla').hide('fast');
+			$('#DesempeñoImagen').hide('fast');
+		});
+	</script>
 	
 <%! 
 	private class UsuarioAuxiliar {
-		int idusuario;
-		String nombre;
-		Double donatarios = 0.0, contratos = 0.0;
+		public int idusuario;
+		public String nombre;
+		public Double donatarios = 0.0, contratos = 0.0;
 		
 		public String toString () {
 			return "[" + idusuario + " " + nombre + " " + donatarios + " " + contratos + "]";
 		}
+		
+		
 	}
 
 %>
