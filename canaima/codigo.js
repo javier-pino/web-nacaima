@@ -47,7 +47,7 @@ function validarValores(form){
 				&&(form.idestado.value == 0)
 				&&(form.idmunicipio.value == 0)
 				&&(form.ciudad.value=="" || form.ciudad.value == null)
-				&&(form.idcolegio.value=="" || form.idcolegio.value == null
+				&&(form.idcolegio.value=="" || form.idcolegio.value == null)
 				&&(form.colegio.value=="" || form.colegio.value == null)
 		   )
 		{
@@ -96,6 +96,18 @@ function eliminarDonatario(iddonatario){
 	ajax.send(null);
 	return false;
 }
+
+function eliminarColegio(idcolegio){	
+	ajax = nuevoAjax();
+	ajax.open("GET", "AjaxEliminarColegio.jsp?idcolegio="+idcolegio, true);
+	ajax.onreadystatechange = function() {
+		document.getElementById("eliminar").innerHTML = ajax.responseText;
+	};
+	ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	ajax.send(null);
+	return false;
+}
+
 
 function nuevoAjax(){
 	var xmlhttp=false; 
