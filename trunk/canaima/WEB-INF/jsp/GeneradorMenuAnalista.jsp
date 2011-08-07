@@ -26,7 +26,7 @@
 			<span>Escuelas</span>
 			<ul>
 				<li><a href="consultarColegio.jsp">Consultar</a></li>																								
-				<li><a href="agregarColegio.jsp">Registrar</a></li>					
+				<li><a href="registrarColegio.jsp">Registrar</a></li>					
 			</ul>			
 			<span>Cajas</span>
 			<ul>

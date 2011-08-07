@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringEscapeUtils;
+import com.lowagie.text.List;
+
 import aplicacion.ExcepcionValidaciones;
 
 public class Colegio extends ObjetoPersistente implements Serializable {	
@@ -19,7 +21,25 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	private int idestado;
 	private int idmunicipio;
 	private int idparroquia;
+	private String direccion;
+	private int idCreadoPor;
 	private boolean activo;
+	
+		public int getIdCreadoPor() {
+		return idCreadoPor;
+	}
+
+	public void setIdCreadoPor(int idCreadoPor) {
+		this.idCreadoPor = idCreadoPor;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
 	
 	public void setIdcolegio(int idcolegio) {
 		this.idcolegio = idcolegio;
@@ -77,7 +97,7 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		return codigo_dea;
 	}
 	
-
+	
 	/**	
 	 *	@see beans.ObjetoPersistente#validarCondiciones()
 	 *  @return
@@ -87,12 +107,12 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		
 		ArrayList<String> resultado = new ArrayList<String>();		
 		if (idestado == 0)
-			resultado.add(errorEsObligatorioModelo("Estado"));
-		if (idmunicipio == 0)
-			resultado.add(errorEsObligatorioModelo("Municipio"));
+			resultado.add(errorEsObligatorio("Estado"));		
+		if ((nombre == null) ||(nombre.compareTo("")== 0))
+			resultado.add(errorEsObligatorio("Nombre"));
 		
-		if (nombre == null)
-			resultado.add(errorEsObligatorioModelo("Nombre"));
+		if ((codigo_dea == null) || (codigo_dea.compareTo("")== 0))
+			resultado.add(errorEsObligatorio("codigo_dea"));
 		
 		if (nombre != null && nombre.length() > TINYTEXT)
 			resultado.add(errorTamaño("Nombre", TINYTEXT));
@@ -106,16 +126,18 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		setIdestado(rs.getInt("idestado"));
 		setIdmunicipio(rs.getInt("idmunicipio"));
 		setIdparroquia(rs.getInt("idparroquia"));
-		setNombre(rs.getString("nombre"));
+		setNombre(StringEscapeUtils.escapeHtml(rs.getString("nombre")));
 		setActivo(rs.getBoolean("activo"));
-		setCodigo_dea(rs.getString("codigo_dea"));	
+		setCodigo_dea(StringEscapeUtils.escapeHtml(rs.getString("codigo_dea")));	
+		setDireccion(StringEscapeUtils.escapeHtml(rs.getString("direccion")));
 	}
 
 	@Override
 	public void guardar(Connection con) throws SQLException,
 			ExcepcionValidaciones {
 		
-		String sql_insercion = "insert into colegio (idestado, idmunicipio, idparroquia, nombre, codigo_dea) values (?, ?, ?, ?, ?)";			
+		String sql_insercion = "insert into colegio (idestado, idmunicipio, idparroquia, nombre, codigo_dea, direccion, idcreadopor) " +
+													"values (?, ?, ?, ?, ?, ?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		ps.setInt(1, getIdestado());
@@ -123,6 +145,8 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		ps.setInt(3, getIdparroquia());
 		ps.setString(4, (nombre == null ? ""  : StringEscapeUtils.unescapeHtml(nombre.toUpperCase())));
 		ps.setString(5, (codigo_dea == null ? "" : StringEscapeUtils.unescapeHtml(codigo_dea.toUpperCase())));
+		ps.setString(6, (direccion == null ? ""  : StringEscapeUtils.unescapeHtml(direccion.toUpperCase())));
+		ps.setInt(7, getIdCreadoPor());
 		ps.executeUpdate();
 		
 		ResultSet rs = ps.getGeneratedKeys();
@@ -140,7 +164,7 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		//Se esta actualizando un colegio previamente existente
 		validarColegioUnico(con);
 		
-		String update = "SELECT idestado, idmunicipio, idparroquia, nombre, activo, codigo_dea FROM colegio where idcolegio = ?";
+		String update = "SELECT idestado, idmunicipio, idparroquia, nombre, activo, codigo_dea, direccion, idcolegio FROM colegio where idcolegio = ?";
 		PreparedStatement ps = con.prepareStatement(update, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 		ps.setInt(1, getID());
 		ResultSet rs = ps.executeQuery();
@@ -148,9 +172,10 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 			rs.updateInt(1, getIdestado());			
 			rs.updateInt(2, getIdmunicipio());
 			rs.updateInt(3, getIdparroquia());
-			rs.updateString(4, getNombre());
+			rs.updateString(4, nombre == null ? ""  : StringEscapeUtils.unescapeHtml(nombre.toUpperCase()));
 			rs.updateBoolean(5, isActivo());
-			rs.updateString(6, getCodigo_dea());
+			rs.updateString(6, (codigo_dea == null ? "" : StringEscapeUtils.unescapeHtml(codigo_dea.toUpperCase())));
+			rs.updateString(7, (direccion == null ? ""  : StringEscapeUtils.unescapeHtml(direccion.toUpperCase())));
 			rs.updateRow();			
 		}
 		rs.close();
@@ -159,7 +184,7 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 
 	@Override
 	public int getID() {
-		return getIdmunicipio();
+		return getIdcolegio();
 	}
 
 	/** Verifica que la restriccion de integridad de codigo dea unico se mantenga 
@@ -167,11 +192,8 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 	 * @throws ExcepcionValidaciones */
 	public void validarColegioUnico (Connection con) throws SQLException, ExcepcionValidaciones 
 	{
-		
-		if (getIdcolegio() == 0)
-			return;
-		
-		String sqlSerialUnico = "select * from canaima.colegio where activo and (codigo_dea = ? or ( idestado = ? and idmunicipio = ? and idparroquia = ? ) ) and nombre = ? and idcolegio != ? " ;
+	
+		String sqlSerialUnico = "select * from canaima.colegio where activo and (codigo_dea = ? or ( idestado = ? and idmunicipio = ? and idparroquia = ? and nombre = ? ) ) and idcolegio != ? " ;
 		PreparedStatement ps =  null; 
 		ResultSet rs = null;
 		try {
@@ -179,7 +201,6 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 			ps.setString(1, getCodigo_dea());
 			ps.setInt(2, getIdestado());
 			ps.setInt(3, getIdmunicipio());
-			ps.setInt(4, getIdparroquia());
 			ps.setInt(4, getIdparroquia());
 			ps.setString(5, getNombre());
 			ps.setInt(6, getIdcolegio());
@@ -260,4 +281,116 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		}
 		return resultado; 
 	}
+	
+	public static ArrayList<Colegio> ultimosColegios (Connection con) throws SQLException {
+		
+		Colegio resultado = new Colegio();
+		ArrayList<Colegio> ultimosColegios = new ArrayList<Colegio>();
+		String sql = "select * from `canaima`.`colegio` order by idcolegio desc limit 10";
+		PreparedStatement ps = null;
+		ResultSet rs = null;		
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();		
+			while (rs.next()) {			
+				resultado.recargar(rs);	
+				ultimosColegios.add(resultado);
+				resultado = new Colegio();
+			}
+		}
+		finally {			
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return ultimosColegios; 
+	}
+	
+	public static ArrayList<Colegio> listarColegios(Connection con,
+			int estado, 
+			int municipio, 
+			int idParroquia,
+			int idColegio,
+			int idColegioo 
+			
+		) throws SQLException, ExcepcionValidaciones {
+			
+			final int ESTADO = 0, MUNICIPIO = 1, IDPARROQUIA = 2, IDCOLEGIO = 3, IDCOLEGIOO = 4;		
+			boolean [] parametrosPresentes = {false, false, false, false, false};
+			
+			if (estado > 0)
+				parametrosPresentes[ESTADO] = true;
+			if (municipio> 0)
+				parametrosPresentes[MUNICIPIO] = true;
+			if (idParroquia > 0)
+				parametrosPresentes[IDPARROQUIA] = true;
+			if (idColegio > 0)
+				parametrosPresentes[IDCOLEGIO] = true;
+			if (idColegioo > 0)
+				parametrosPresentes[IDCOLEGIOO] = true;
+			
+			ArrayList<Colegio> resultado = new ArrayList<Colegio>();		
+			int parametrosUsados = 1;
+			
+			//Crear el string de búsqueda
+			String sqlDonatarios = 
+				"select * from colegio where activo ";
+			if (parametrosPresentes[ESTADO]) {
+				sqlDonatarios += " and idestado = ? ";
+			}
+			if (parametrosPresentes[MUNICIPIO]) {
+				sqlDonatarios += " and idmunicipio = ? ";
+			}
+			if (parametrosPresentes[IDPARROQUIA]) {
+				sqlDonatarios += " and idparroquia = ?";
+			}
+			if (parametrosPresentes[IDCOLEGIO]) {
+				sqlDonatarios += " and idcolegio = ?";
+			}
+			if (parametrosPresentes[IDCOLEGIOO]) {
+				sqlDonatarios += " and idcolegio = ?";
+			}	
+						
+			sqlDonatarios += " order by idcolegio, nombre";
+			
+			PreparedStatement ps =  null; 
+			ResultSet rs = null;		
+			try {
+				ps = con.prepareStatement(sqlDonatarios);		
+				if (parametrosPresentes[ESTADO]) {
+					ps.setInt(parametrosUsados++, estado);				
+				}
+				if (parametrosPresentes[MUNICIPIO]) {
+					ps.setInt(parametrosUsados++, municipio);
+				}
+				if (parametrosPresentes[IDPARROQUIA]) {
+					ps.setInt(parametrosUsados++, idParroquia);
+				}
+				if (parametrosPresentes[IDCOLEGIO]) {
+					ps.setInt(parametrosUsados++, idColegio);
+				}
+				if (parametrosPresentes[IDCOLEGIOO]) {
+					ps.setInt(parametrosUsados++, idColegioo);
+				}
+				
+				
+				rs = ps.executeQuery();
+				Colegio retornado = null;
+				while (rs.next()) {
+					retornado = new Colegio();
+					retornado.recargar(rs);
+					resultado.add(retornado);
+				}
+			}
+			finally {
+				if (rs != null)
+					rs.close();
+				if (ps != null)
+					ps.close();
+			}
+			return resultado;
+		}
+		
+
 }
