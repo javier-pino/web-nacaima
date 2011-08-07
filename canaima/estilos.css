@@ -50,6 +50,19 @@
 	margin-left: 1px;
 }
 
+.edicionColegio{ 
+	width:815px; 
+	height:290px; 
+	background-color:#F2F2F2; 
+	overflow:auto; 
+	border-top-style: solid; 
+	border-right-style: solid;
+	border-left-style: solid; 
+	border-bottom-style: solid;
+	border: 1px solid grey;
+	margin-left: 1px;
+}
+
 #filtro{ 
 	width:98%; 
 	height:150px; 
@@ -77,6 +90,17 @@
 
 .largo{
 	width: 160px;
+	text-align: center; 
+	border: 1px grey;
+	border-bottom-style: solid;
+	border-left-style:solid ;
+	border-top-style: solid;
+	border-right-style:solid;	
+	padding-bottom: 19px;
+}
+
+.largoColegio{
+	width: 250px;
 	text-align: center; 
 	border: 1px grey;
 	border-bottom-style: solid;
@@ -220,4 +244,17 @@ body {
     margin-bottom: 50px;
     display: none;
 }
+
+#consultaColegio{ 
+	width:98%; 
+	height:250px; 
+	background-color:#F2F2F2; 
+	overflow:auto; 
+	border-top-style: solid; 
+	border-right-style: solid;
+	border-left-style: solid; 
+	border-bottom-style: solid;
+	border: 1px solid grey;
+    margin-left: 10px;
+}	
 

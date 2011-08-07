@@ -64,7 +64,7 @@
 	         <TR><TD COLSPAN=4>&nbsp;</TD></TR>
 	         <TR ID=BUT1>
 	            <TD ALIGN="CENTER" COLSPAN=4><FONT FACE=ARIAL SIZE=-1>
-	            <INPUT type="submit" name="Validar" value="Aceptar">
+	            <INPUT type="submit" name="Validar" value="Aceptar" style="width: 80px; height: 30px">
 	            <INPUT type="hidden" name="login_estado" value="<%= ESTADO.CONECTANDO %>">	           
 	            </FONT></TD>	            
 	         </TR>

@@ -57,6 +57,18 @@ function validarValores(form){
 	
 }
 
+function validarValoresColegio(form){
+	if ( (form.idestado.value == 0) &&(form.idmunicipio.value == 0) &&(form.idparroquia.value == 0)
+		 &&(form.idcolegioo.value == "" || form.idcolegioo.value == null)
+		 &&(form.idcolegio.value == "" || form.idcolegio.value == null)
+	   )
+	{
+	alert("Introduzca al menos un campo");
+	return false;
+	} 
+
+}
+
 function buscarContrato(form){
 	if ( (form.iddonatario.value=="" || form.iddonatario.value == null) 
 			&&(form.numero.value=="" || form.numero.value == null)) {
