@@ -35872,6 +35872,8 @@ INSERT INTO `parroquia` (`idparroquia`,`idmunicipio`,`nombre`,`activo`) VALUES
 
 ALTER TABLE `donatario` ADD COLUMN `idparroquia` INTEGER (11) AFTER idmunicipio;
 
+ALTER TABLE `donatario` ADD COLUMN `idequipo` INTEGER (11) AFTER equipo_serial;
+
 ALTER TABLE `donatario` ADD COLUMN `idcolegio` INTEGER (11) AFTER idparroquia;
 
 ALTER TABLE `canaima`.`caja` ADD COLUMN `tipo` CHAR(3) NOT NULL DEFAULT 'DON' AFTER `creacion`;
@@ -35880,6 +35882,54 @@ UPDATE `contrato` set `direccion` = concat(substr(`direccion`, 1, 15 ),'Donatari
 
 ALTER TABLE `canaima`.`colegio` ADD COLUMN `idcreadopor` INTEGER UNSIGNED NOT NULL AFTER `codigo_dea`,
 ADD COLUMN `direccion` TINYTEXT NOT NULL AFTER `idcreadopor`;
+
+
+DROP TABLE IF EXISTS `canaima`.`docente`;
+CREATE TABLE  `canaima`.`docente` (
+  `iddocente` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idcolegio` int(10) unsigned NOT NULL DEFAULT '0',
+  `idestado` int(10) unsigned NOT NULL DEFAULT '0',
+  `idmunicipio` int(10) unsigned NOT NULL DEFAULT '0',
+  `idparroquia` int(10) unsigned NOT NULL DEFAULT '0',
+  `ciudad` tinytext NOT NULL,
+  `nacionalidad` char(1) NOT NULL,
+  `cedula` tinytext NOT NULL,
+  `nombre` tinytext NOT NULL,
+  `fecha_entrega` date NOT NULL,
+  `fecha_llegada` date NOT NULL,
+  `observacion` tinytext NOT NULL,
+  `proveedor` tinytext NOT NULL,
+  `idcreadopor` int(10) unsigned NOT NULL,
+  `fecha_carga` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `idcontrato` int(10) unsigned NOT NULL DEFAULT '0',
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`iddocente`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `canaima`.`equipo`;
+CREATE TABLE  `canaima`.`equipo` (
+  `idequipo` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `serial` tinytext NOT NULL,
+  `iddocente` int(10) unsigned NOT NULL DEFAULT '0',
+  `iddonatario` int(10) unsigned NOT NULL DEFAULT '0',
+  `fecha_carga` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idequipo`)
+) ENGINE=InnoDB AUTO_INCREMENT=2048 DEFAULT CHARSET=latin1;
+
+-- Queries relacionados con la tabla de equipo
+
+INSERT into `equipo` (`serial`, `iddonatario`, `iddocente`)
+select d.equipo_serial, d.iddonatario, 0 from donatario d where d.equipo_serial != '';
+
+-- ALTER TABLE `donatario` ADD COLUMN `idequipo` INTEGER (11) not null default 0 AFTER equipo_serial ;
+
+-- UPDATE donatario SET idequipo = (SELECT idequipo FROM equipo e WHERE e.serial = equipo_serial)
+-- where equipo_serial != '';
+
+ALTER TABLE donatario DROP COLUMN equipo_serial;
+
+-- Fin queries relacionados con serial de equipo
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

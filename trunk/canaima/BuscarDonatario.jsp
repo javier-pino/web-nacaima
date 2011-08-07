@@ -57,7 +57,7 @@
 							Colegio colegio = new Colegio();
 							Connection conn = canaima.solicitarConexion();				
 							ArrayList<Colegio> colegios = Colegio.listarColegio(conn);
-							canaima.getPoolConexiones().cerrarConexion(conn);
+							canaima.liberarConexion(conn);
 							out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 							for (int i=0; i < colegios.size(); i++) {
 								out.write("<option value=\"" + colegios.get(i).getID() + "\" >" + colegios.get(i).getNombre()  + "</option>");
@@ -85,7 +85,7 @@
 							Estado estado = new Estado();
 							Connection con = canaima.solicitarConexion();				
 							ArrayList<Estado> estados = Estado.listarEstados(con);
-							canaima.getPoolConexiones().cerrarConexion(con);
+							canaima.liberarConexion(con);
 							out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 							for (int i=0; i < estados.size(); i++) {
 								out.write("<option value=\"" + estados.get(i).getID() + "\" >" + estados.get(i).getNombre()  + "</option>");
@@ -218,7 +218,7 @@
 			request.setAttribute("excepcion", exc);
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		} finally {
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 		}
 	}	
 %>			

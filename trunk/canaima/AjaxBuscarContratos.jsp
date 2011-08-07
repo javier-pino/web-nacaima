@@ -1,4 +1,4 @@
-<%@page import="beans.DonatarioContrato"%>
+<%@page import="joins.DonatarioContrato"%>
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.util.*" %>
 <%@ page import="beans.*"%>
@@ -166,7 +166,7 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 		//Se obtiene la información actual	
 		con = canaima.solicitarConexion();			
 		cont.validarContratoUnico(con);
-		canaima.getPoolConexiones().cerrarConexion(con);
+		canaima.liberarConexion(con);
 		
 		//Intentar guardar el archivo
 		if (archivo != null) {

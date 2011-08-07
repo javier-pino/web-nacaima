@@ -1,3 +1,4 @@
+<%@page import="beans.Equipo"%>
 <%@page import="beans.Colegio"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="aplicacion.ModeloCanaima"%>
@@ -18,9 +19,8 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;
-		
-		$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+		$().ready(function() {;		
+			$("#colegio").autocomplete("autocompletar_colegio.jsp", {
 				width: 460,
 				height: 500,
 				matchContains: true,
@@ -46,7 +46,6 @@
 	if (actual.equals(ESTADO.POR_GUARDAR)) {
 		try {
 %> 
-
 			<jsp:useBean id="donatario" class = "beans.Donatario" scope="request">
 				<jsp:setProperty property="*" name = "donatario"/> </jsp:useBean>
 <% 					
@@ -57,24 +56,39 @@
 				donatario.setIdmunicipio(col.getIdmunicipio());
 				donatario.setIdparroquia(col.getIdparroquia());
 			}
-			
 			donatario.setIdcreadopor(canaima.getUsuarioActual().getID());		
-			donatario.setRepresentante_nac(request.getParameter("representante_nac"));
-			
+			donatario.setRepresentante_nac(request.getParameter("representante_nac"));			
 			if (donatario.getRepresentante_ci() != null && !donatario.getRepresentante_ci().isEmpty()) {
 				if (donatario.getRepresentante_nac() == null ) {
 					donatario.setRepresentante_nac(NACIONALIDAD.V.toString());	
 				}				
 			} else
-				donatario.setRepresentante_nac(null);						
+				donatario.setRepresentante_nac(null);	
 		
-			canaima.guardar(donatario);					
+			//Se guarda el donatario
+			canaima.guardar(donatario);
+				
+			//Se intenta guardar el serial del equipo
+			String equipoSerial = request.getParameter("equipo_serial");
+			int idEquipo = 0;
+			
+			if (equipoSerial != null && !equipoSerial.isEmpty()) {
+				
+				//Se verifica que no haya un donatario o docente con el mismo serial de equipo				
+				Equipo equipo = new Equipo();
+				equipo.setSerial(equipoSerial);
+				equipo.setIddonatario(donatario.getID());				
+				canaima.guardar(equipo);				
+			}
+											
+			//Se agrega al vector de ultimos resultados
 			canaima.agregarDonatario(donatario);
 			
-			//Aqui se valida si no tiene el mismo nombre y cedula
+			//Aqui se valida si no tiene el mismo nombre y cedula, arroja una excepcion, pero guarda el usuario			
 			Connection con = canaima.solicitarConexion();
 			donatario.validarCedulaRepNombreDonatario(con);			
-			canaima.getPoolConexiones().cerrarConexion(con);			
+			canaima.liberarConexion(con);			
+			
 		} catch (ExcepcionValidaciones val) {
 			request.setAttribute("validaciones", val.getValidacionesIncumplidas());
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);					
@@ -108,7 +122,7 @@
 				Estado estado = new Estado();
 				Connection con = canaima.solicitarConexion();				
 				ArrayList<Estado> estados = Estado.listarEstados(con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < estados.size(); i++) {
 					if (ultimo.getIdestado() > 0 && ultimo.getIdestado() == estados.get(i).getID())
@@ -125,7 +139,7 @@
 			if (ultimo.getID() > 0 && ultimo.getIdestado() > 0) {
 				con = canaima.solicitarConexion();				
 				ArrayList<Municipio> municipios = Municipio.listarMunicipiosPorEstado(ultimo.getIdestado(), con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < municipios.size(); i++) {
 					if (ultimo.getIdmunicipio() > 0 && ultimo.getIdmunicipio() == municipios.get(i).getID())
@@ -145,7 +159,7 @@
 			if (ultimo.getID() > 0 && ultimo.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();				
 				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(ultimo.getIdmunicipio(), con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < parroquias.size(); i++) {
 					if (ultimo.getIdparroquia() > 0 && ultimo.getIdparroquia() == parroquias.get(i).getID())

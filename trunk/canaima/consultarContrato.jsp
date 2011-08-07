@@ -1,4 +1,4 @@
-<%@page import="beans.DonatarioContrato"%>
+<%@page import="joins.DonatarioContrato"%>
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.util.*" %>
 <%@ page import="beans.*"%>
@@ -252,7 +252,7 @@
 			if (cambiarContrato) {
 				con = canaima.solicitarConexion();			
 				cont.validarContratoUnico(con);				
-				canaima.getPoolConexiones().cerrarConexion(con);				
+				canaima.liberarConexion(con);				
 			}
 					
 			//Intentar guardar el archivo

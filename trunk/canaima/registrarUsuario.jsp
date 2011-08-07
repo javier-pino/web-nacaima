@@ -27,7 +27,6 @@
 	} 
 %>
 
-
 <%
 	ESTADO actual = ESTADO.INICIAL;
 

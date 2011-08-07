@@ -91,7 +91,7 @@
 			request.setAttribute("excepcion", exc);
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		} finally {
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 		}	
 %>			
        	

@@ -108,7 +108,6 @@ public class Contrato extends ObjetoPersistente  implements Serializable {
 	 */
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return getIdcontrato();
 	}
 	
@@ -224,6 +223,5 @@ public class Contrato extends ObjetoPersistente  implements Serializable {
 			if (ps != null)
 				ps.close();
 		}
-	}
-	
+	}	
 }

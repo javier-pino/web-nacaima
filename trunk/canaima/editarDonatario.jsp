@@ -109,7 +109,7 @@
 					//Aqui se valida si no tiene el mismo nombre y cedula
 					Connection con = canaima.solicitarConexion();
 					donatario.validarCedulaRepNombreDonatario(con);			
-					canaima.getPoolConexiones().cerrarConexion(con);
+					canaima.liberarConexion(con);
 					
 					ArrayList<Donatario> recientes = canaima.getRecientes();
 					for (int i = 0; i < recientes.size() ; i++) {
@@ -177,7 +177,7 @@
 				Estado estado = new Estado();
 				Connection con = canaima.solicitarConexion();				
 				ArrayList<Estado> estados = Estado.listarEstados(con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < estados.size(); i++) {
 					if (donatario.getIdestado() > 0 && donatario.getIdestado() == estados.get(i).getID())
@@ -195,7 +195,7 @@
 					if (donatario.getIdestado() > 0) {
 						con = canaima.solicitarConexion();				
 						ArrayList<Municipio> municipios = Municipio.listarMunicipiosPorEstado(donatario.getIdestado(), con);
-						canaima.getPoolConexiones().cerrarConexion(con);
+						canaima.liberarConexion(con);
 						out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 						for (int i=0; i < municipios.size(); i++) {
 							if (donatario.getIdmunicipio() > 0 && donatario.getIdmunicipio() == municipios.get(i).getID())
@@ -218,7 +218,7 @@
 			if (donatario.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();
 				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(donatario.getIdmunicipio(), con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < parroquias.size(); i++) {
 					if (donatario.getIdparroquia() > 0 && donatario.getIdparroquia() == parroquias.get(i).getID())

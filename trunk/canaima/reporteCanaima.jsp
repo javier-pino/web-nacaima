@@ -60,7 +60,7 @@
 								Estado estado = new Estado();
 								Connection con = canaima.solicitarConexion();				
 								ArrayList<Estado> estados = Estado.listarEstados(con);
-								canaima.getPoolConexiones().cerrarConexion(con);
+								canaima.liberarConexion(con);
 								out.write("<option value=\"" + -1 + "\">--TODOS LOS ESTADOS--</option>");
 								out.write("<option value=\"" + 0 + "\">--SIN ESTADO ESPECIFICADO--</option>");
 								for (int i=0; i < estados.size(); i++) {									

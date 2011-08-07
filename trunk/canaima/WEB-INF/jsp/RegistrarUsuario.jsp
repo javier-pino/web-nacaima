@@ -100,7 +100,7 @@
 <% 		
 	Connection con = canaima.solicitarConexion();
 	Usuario usuario = Usuario.ultimoRegistrado(con);	
-	canaima.getPoolConexiones().cerrarConexion(con);
+	canaima.liberarConexion(con);
 %>
 	<tr class = "largo">
 		<td class = "largo"><%=usuario.getUsuario()%> </td>

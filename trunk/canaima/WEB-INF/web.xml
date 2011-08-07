@@ -67,8 +67,12 @@
   </context-param>
   <context-param>
     <param-name>directorioGuardado</param-name>
-    <param-value>C:/Dev/Canaima/Guardado/</param-value>
+    <param-value>C:/Dev/Canaima/Donatario/</param-value>
   </context-param>
+  <context-param>
+    <param-name>directorioDocente</param-name>
+    <param-value>C:/Dev/Canaima/Docente/</param-value>
+  </context-param>  
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>  

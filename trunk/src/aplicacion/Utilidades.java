@@ -289,7 +289,7 @@ public class Utilidades {
 				} catch (SQLException e) {					
 					e.printStackTrace();
 				}
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 		}
 	}
 }

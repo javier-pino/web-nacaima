@@ -131,7 +131,7 @@
 	FileOutputStream salidaImagen = new FileOutputStream(imagen);	
 	ChartUtilities.writeChartAsPNG(salidaImagen,grafico,800, 800);
 	salidaImagen.close();
-	canaima.getPoolConexiones().cerrarConexion(null, ps, rs);
+	canaima.liberarConexion(null, ps, rs);
 		
 	HSSFWorkbook wb = new HSSFWorkbook();
 	HSSFSheet sheet = wb.createSheet("Estadísticas de Canaima");		
@@ -282,7 +282,7 @@
 		row.createCell(j++).setCellValue(rs.getBoolean("tienecedula"));
 		row.createCell(j++).setCellValue(rs.getBoolean("tienepartida"));		
 	}	
-	canaima.getPoolConexiones().cerrarConexion( con, ps, rs);
+	canaima.liberarConexion( con, ps, rs);
 	
 	while (j >= 0) {
 		sheet.autoSizeColumn(j--);

@@ -29,7 +29,7 @@
 		Donatario ultimo = canaima.getUltimo();
 		Connection con = canaima.solicitarConexion(); 				   				
 		ArrayList<Municipio> listaMunicipio = Municipio.listarMunicipiosPorEstado(idestado, con);
-		canaima.getPoolConexiones().cerrarConexion(con);
+		canaima.liberarConexion(con);
 		out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 		for (int i=0; i < listaMunicipio.size(); i++) {				
 			out.write("<option value=\"" + listaMunicipio.get(i).getID() + "\">" + listaMunicipio.get(i).getNombre()  + "</option>");

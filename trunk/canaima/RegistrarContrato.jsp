@@ -194,7 +194,7 @@
 			//Aqui se valida si no tiene el mismo nombre y cedula
 			Connection con = canaima.solicitarConexion();
 			donatario.validarCedulaRepNombreDonatario(con);			
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 			
 			//Actualizo los recientes
 			ArrayList<Donatario> recientes = canaima.getRecientes();
@@ -261,7 +261,7 @@
 			}
 			contrato.setIdlote(loteActual);
 			contrato.validarContratoUnico(con);
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 			
 			//Intentar guardar el archivo
 			if (archivo != null) {

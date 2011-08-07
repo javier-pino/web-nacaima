@@ -51,8 +51,7 @@ public class Donatario extends ObjetoPersistente {
 	private String representante_tlf; 
 
 	//Datos del Contrato
-	private int idcontrato;
-	private String equipo_serial;
+	private int idcontrato;	
 	private String proveedor; 
 	private Date fecha_entrega;  
 	private Date fecha_llegada;
@@ -69,8 +68,6 @@ public class Donatario extends ObjetoPersistente {
 	private boolean tienefirma = true;
 	private boolean tienecedula = true;
 	private boolean tienepartida = true;
-	
-	private static final int TAM_SERIAL = 20;
 	
 	/**	
 	 *	@see beans.ObjetoPersistente#validarCondiciones()
@@ -110,9 +107,7 @@ public class Donatario extends ObjetoPersistente {
 		if (representante_nombre != null && representante_nombre.length() > TINYTEXT)
 			resultado.add(errorTamaño("Representante - Nombre", TINYTEXT));
 		if (representante_tlf != null && representante_tlf.length() > TINYTEXT)
-			resultado.add(errorTamaño("Representante - Télefono", TINYTEXT));
-		if (equipo_serial != null && equipo_serial.length() > TAM_SERIAL)
-			resultado.add(errorTamaño("Serial Equipo", TAM_SERIAL));
+			resultado.add(errorTamaño("Representante - Télefono", TINYTEXT));	
 		if (proveedor != null && proveedor.length() > TINYTEXT)
 			resultado.add(errorTamaño("Proveedor", TINYTEXT));
 		if (partidanacimiento != null && partidanacimiento.length() > TINYTEXT)
@@ -276,14 +271,6 @@ public class Donatario extends ObjetoPersistente {
 		this.idcontrato = idcontrato;
 	}
 
-	public String getEquipo_serial() {
-		return equipo_serial;
-	}
-
-	public void setEquipo_serial(String equipo_serial) {
-		this.equipo_serial = equipo_serial;
-	}
-
 	public String getProveedor() {
 		return proveedor;
 	}
@@ -420,8 +407,7 @@ public class Donatario extends ObjetoPersistente {
 		  director_nombre = StringEscapeUtils.escapeHtml(rs.getString("director_nombre")); 
 		  ano_escolar = rs.getInt("ano_escolar");
 		  grado = rs.getInt("grado");
-		  seccion = StringEscapeUtils.escapeHtml(rs.getString("seccion"));
-		  
+		  seccion = StringEscapeUtils.escapeHtml(rs.getString("seccion"));		  
 		  idparroquia = rs.getInt("idparroquia");
 		  idcolegio = rs.getInt("idcolegio");
 		  
@@ -433,8 +419,7 @@ public class Donatario extends ObjetoPersistente {
 		  representante_ci = StringEscapeUtils.escapeHtml(rs.getString("representante_ci"));
 		  representante_nombre = StringEscapeUtils.escapeHtml(rs.getString("representante_nombre"));		  
 		  representante_tlf = StringEscapeUtils.escapeHtml(rs.getString("representante_tlf"));  
-		  idcontrato = rs.getInt("idcontrato");
-		  equipo_serial = StringEscapeUtils.escapeHtml(rs.getString("equipo_serial"));
+		  idcontrato = rs.getInt("idcontrato");		  
 		  proveedor = StringEscapeUtils.escapeHtml(rs.getString("proveedor")); 
 		  fecha_entrega  = rs.getDate("fecha_entrega");
 		  fecha_llegada = rs.getDate("fecha_llegada");
@@ -463,18 +448,16 @@ public class Donatario extends ObjetoPersistente {
 	public synchronized void guardar(Connection con) throws SQLException, ExcepcionValidaciones {
 		
 		//Se esta creando un donatario previamente existente		
-		validarSerialUnico(con);
-		validarContratoUnico(con);
-		
+			
 		String sql_insercion = "insert into `canaima`.`donatario` " +				
 			"(`idcreadopor`, `nombre`, `direccion`, " +
 			"`idestado`, `idmunicipio`, `ciudad`, `colegio`, " +
 			"`ano_escolar`, `grado`, " +
 			"`seccion`, `representante_nac`, `representante_ci`, `representante_nombre`, `representante_tlf`, `idcontrato`, " +
-			"`equipo_serial`, `fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
+			" `fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
 			"`tienefirma`, `tienecedula`, `tienepartida`,`codigo_dea`, `director_nombre`, `proveedor`, `fecha_act`, `activo`, " +
 			"`idparroquia`, `idcolegio`) " +
-			" values (?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)";			
+			" values (?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ? , ?, ?, ?,?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		ps.setInt(1, idcreadopor); 	
 		ps.setString(2, (nombre == null ? ""  : StringEscapeUtils.unescapeHtml(nombre.toUpperCase())));
@@ -490,24 +473,23 @@ public class Donatario extends ObjetoPersistente {
 		ps.setString(12, (representante_ci == null ? "" : StringEscapeUtils.unescapeHtml(representante_ci.toUpperCase())));
 		ps.setString(13, (representante_nombre == null ? "" : StringEscapeUtils.unescapeHtml(representante_nombre.toUpperCase())));		  
 		ps.setString(14, (representante_tlf == null ? "" : StringEscapeUtils.unescapeHtml(representante_tlf.toUpperCase())));  
-		ps.setInt(15, idcontrato);
-		ps.setString(16, (equipo_serial == null ? "" : StringEscapeUtils.unescapeHtml(equipo_serial.toUpperCase())));
-		ps.setDate(17,fecha_entrega);
-		ps.setDate(18, fecha_llegada);		  
-		ps.setString(19, (partidanacimiento == null) ? "" : StringEscapeUtils.unescapeHtml(partidanacimiento.toUpperCase()));
-		ps.setString(20, cedula);		
-		ps.setString(21, (nacionalidad != null) ? nacionalidad.toString(): "");		
-		ps.setString(22, (observacion == null ? "" : StringEscapeUtils.unescapeHtml(observacion.toUpperCase())));
-		ps.setBoolean(23,tienefirma);
-		ps.setBoolean(24, tienecedula);
-		ps.setBoolean(25, tienepartida);
-		ps.setString(26, (codigo_dea == null ? "" : StringEscapeUtils.unescapeHtml(codigo_dea.toUpperCase()))); 
-		ps.setString(27, (director_nombre == null ? "" : StringEscapeUtils.unescapeHtml(director_nombre.toUpperCase())));
-		ps.setString(28, (proveedor == null ? "" : StringEscapeUtils.unescapeHtml(proveedor.toUpperCase())));
-		ps.setDate(29, fecha_act);
-		ps.setBoolean(30, activo);
-		ps.setInt(31, idparroquia);
-		ps.setInt(32, idcolegio);
+		ps.setInt(15, idcontrato);		
+		ps.setDate(16,fecha_entrega);
+		ps.setDate(17, fecha_llegada);		  
+		ps.setString(18, (partidanacimiento == null) ? "" : StringEscapeUtils.unescapeHtml(partidanacimiento.toUpperCase()));
+		ps.setString(19, cedula);		
+		ps.setString(20, (nacionalidad != null) ? nacionalidad.toString(): "");		
+		ps.setString(21, (observacion == null ? "" : StringEscapeUtils.unescapeHtml(observacion.toUpperCase())));
+		ps.setBoolean(22,tienefirma);
+		ps.setBoolean(23, tienecedula);
+		ps.setBoolean(24, tienepartida);
+		ps.setString(25, (codigo_dea == null ? "" : StringEscapeUtils.unescapeHtml(codigo_dea.toUpperCase()))); 
+		ps.setString(26, (director_nombre == null ? "" : StringEscapeUtils.unescapeHtml(director_nombre.toUpperCase())));
+		ps.setString(27, (proveedor == null ? "" : StringEscapeUtils.unescapeHtml(proveedor.toUpperCase())));
+		ps.setDate(28, fecha_act);
+		ps.setBoolean(29, activo);
+		ps.setInt(30, idparroquia);
+		ps.setInt(31, idcolegio);
 		ps.executeUpdate();
 		ResultSet rs = ps.getGeneratedKeys();
 		if (rs.next()) {
@@ -528,15 +510,12 @@ public class Donatario extends ObjetoPersistente {
 	public synchronized void actualizar(Connection con) throws SQLException, ExcepcionValidaciones {
 		
 		//Se esta actualizando un donatario previamente existente		
-		validarSerialUnico(con);
-		validarContratoUnico(con);
-		
 		String update = "SELECT " +
 				"`idcreadopor`, `nombre`, `direccion`, " +
 				"`idestado`, `idmunicipio`, `ciudad`, `colegio`, " +
 				"`ano_escolar`, `grado`, " +
 				"`seccion`, `representante_nac`, `representante_ci`, `representante_nombre`, `representante_tlf`, `idcontrato`, " +
-				"`equipo_serial`, `fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
+				"`fecha_entrega`, `fecha_llegada`, `partidanacimiento`, `cedula`, `nacionalidad`, `observacion`, " +
 				"`tienefirma`, `tienecedula`, `tienepartida`,`codigo_dea`, `director_nombre`, " +				
 				"`proveedor`, `fecha_act`, `activo`, `idparroquia`, `idcolegio`, `iddonatario` FROM `canaima`.`donatario` where iddonatario = ?";
 		PreparedStatement ps = con.prepareStatement(update, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
@@ -557,24 +536,23 @@ public class Donatario extends ObjetoPersistente {
 			rs.updateString(12, representante_ci);
 			rs.updateString(13, (representante_nombre == null ? "" : representante_nombre.toUpperCase()));		  
 			rs.updateString(14, (representante_tlf == null ? "" : representante_tlf.toUpperCase()));  
-			rs.updateInt(15, idcontrato);
-			rs.updateString(16, (equipo_serial == null ? "" : equipo_serial.toUpperCase()));
-			rs.updateDate(17,fecha_entrega);
-			rs.updateDate(18, fecha_llegada);		  
-			rs.updateString(19, (partidanacimiento == null) ? "" : partidanacimiento.toUpperCase());
-			rs.updateString(20, cedula);	
-			rs.updateString(21, (nacionalidad != null) ? nacionalidad.toString(): "");
-			rs.updateString(22, (observacion == null ? "" : observacion.toUpperCase()));
-			rs.updateBoolean(23,tienefirma);
-			rs.updateBoolean(24, tienecedula);
-			rs.updateBoolean(25, tienepartida);
-			rs.updateString(26, (codigo_dea == null ? "" : codigo_dea.toUpperCase())); 
-			rs.updateString(27, (director_nombre == null ? "" : director_nombre.toUpperCase()));
-			rs.updateString(28, (proveedor == null ? "" : proveedor.toUpperCase()));
-			rs.updateDate(29, fecha_act);
-			rs.updateBoolean(30, activo);
-			rs.updateInt(31, idparroquia);
-			rs.updateInt(32, idcolegio);
+			rs.updateInt(15, idcontrato);			
+			rs.updateDate(16,fecha_entrega);
+			rs.updateDate(17, fecha_llegada);		  
+			rs.updateString(18, (partidanacimiento == null) ? "" : partidanacimiento.toUpperCase());
+			rs.updateString(19, cedula);	
+			rs.updateString(20, (nacionalidad != null) ? nacionalidad.toString(): "");
+			rs.updateString(21, (observacion == null ? "" : observacion.toUpperCase()));
+			rs.updateBoolean(22,tienefirma);
+			rs.updateBoolean(23, tienecedula);
+			rs.updateBoolean(24, tienepartida);
+			rs.updateString(25, (codigo_dea == null ? "" : codigo_dea.toUpperCase())); 
+			rs.updateString(26, (director_nombre == null ? "" : director_nombre.toUpperCase()));
+			rs.updateString(27, (proveedor == null ? "" : proveedor.toUpperCase()));
+			rs.updateDate(28, fecha_act);
+			rs.updateBoolean(29, activo);
+			rs.updateInt(30, idparroquia);
+			rs.updateInt(31, idcolegio);
 			rs.updateRow();
 		}
 		rs.close();
@@ -594,8 +572,7 @@ public class Donatario extends ObjetoPersistente {
 				+ ", representante_ci=" + representante_ci
 				+ ", representante_nombre=" + representante_nombre
 				+ ", representante_tlf=" + representante_tlf + ", idcontrato="
-				+ idcontrato + ", equipo_serial=" + equipo_serial
-				+ ", proveedor=" + proveedor + ", fecha_entrega="
+				+ idcontrato + ", proveedor=" + proveedor + ", fecha_entrega="
 				+ fecha_entrega + ", fecha_llegada=" + fecha_llegada
 				+ ", fecha_act=" + fecha_act + ", partidanacimiento="
 				+ partidanacimiento + ", nacionalidad=" + nacionalidad
@@ -611,70 +588,6 @@ public class Donatario extends ObjetoPersistente {
 	}
 	
 	
-	/** Verifica que la restriccion de integridad de serial unico se mantenga 
-	 * @throws SQLException 
-	 * @throws ExcepcionValidaciones */
-	public void validarSerialUnico (Connection con) throws SQLException, ExcepcionValidaciones {
-		
-		if (getEquipo_serial() == null || getEquipo_serial().isEmpty())
-			return;
-		
-		String sqlSerialUnico = "select * from canaima.donatario where activo and equipo_serial = ? and iddonatario != ? " ;
-		PreparedStatement ps =  null; 
-		ResultSet rs = null;
-		try {
-			ps = con.prepareStatement(sqlSerialUnico);
-			ps.setString(1, getEquipo_serial());
-			ps.setInt(2, getIddonatario());		
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Donatario repetido = new Donatario();
-				repetido.recargar(rs);
-				throw new ExcepcionValidaciones(
-						"El donatario 'ID = " + repetido.getID() + "' posee el mismo Serial de Equipo('" +	
-						repetido.getEquipo_serial() + "') que el donatario ingresado )");
-			}
-		}
-		finally {
-			if (rs != null)
-				rs.close();
-			if (ps != null)
-				ps.close();
-		}
-	}
-	
-	/** Verifica que la restriccion de integridad de serial unico se mantenga 
-	 * @throws SQLException 
-	 * @throws ExcepcionValidaciones */
-	public void validarContratoUnico (Connection con) throws SQLException, ExcepcionValidaciones {
-		
-		if (getIdcontrato() == 0)
-			return;
-		
-		String sqlSerialUnico = "select * from canaima.donatario where activo and idcontrato = ? and iddonatario != ? " ;
-		PreparedStatement ps =  null; 
-		ResultSet rs = null;
-		try {
-			ps = con.prepareStatement(sqlSerialUnico);
-			ps.setInt(1, getIdcontrato());
-			ps.setInt(2, getIddonatario());		
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Donatario repetido = new Donatario();
-				repetido.recargar(rs);
-				throw new ExcepcionValidaciones(
-						"El donatario 'ID = " + repetido.getID() + "' posee el mismo Contrato('" +	
-						repetido.getIdcontrato() + "') que el donatario ingresado )");
-			}
-		}
-		finally {
-			if (rs != null)
-				rs.close();
-			if (ps != null)
-				ps.close();
-		}
-	}
-
 	/** Aunque no es una validacion en si misma la regla del negocio, implica que debe alertarse por 
 	 * donatarios con misma cedula y mismo nombre  
 	 * @throws SQLException 
