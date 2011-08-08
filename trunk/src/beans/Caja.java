@@ -217,7 +217,7 @@ public class Caja extends ObjetoPersistente {
 				"select coalesce(max(numero) + 1, 1) as NUMERO from `canaima`.`caja` " +
 				" where tipo = ? ";
 			ps = con.prepareStatement(sqlMaxCaja);
-			ps.setString(1, (getTipo() != null) ? getTipo().toString() : CAJA_TIPO.DON.toString());
+			ps.setString(1, (caja != null) ? caja.toString() : CAJA_TIPO.DON.toString());
 			rs = ps.executeQuery();
 			rs.next();
 			setNumero(rs.getInt("NUMERO"));		

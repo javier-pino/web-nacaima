@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 import joins.DonatarioContrato;
 import beans.Contrato;
 import beans.Donatario;
+import beans.Docente;
 import beans.ObjetoPersistente;
 import beans.Usuario;
 
@@ -304,7 +305,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 		recientes.add(reciente);
 		ultimo = reciente;
 	}
-
+	
 	public Donatario getUltimo() {
 		return ultimo;
 	}
@@ -315,6 +316,29 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 
 	public ArrayList<Donatario> getRecientes() {
 		return recientes;
+	}
+	
+	private final ArrayList<Docente> recientesDocen = new ArrayList<Docente>();
+	private Docente ultimoDocen = new Docente();
+	
+	/** Agregar Docente a la lista de recientes */	
+	public void agregarDocente (Docente reciente) {
+		if (recientesDocen.size() > TAM_RECIENTES)
+			recientesDocen.remove(0);
+		recientesDocen.add(reciente);
+		ultimoDocen = reciente;
+	}
+	
+	public Docente getUltimoDocen() {
+		return ultimoDocen;
+	}
+
+	public void setUltimoDocen(Docente ultimo) {
+		this.ultimoDocen = ultimo;
+	}
+
+	public ArrayList<Docente> getRecientesDocentes() {
+		return recientesDocen;
 	}
 	
 	/** Retorna 

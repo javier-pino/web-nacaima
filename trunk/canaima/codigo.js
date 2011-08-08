@@ -109,6 +109,17 @@ function eliminarDonatario(iddonatario){
 	return false;
 }
 
+function eliminarDocente(iddocente){	
+	ajax = nuevoAjax();
+	ajax.open("GET", "AjaxEliminarDocente.jsp?iddocente="+iddocente, true);
+	ajax.onreadystatechange = function() {
+		document.getElementById("eliminar").innerHTML = ajax.responseText;
+	};
+	ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	ajax.send(null);
+	return false;
+}
+
 function eliminarColegio(idcolegio){	
 	ajax = nuevoAjax();
 	ajax.open("GET", "AjaxEliminarColegio.jsp?idcolegio="+idcolegio, true);
@@ -205,3 +216,45 @@ function validarContratoActualizado(form, contrato){
 	} 
 	return true;
 }
+
+function removeAttachmentElement(num_id) {
+	var container = document.getElementById('attachment_container');
+	container.removeChild( document.getElementById('attachment_'+num_id) );
+}
+
+
+function addAttachmentElement() {
+	var container = document.getElementById('attachment_container');
+	var counter = document.getElementById('attachment_counter').value;
+	counter++;
+	document.getElementById('attachment_counter').value = counter;
+	var attachment_div = document.createElement('div');
+	attachment_div.setAttribute('id','attachment_'+counter);
+	attachment_div.setAttribute('class','attachment');
+	 
+		var attachment_label = document.createElement('label');
+		attachment_label.innerHTML = "Serial ";
+		attachment_div.appendChild(attachment_label);
+	 
+		var attachment_input = document.createElement('input');
+		attachment_input.setAttribute('type','text');
+		attachment_input.setAttribute('size','14');
+		attachment_input.setAttribute('id','file_'+counter);
+	      attachment_input.setAttribute('name','file_'+counter);
+		attachment_div.appendChild(attachment_input);
+	 
+		var attachment_a2 = document.createElement('a');
+		attachment_a2.setAttribute('href','');
+		attachment_a2.setAttribute('onclick','removeAttachmentElement('+counter+');return false;');
+			var attachment_img2 = document.createElement('img');
+			attachment_img2.setAttribute('id','RemoveButton_'+counter);
+			attachment_img2.setAttribute('src','img/minusButton.png');
+			attachment_img2.setAttribute('alt','Remove');
+			attachment_img2.setAttribute('onmousedown',"this.src='img/minusButtonDown.png';");
+			attachment_img2.setAttribute('onmouseup',"this.src='img/minusButton.png';");
+			attachment_a2.appendChild(attachment_img2);
+	 
+		attachment_div.appendChild(attachment_a2);
+	 
+	container.appendChild(attachment_div);
+	}
