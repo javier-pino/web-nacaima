@@ -71,7 +71,7 @@
 					//Aqui se valida si no tiene el mismo nombre y cedula
 					Connection con = canaima.solicitarConexion();
 					colegio.validarColegioUnico(con);		
-					canaima.getPoolConexiones().cerrarConexion(con);
+					canaima.liberarConexion(con);
 					
 					/*ArrayList<Colegio> recientes = canaima.getRecientes();
 					for (int i = 0; i < recientes.size() ; i++) {
@@ -126,7 +126,7 @@
 				Estado estado = new Estado();
 				Connection con = canaima.solicitarConexion();				
 				ArrayList<Estado> estados = Estado.listarEstados(con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < estados.size(); i++) {
 					if (colegio.getIdestado() > 0 && colegio.getIdestado() == estados.get(i).getID())
@@ -144,7 +144,7 @@
 					if (colegio.getIdestado() > 0) {
 						con = canaima.solicitarConexion();				
 						ArrayList<Municipio> municipios = Municipio.listarMunicipiosPorEstado(colegio.getIdestado(), con);
-						canaima.getPoolConexiones().cerrarConexion(con);
+						canaima.liberarConexion(con);
 						out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 						for (int i=0; i < municipios.size(); i++) {
 							if (colegio.getIdmunicipio() > 0 && colegio.getIdmunicipio() == municipios.get(i).getID())
@@ -167,7 +167,7 @@
 			if (colegio.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();
 				ArrayList<Parroquia> parroquias = Parroquia.listarParroquiasPorMunicipios(colegio.getIdmunicipio(), con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < parroquias.size(); i++) {
 					if (colegio.getIdparroquia() > 0 && colegio.getIdparroquia() == parroquias.get(i).getID())

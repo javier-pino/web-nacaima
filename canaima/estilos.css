@@ -258,3 +258,15 @@ body {
     margin-left: 10px;
 }	
 
+#estadisticas{ 
+	width:98%; 
+	height:105px; 
+	background-color:#F2F2F2; 
+	overflow:auto; 
+	border-top-style: solid; 
+	border-right-style: solid;
+	border-left-style: solid; 
+	border-bottom-style: solid;
+	border: 1px solid grey;
+    margin-left: 10px;
+}

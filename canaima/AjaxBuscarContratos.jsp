@@ -38,12 +38,13 @@ if (ServletFileUpload.isMultipartContent(request)) {
 if (actual.equals(ESTADO.POR_GUARDAR)) {
 	
 	try {				
-		int numeroContrato = 0;
-		Donatario donatario = new Donatario();
-		
+		int numeroContrato = 0;		
+
 		//Si se subio el archivo			
 		ServletFileUpload fileUpload = new ServletFileUpload(new DiskFileItemFactory());
-		List<FileItem> listaItems = fileUpload.parseRequest(request);			
+		List<FileItem> listaItems = fileUpload.parseRequest(request);
+		
+		//Se recorre por completo para obtener el campo iddonatario
 		FileItem item = null;
 		Iterator<FileItem> it = listaItems.iterator();				
 		while (it.hasNext()) {
@@ -58,20 +59,37 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 		
 		//Se recarga el donatario para actualizarlo
 		if (idDonatario == 0) 
-			throw new ExcepcionValidaciones("Ërror en el modelo: Donatario es obligatorio");
+			throw new ExcepcionValidaciones("Error en el modelo: Donatario es obligatorio");
+		
+		Donatario donatario = new Donatario();
 		canaima.buscarPorID(idDonatario, donatario);
 		
-		//Aqui almaceno la info necesaria hasta el ultimo momento
-		FileItem archivo = null;
+		//Buscar el serial de equipo
+		Connection con = canaima.solicitarConexion();						
+		ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+		Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);	
+		canaima.liberarConexion(con);
 		
-		//Se leen por completo los valores
+		//Aqui almaceno la info necesaria hasta el ultimo momento - Se leen por completo los valores
+		FileItem archivo = null;		
 		it = listaItems.iterator();
 		while (it.hasNext()) {
 			item = (FileItem)it.next();
 			if (item.isFormField()) {
 				if (item.getFieldName().equals("equipo_serial")) {
-					if (!item.getFieldName().isEmpty())
-						donatario.setEquipo_serial(item.getString());	
+					if (item.getString() != null && !item.getString().trim().isEmpty()) {						
+						//No hay serial asociado
+						if (equipoAsociado == null) {							
+								//Se verifica que no haya un donatario o docente con el mismo serial de equipo				
+							Equipo equipo = new Equipo();
+							equipo.setSerial(item.getString().trim());
+							equipo.setIddonatario(donatario.getID());				
+							canaima.guardar(equipo);								
+						} else {
+							equipoAsociado.setSerial(item.getString().trim());
+							canaima.actualizar(equipoAsociado);
+						}					
+					}
 				} else if (item.getFieldName().equals("fecha_entrega")) {
 					if (item.getString() != null && !item.getString().trim().isEmpty()) {							
 						String [] fechaA  = item.getString().split("-");
@@ -145,7 +163,6 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 		}
 			
 		//Aqui se valida si no tiene el mismo nombre y cedula
-		Connection con = null;
 		
 		//Actualizo los recientes
 		ArrayList<Donatario> recientes = canaima.getRecientes();
@@ -216,11 +233,6 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 	}	
 }
 
-
-
-
-
-
 	String snumero = "", sdonatario;
 	int iddonatario = 0, numero = 0;
     if (request.getParameter("iddonatario") != null) {
@@ -239,6 +251,14 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
     }    
     DonatarioContrato donCon = canaima.buscarDonatarioContrato(iddonatario, numero);
     if (donCon.isValido()) {    	
+    	
+    	//Si es valido mostrar la información vieja
+    	//Buscar los seriales de los equipos		
+		Connection con = canaima.solicitarConexion();						
+		ArrayList<Equipo> equipo = Equipo.buscarEquipos(con, iddonatario, 0 , null);
+		Equipo equipoAsociado = (equipo.size() > 0 ? equipo.get(0) : null);	
+		canaima.liberarConexion(con);
+    	
 %>
 <form 
 method="post"
@@ -273,7 +293,7 @@ accept-charset="text/plain">
 			<td class="b" height="10" width="90">
 			<%=donCon.getDonatario().getRepresentante_nombre()%>
 			</td>
-			<td><input tabindex="15" name="equipo_serial" size="20" value="<%= (donCon.getDonatario().getEquipo_serial() != null) ? donCon.getDonatario().getEquipo_serial() : ""%>"></td>
+			<td><input tabindex="15" name="equipo_serial" size="20" value="<%= (equipoAsociado.getSerial() != null) ? equipoAsociado.getSerial() : ""%>"></td>
 	</tr>
 	</table>
 	&nbsp;

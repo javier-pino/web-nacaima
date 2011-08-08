@@ -113,8 +113,7 @@
 			 	numero = Integer.parseInt(snumero);  
 		   } catch (Exception e) {		   		  
 		   } 
-	    } 
-		
+	    } 		
 	} else  if (actual == ESTADO.POR_GUARDAR){
 		try {				
 			int numeroContrato = 0;
@@ -140,6 +139,12 @@
 				throw new ExcepcionValidaciones("Error en el modelo: Donatario es obligatorio");
 			canaima.buscarPorID(idDonatario, donatario);
 			
+			//Buscar el serial de equipo
+			Connection con = canaima.solicitarConexion();						
+			ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+			Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);	
+			canaima.liberarConexion(con);
+			
 			//Aqui almaceno la info necesaria hasta el ultimo momento
 			FileItem archivo = null;
 		
@@ -150,8 +155,19 @@
 				item = (FileItem)it.next();
 				if (item.isFormField()) {
 					if (item.getFieldName().equals("equipo_serial")) {
-						if (!item.getFieldName().isEmpty())
-							donatario.setEquipo_serial(item.getString());	
+						if (item.getString() != null && !item.getString().trim().isEmpty()) {						
+							//No hay serial asociado
+							if (equipoAsociado == null) {							
+									//Se verifica que no haya un donatario o docente con el mismo serial de equipo				
+								Equipo equipo = new Equipo();
+								equipo.setSerial(item.getString().trim());
+								equipo.setIddonatario(donatario.getID());				
+								canaima.guardar(equipo);								
+							} else {
+								equipoAsociado.setSerial(item.getString().trim());
+								canaima.actualizar(equipoAsociado);
+							}					
+						}	
 					} else if (item.getFieldName().equals("fecha_entrega")) {
 						if (item.getString() != null && !item.getString().trim().isEmpty()) {							
 							String [] fechaA  = item.getString().split("-");
@@ -228,9 +244,7 @@
 				cambiarContrato = true;			
 			}
 				
-			//Aqui se valida si no tiene el mismo nombre y cedula
-			Connection con = null;
-			
+			//Aqui se valida si no tiene el mismo nombre y cedula						
 			//Actualizo los recientes
 			ArrayList<Donatario> recientes = canaima.getRecientes();
 			for (int i = 0; i < recientes.size() ; i++) {
@@ -293,12 +307,16 @@
 			request.setAttribute("excepcion", exc);
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		}			
-	} 
-	
-	if (idDonatario > 0 || numero > 0) {			
-	    DonatarioContrato donCon = canaima.buscarDonatarioContrato(idDonatario, numero);
-	    
+	}	
+	if (idDonatario > 0 || numero > 0) {
+	    DonatarioContrato donCon = canaima.buscarDonatarioContrato(idDonatario, numero);	    
 	    if (donCon.isValido()) {
+
+	    	//Si es valido mostrar la información vieja - Buscar los seriales de los equipos		
+			Connection con = canaima.solicitarConexion();						
+			ArrayList<Equipo> equipo = Equipo.buscarEquipos(con, idDonatario, 0 , null);
+			Equipo equipoAsociado = (equipo.size() > 0 ? equipo.get(0) : null);	
+			canaima.liberarConexion(con);
 	    	
 	    	String nombre = "temp" + Calendar.getInstance().getTimeInMillis(), ext = ".pdf";
 	    	
@@ -316,7 +334,7 @@
 	    	canaima.buscarPorID(donCon.getContrato().getIdlote(), lote);	    	    
 	    	Caja caja = new Caja();
 	    	canaima.buscarPorID(lote.getIdcaja(), caja);
-	%>
+	%>	
 	<div id = "busqueda">
 	<form 
 	method="post"
@@ -351,7 +369,7 @@
 				<td class="b" height="10" width="90">
 				<%=donCon.getDonatario().getRepresentante_nombre()%>
 				</td>
-				<td><input tabindex="1" name="equipo_serial" size="20" value="<%= (donCon.getDonatario().getEquipo_serial() != null) ? donCon.getDonatario().getEquipo_serial() : ""%>"></td>
+				<td><input tabindex="1" name="equipo_serial" size="20" value="<%= (equipoAsociado != null) ? equipoAsociado.getSerial() : ""%>"></td>
 		</tr>
 		</table>
 		&nbsp;
