@@ -1,3 +1,4 @@
+<%@page import="enums.CAJA_TIPO"%>
 <%@page import="java.io.FileInputStream"%>
 <%@ page import="aplicacion.ExcepcionValidaciones"%>
 <%@ page import="aplicacion.Utilidades"%>
@@ -88,6 +89,12 @@
 				throw new ExcepcionValidaciones("Error en el modelo: Donatario es obligatorio");
 			canaima.buscarPorID(idDonatario, donatario);
 			
+			//Buscar el serial de equipo
+			Connection con = canaima.solicitarConexion();						
+			ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+			Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);	
+			canaima.liberarConexion(con);
+			
 			boolean dijocedula = false, dijofirma = false, dijopartida = false;
 			
 			//Aqui almaceno la info necesaria hasta el ultimo momento
@@ -99,20 +106,32 @@
 				item = (FileItem)it.next();
 				if (item.isFormField()) {
 					if (item.getFieldName().equals("nombre")  ) {						
-						if (!item.getFieldName().isEmpty())
+						if (item.getString() != null && !item.getString().trim().isEmpty()) 
 							donatario.setNombre(item.getString());
 					} else if (item.getFieldName().equals("representante_nac")) {
-						if (!item.getFieldName().isEmpty())
+						if (item.getString() != null && !item.getString().trim().isEmpty()) 
 							donatario.setRepresentante_nac(item.getString());
 					} else if (item.getFieldName().equals("representante_ci")) {
-						if (!item.getFieldName().isEmpty())
+						if (item.getString() != null && !item.getString().trim().isEmpty()) 
 							donatario.setRepresentante_ci(item.getString());						
 					} else if (item.getFieldName().equals("representante_nombre")) {
-						if (!item.getFieldName().isEmpty())
+						if (item.getString() != null && !item.getString().trim().isEmpty()) 
 							donatario.setRepresentante_nombre(item.getString());
-					} else if (item.getFieldName().equals("equipo_serial")) {
-						if (!item.getFieldName().isEmpty())
-							donatario.setEquipo_serial(item.getString());	
+					} else if (item.getFieldName().equals("equipo_serial")) {						
+							if (item.getString() != null && !item.getString().trim().isEmpty()) {						
+								//No hay serial asociado
+								if (equipoAsociado == null) {							
+										//Se verifica que no haya un donatario o docente con el mismo serial de equipo				
+									Equipo equipo = new Equipo();
+									equipo.setSerial(item.getString().trim());
+									equipo.setIddonatario(donatario.getID());				
+									canaima.guardar(equipo);								
+								} else {
+									equipoAsociado.setSerial(item.getString().trim());
+									canaima.actualizar(equipoAsociado);
+								}					
+							}
+						}							
 					} else if (item.getFieldName().equals("fecha_entrega")) {
 						if (item.getString() != null && !item.getString().trim().isEmpty()) {							
 							String [] fechaA  = item.getString().trim().split("-");
@@ -165,16 +184,13 @@
 						if (item.getString() != null && item.getString().equals("true"))
 							dijopartida = true;
 					} else if (item.getFieldName().equals("numero")) {						
-						if (item.getString()!=null) {				
-							if (!item.getString().isEmpty())
+						if (item.getString()!=null &&!item.getString().isEmpty())
 								numeroContrato = Integer.parseInt(item.getString());						
-						}						
-					}
-				}	else {
-					archivo = item;
-					String ext = "." + FilenameUtils.getExtension(archivo.getName());
-					if (!ext.equals(".pdf")) 
-						throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+					} else {
+						archivo = item;
+						String ext = "." + FilenameUtils.getExtension(archivo.getName());
+						if (!ext.equals(".pdf")) 
+							throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
 				}				
 			}
 			//Verificacion de la cedula del representante
@@ -192,7 +208,7 @@
 				throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
 			
 			//Aqui se valida si no tiene el mismo nombre y cedula
-			Connection con = canaima.solicitarConexion();
+			con = canaima.solicitarConexion();
 			donatario.validarCedulaRepNombreDonatario(con);			
 			canaima.liberarConexion(con);
 			
@@ -215,10 +231,10 @@
 			Usuario usuarioActual = canaima.getUsuarioActual(); 
 			con = canaima.solicitarConexion();
 			
-			int cajaActual = Caja.getUltimaCajaRegistrada(con, usuarioActual);			
+			int cajaActual = Caja.getUltimaCajaRegistrada(con, usuarioActual, CAJA_TIPO.DON);			
 			if (cajaActual == 0) {
 				synchronized (caja) {
-					caja.asignarNuevoNumeroACaja(con);
+					caja.asignarNuevoNumeroACaja(con, CAJA_TIPO.DON);
 					caja.setIdusuario(usuarioActual.getIdusuario());					
 					canaima.guardar(caja);
 					cajaActual = caja.getID();
@@ -247,7 +263,7 @@
 						//Crear una caja y un lote nuevo
 						synchronized (caja) { 
 							caja.setIdusuario(usuarioActual.getID());						
-							caja.asignarNuevoNumeroACaja(con);
+							caja.asignarNuevoNumeroACaja(con, CAJA_TIPO.DON);
 							canaima.guardar(caja);
 							cajaActual = caja.getID();
 						}
@@ -324,10 +340,12 @@
 		if (request.getParameter("iddonatario")!=null)
 			idDonatario = Integer.parseInt(request.getParameter("iddonatario"));		
 	}	
-    canaima.buscarPorID(idDonatario, donatario);
-   	
-if (donatario.getIdcontrato()==0)
-{
+    canaima.buscarPorID(idDonatario, donatario);   	
+    Connection con = canaima.solicitarConexion();						
+	ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+	Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);	
+	canaima.liberarConexion(con);
+	if (donatario.getIdcontrato()==0) {
 %>
 <body>
 <br>
@@ -340,7 +358,8 @@ accept-charset="text/plain" >
     <table border="1">
        	<tr>
     		<td class = "a"> Nombre Donatario:</td>
-    		<td><input tabindex="1" size="20" name = "nombre" value="<%= (donatario.getNombre() != null) ? donatario.getNombre() : ""%>" ></td>
+    		<td><input tabindex="1" size="20" name = "nombre" 
+    			value="<%= (donatario.getNombre() != null) ? donatario.getNombre() : ""%>" ></td>
     		<td class = "a"> ID Donatario</td>
     		<td><%= idDonatario %></td> 
     	</tr>
@@ -360,13 +379,8 @@ accept-charset="text/plain" >
     		<td class = "a">Nombre Rep.</td>
     		<td><input tabindex="4" size="20" name = "representante_nombre" value="<%= (donatario.getRepresentante_nombre() != null) ? donatario.getRepresentante_nombre() : ""%>"></td>
     		<td class = "a">Serial Equipo:</td>
-    		<td><input tabindex="5" name="equipo_serial" size="20" value="<%= (donatario.getEquipo_serial() != null) ? donatario.getEquipo_serial() : ""%>"></td>
-    	</tr>
-    	<%
-    	
-    		Contrato con = new Contrato();
-    		canaima.buscarPorID(donatario.getIdcontrato(), con);    		    	
-    	%>
+    		<td><input tabindex="5" name="equipo_serial" size="20" value="<%= (equipoAsociado != null) ? equipoAsociado.getSerial() : ""%>"></td>
+    	</tr>    	
     	<tr>
     		<td class = "a">Fecha de Entrada:</td>
     		<td><input tabindex="7" size="20" name="fecha_entrega" onclick="scwShow(this, event)" value="<%= (donatario.getFecha_entrega() != null) ? Utilidades.mostrarFecha(donatario.getFecha_entrega()) : ""%> "></td>
@@ -393,7 +407,7 @@ accept-charset="text/plain" >
     	</tr>
     	<tr>
     		<td class = "a">Nro. Contrato</td>
-    		<td><input tabindex="6" size="20" name = "numero" value="<%= (con.getNumero() != 0) ? con.getNumero() : ""%>"></td>
+    		<td><input tabindex="6" size="20" name = "numero"></td>
     	</tr>
     	<tr>
     		<td class = "a">Archivo:</td>

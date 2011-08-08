@@ -73,7 +73,9 @@
 		try {				
 %> 			
 			<jsp:useBean id= "donatario" class = "beans.Donatario" scope="request">
-				<%				
+				<%	
+				
+					//Cargar información vieja de la bd				
 					canaima.buscarPorID(idDonatario, donatario);
 					donatario.setNombre(request.getParameter("nombre"));
 					donatario.setPartidanacimiento(request.getParameter("partidanacimiento" ));
@@ -86,17 +88,11 @@
 					donatario.setCiudad(request.getParameter("ciudad"));
 					donatario.setDireccion(request.getParameter("direccion"));
 					donatario.setIdcolegio(Integer.valueOf(request.getParameter("idcolegio")));
-						
-					/* Se puede guardar asi pero se corre el riesgo de perder la data original
-					donatario.setColegio("");
-					donatario.setCodigo_dea("");
-					*/
 					donatario.setColegio(request.getParameter("colegio"));
 					donatario.setCodigo_dea(request.getParameter("codigo_dea"));
 					donatario.setAno_escolar(Integer.valueOf(request.getParameter("ano_escolar")));
 					donatario.setGrado(Integer.valueOf(request.getParameter("grado")));
 					donatario.setSeccion(request.getParameter("seccion"));
-					donatario.setEquipo_serial(request.getParameter("equipo_serial"));
 					donatario.setDirector_nombre(request.getParameter("director_nombre"));
 					donatario.setProveedor(request.getParameter("proveedor"));
 					donatario.setObservacion(request.getParameter("observacion"));
@@ -105,6 +101,29 @@
 						donatario.setRepresentante_nac(null);
 										
 					canaima.actualizar(donatario);
+					
+					//Actualizar el serial					
+					if (request.getParameter("equipo_serial") != null && !request.getParameter("equipo_serial").trim().isEmpty()) {
+						
+						//Buscar el serial de equipo
+						Connection con = canaima.solicitarConexion();
+						ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+						Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);
+						canaima.liberarConexion(con);
+						
+						//No hay serial asociado al donatario
+						if (equipoAsociado == null) {
+							
+								//Se verifica que no haya un donatario o docente con el mismo serial de equipo				
+							Equipo equipo = new Equipo();
+							equipo.setSerial(request.getParameter("equipo_serial").trim());
+							equipo.setIddonatario(donatario.getID());				
+							canaima.guardar(equipo);								
+						} else {
+							equipoAsociado.setSerial(request.getParameter("equipo_serial").trim());
+							canaima.actualizar(equipoAsociado);
+						}					
+					}
 					
 					//Aqui se valida si no tiene el mismo nombre y cedula
 					Connection con = canaima.solicitarConexion();
@@ -296,7 +315,14 @@
     	</tr>
     	<tr>
     		<td class = "a">Serial Equipo:</td>
-    		<td> <input tabindex="15" name="equipo_serial" size="28" value="<%= (donatario.getEquipo_serial() != null) ? donatario.getEquipo_serial() : ""%>"></td>
+    <%
+	  	//Buscar el serial de equipo
+		con = canaima.solicitarConexion();
+		ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatario.getID(), 0 , null);
+		Equipo equipoAsociado = (equiposAsociados.size() > 0 ? equiposAsociados.get(0) : null);
+		canaima.liberarConexion(con);
+    %>		
+    		<td> <input tabindex="15" name="equipo_serial" size="28" value="<%= (equipoAsociado != null) ? equipoAsociado.getSerial() : ""%>"></td>
     		<td class = "a">Código DEA:</td>
     		<td><input tabindex="16" name="codigo_dea" size="28" value="<%= (donatario.getCodigo_dea() != null) ? donatario.getCodigo_dea() : ""%>"></td>
     	</tr>

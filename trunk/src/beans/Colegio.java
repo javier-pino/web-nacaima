@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringEscapeUtils;
-import com.lowagie.text.List;
 
 import aplicacion.ExcepcionValidaciones;
 

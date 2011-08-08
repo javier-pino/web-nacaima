@@ -36,7 +36,7 @@
 			//Aqui se valida si no tiene el mismo nombre y cedula
 			Connection con = canaima.solicitarConexion();
 			colegio.validarColegioUnico(con);			
-			canaima.getPoolConexiones().cerrarConexion(con);
+			canaima.liberarConexion(con);
 
 
 			colegio.setIdCreadoPor(canaima.getUsuarioActual().getID());						
@@ -74,7 +74,7 @@
 				Estado estado = new Estado();
 				Connection con = canaima.solicitarConexion();				
 				ArrayList<Estado> estados = Estado.listarEstados(con);
-				canaima.getPoolConexiones().cerrarConexion(con);
+				canaima.liberarConexion(con);
 				out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
 				for (int i=0; i < estados.size(); i++) { 
 						out.write("<option value=\"" + estados.get(i).getID() + "\" >" + estados.get(i).getNombre()  + "</option>");
@@ -145,7 +145,7 @@
 	 con = canaima.solicitarConexion();
 	ArrayList<Colegio> ultimosColegios = Colegio.ultimosColegios(con);	
 	Colegio colegio = new Colegio();
-	canaima.getPoolConexiones().cerrarConexion(con);
+	canaima.liberarConexion(con);
 	
 	for (int i = 0; i < ultimosColegios.size(); i++)
 	{

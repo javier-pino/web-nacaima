@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
+import joins.DocenteEquipo;
+import joins.DonatarioEquipo;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 import aplicacion.ExcepcionValidaciones;
@@ -184,4 +188,58 @@ public class Equipo extends ObjetoPersistente {
 				ps.close();
 		}
 	}
+	
+	/** Verifica que la restriccion de integridad de serial unico se mantenga 
+	 * @throws SQLException 
+	 * @throws ExcepcionValidaciones */
+	public static ArrayList<Equipo> buscarEquipos(Connection con, int iddonatario, int iddocente, String serial) 
+		throws SQLException, ExcepcionValidaciones {		
+		
+		final int DONATARIO = 0, DOCENTE = 1, SERIAL = 2;
+		boolean [] parametrosPresentes = {false, false, false};
+		ArrayList<Equipo> resultado = new ArrayList<Equipo>();
+		String sqlSerialUnico = "select * from canaima.equipo where activo "; 		
+		if (iddonatario > 0) {
+			parametrosPresentes[DONATARIO] = true;
+			sqlSerialUnico += " and iddonatario = ? ";
+		}
+		if (iddocente > 0) {
+			parametrosPresentes[DOCENTE] = true;
+			sqlSerialUnico += " and iddocente = ? ";
+		}
+		if (serial == null || serial.isEmpty()) {
+			parametrosPresentes[SERIAL] = true;
+			sqlSerialUnico += " and serial = ? ";
+		}
+		if (!(parametrosPresentes [0] || parametrosPresentes [1] || parametrosPresentes [2])) {
+			return resultado;
+		}
+		int parametros = 1;
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;
+		try {
+			ps = con.prepareStatement(sqlSerialUnico);			
+			if (parametrosPresentes[DONATARIO])
+				ps.setInt(parametros++, iddonatario);
+			if (parametrosPresentes[DOCENTE])
+				ps.setInt(parametros++, iddocente);
+			if (parametrosPresentes[SERIAL])
+				ps.setString(parametros++, serial);
+			Equipo equipo = null;
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				equipo = new Equipo();
+				equipo.recargar(rs);
+				resultado.add(equipo);				
+			}
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return resultado;
+	}
+	
 }

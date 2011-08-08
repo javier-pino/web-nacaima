@@ -18,7 +18,7 @@ public class DonatarioContrato implements Serializable {
 		return donatario;
 	}
 	public void setDonatario(Donatario donatario) {
-		if (donatario != null)
+		if (donatario != null && contrato != null)
 			valido = true;
 		this.donatario = donatario;
 	}
@@ -26,7 +26,7 @@ public class DonatarioContrato implements Serializable {
 		return contrato;
 	}
 	public void setContrato(Contrato contrato) {
-		if (contrato != null)
+		if (donatario != null && contrato != null)
 			valido = true;
 		this.contrato = contrato;		
 	}

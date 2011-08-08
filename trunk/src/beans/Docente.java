@@ -294,6 +294,29 @@ public class Docente extends ObjetoPersistente {
 		rs.close();
 		ps.close();
 	}
+	
+	/** Obtiene el ultimo donatario registrado por el usuario 
+	 * @throws SQLException 
+	 * @throws ExcepcionValidaciones */
+	public static int getUltimoDocenteRegistrado (Usuario actual, Connection con) throws SQLException, ExcepcionValidaciones {		
+		
+		String sql = " select coalesce(max(iddocente), 0) from docente where activo and idcreadopor = ?" ;
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;
+		try {			
+			ps = con.prepareStatement(sql);		
+			ps.setInt(1, actual.getID());		
+			rs = ps.executeQuery();
+			rs.next();
+			return rs.getInt(1);
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}		
+	}
 
 	@Override
 	public int getID() {	
