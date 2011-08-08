@@ -12,8 +12,9 @@
 		Connection con = canaima.solicitarConexion();
 		
 		int ultimoDon = Donatario.getUltimoDonatarioRegistrado(actual, con);
-		int ultimoCon = Contrato.getUltimoContratoRegistrado(actual, con);
+		int ultimoConDon = Contrato.getUltimoContratoDonatarioRegistrado(actual, con);
 		int ultimoDoc = Docente.getUltimoDocenteRegistrado(actual, con);
+		int ultimoConDoc = Contrato.getUltimoContratoDonatarioRegistrado(actual, con);
 		
 		int ultimaCajDon = Caja.getUltimaCajaRegistrada(con, actual, CAJA_TIPO.DON), 
 			ultimaCajDoc = Caja.getUltimaCajaRegistrada(con, actual, CAJA_TIPO.DOC);				
@@ -47,7 +48,7 @@
 	<div id = "estadisticas">
 		<table border="0">
 			<tr class = "a" align="center">
-				<td colspan="4" > 
+				<td colspan="5" > 
 					&Uacute;ltimos valores
 				</td>
 				<td colspan="8" > 
@@ -60,6 +61,7 @@
 			<tr class = "w" align="center">
 				<td class = "largo">&Uacute;ltimo Donatario Registrado</td>									
 				<td class = "largo">&Uacute;ltimo Contrato Donatario</td>
+				<td class = "largo">&Uacute;ltimo Docente Registrado</td>
 				<td class = "largo">&Uacute;ltimo Contrato Docente</td>
 				<td class = "largo"></td>
 				<td class = "largo">Lote Actual </td>
@@ -80,8 +82,9 @@
 			</tr>		
 			<tr class = "a">
 				<td class = "largo"><%=(ultimoDon > 0 ? ultimoDon : "")%></td>									
-				<td class = "largo"><%=(ultimoCon > 0 ? ultimoCon : "")%></td>
+				<td class = "largo"><%=(ultimoConDon > 0 ? ultimoConDon : "")%></td>
 				<td class = "largo"><%=(ultimoDoc > 0 ? ultimoDoc : "")%></td>										
+				<td class = "largo"><%=(ultimoConDoc > 0 ? ultimoConDoc : "")%></td>
 				<td class = "largo"></td>
 				<td class = "largo"><%=(ultimoLotDon > 0 ? ultimoLotDon : "") %></td>
 				<td class = "largo"><%=(numeroConDon > 0 ? numeroConDon : "") %></td>

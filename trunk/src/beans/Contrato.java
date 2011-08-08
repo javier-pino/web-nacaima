@@ -151,9 +151,9 @@ public class Contrato extends ObjetoPersistente  implements Serializable {
 		this.idlote = idlote;
 	}
 	
-	/** Obtiene el ultimo contrato registrado por el usuario 
+	/** Obtiene el ultimo contrato registrado por el usuario asociado a un donatario 
 	 * @throws SQLException */
-	public static int getUltimoContratoRegistrado (Usuario actual, Connection con) throws SQLException {		
+	public static int getUltimoContratoDonatarioRegistrado (Usuario actual, Connection con) throws SQLException {		
 		
 		String sql = " SELECT coalesce(max(c.numero), 0) FROM contrato c join donatario d on (d.idcontrato = c.idcontrato )" +
 				" and d.activo and d.idcreadopor = ? order by fecha_act desc;" ;
@@ -174,7 +174,29 @@ public class Contrato extends ObjetoPersistente  implements Serializable {
 		}
 	}
 	
-	
+	/** Obtiene el ultimo contrato registrado por el usuario asociado a un donatario 
+	 * @throws SQLException */
+	public static int getUltimoContratoDocenteRegistrado (Usuario actual, Connection con) throws SQLException {		
+		
+		String sql = " SELECT coalesce(max(c.numero), 0) FROM contrato c join docente d on (d.idcontrato = c.idcontrato )" +
+				" and d.activo and d.idcreadopor = ? order by fecha_act desc;" ;
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;
+		try {			
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, actual.getID());
+			rs = ps.executeQuery();
+			rs.next();
+			return rs.getInt(1);
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+	}
+
 	/** Obtiene el numero de contratos registrados para un lote 
 	 * @throws SQLException */
 	public static int getNumeroDeContratos (Connection con, int idlote) throws SQLException {		
