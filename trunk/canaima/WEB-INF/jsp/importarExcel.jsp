@@ -34,7 +34,7 @@
         <div id="Page">
             <div id="Content">            
 <%
-				Utilidades.leerArchivoExcel(canaima, canaima.DIRECTORIO_GUARDADO + "Reporte_general_de_colegios.xls");
+				Utilidades.leerArchivoExcel(canaima, canaima.DIRECTORIO_DONATARIO + "Reporte_general_de_colegios.xls");
 %>			
 			</div>
 			<p>&nbsp;</p>

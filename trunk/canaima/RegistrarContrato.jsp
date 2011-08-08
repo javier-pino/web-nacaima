@@ -284,7 +284,7 @@
 				if (archivo.getSize() > 0) {						
 					
 					//Crear la carpeta				
-					String directorio = canaima.DIRECTORIO_GUARDADO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
+					String directorio = canaima.DIRECTORIO_DONATARIO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
 					Utilidades.crearDirectorio(directorio);				
 					boolean existe = true;
 					File archivo_fisico = null;				
