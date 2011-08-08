@@ -69,16 +69,17 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	} 
 
 	/** Se deben tomar en cuenta los parámetros de inicializacion que corresponden al negocio, max lotes y max contratos */ 
-	public void configurarAplicacion (ServletContext application) {
-		
+	public void configurarAplicacion (ServletContext application) {		
 		MAX_CONTRATOS_X_LOTE = 
 			Integer.parseInt(application.getInitParameter("maxContratosXLote").trim());
 		MAX_LOTES_X_CAJA = 
 			Integer.parseInt(application.getInitParameter("maxLotesXCaja").trim());
 		DIRECTORIO_TEMPORAL = 
 			application.getInitParameter("directorioTemporal");		
-		DIRECTORIO_GUARDADO =  
+		DIRECTORIO_DONATARIO =  
 			application.getInitParameter("directorioGuardado");
+		DIRECTORIO_DOCENTE =  
+			application.getInitParameter("directorioDocente");
 	}
 	
 	//**************** Párametros y Métodos de la aplicación 
@@ -206,7 +207,7 @@ public class ModeloCanaima implements Serializable, HttpSessionBindingListener {
 	}
 		
 	public int MAX_LOTES_X_CAJA, MAX_CONTRATOS_X_LOTE;
-	public String DIRECTORIO_TEMPORAL, DIRECTORIO_GUARDADO;
+	public String DIRECTORIO_TEMPORAL, DIRECTORIO_DONATARIO, DIRECTORIO_DOCENTE;
 	public String DIRECTORIO_TEMPORAL_SUFIJO =  "/canaima/temp/";
 	
 	/*** Verifica si se puede hacer login */

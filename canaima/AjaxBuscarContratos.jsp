@@ -193,7 +193,7 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 				viejo.delete();
 								
 				//Crear la carpeta				
-				String directorio = canaima.DIRECTORIO_GUARDADO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
+				String directorio = canaima.DIRECTORIO_DONATARIO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
 				Utilidades.crearDirectorio(directorio);
 				boolean existe = true;
 				File archivo_fisico = null;				

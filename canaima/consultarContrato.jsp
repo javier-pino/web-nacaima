@@ -281,7 +281,7 @@
 					viejo.delete();	
 													
 					//Crear la carpeta				
-					String directorio = canaima.DIRECTORIO_GUARDADO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
+					String directorio = canaima.DIRECTORIO_DONATARIO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
 					Utilidades.crearDirectorio(directorio);								
 					File archivo_fisico = new File(directorio, cont.getNumero()+ ".pdf");								
 					archivo.write(archivo_fisico);				
