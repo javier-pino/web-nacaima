@@ -25,6 +25,17 @@
     margin-left: 10px;
 }
 
+#scroll2{ 
+	width:98%;  
+	background-color:#F2F2F2;  
+	border-top-style: solid; 
+	border-right-style: solid;
+	border-left-style: solid; 
+	border-bottom-style: solid;
+	border: 1px solid grey;
+    margin-left: 10px;
+}
+
 #scrollInf{ 
 	width:815px; 
 	background-color:#F2F2F2; 

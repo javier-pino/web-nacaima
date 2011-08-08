@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -18,14 +19,14 @@ public class Docente extends ObjetoPersistente {
 
 	private static final long serialVersionUID = 723342237982751857L;
 		
-	//Identificacion del profesor
+	//Identificacion del docente
 	private int iddocente;
 	private int idcreadopor;
 	private NACIONALIDAD nacionalidad;
 	private String cedula;
 	private String nombre;
 	
-	//Direccion del profesor
+	//Direccion del docente
 	private int idestado;
 	private int idmunicipio;	
 	private int idparroquia;	
@@ -73,8 +74,10 @@ public class Docente extends ObjetoPersistente {
 		return nacionalidad;
 	}
 
-	public void setNacionalidad(NACIONALIDAD nacionalidad) {
-		this.nacionalidad = nacionalidad;
+	public void setNacionalidad(String nacionalidad) {
+		if (nacionalidad != null)
+			this.nacionalidad = NACIONALIDAD.valueOf(nacionalidad);
+		else this.nacionalidad = null;
 	}
 
 	public String getCedula() {
@@ -194,7 +197,7 @@ public class Docente extends ObjetoPersistente {
 			resultado.add(errorTamaño("Observacion", TINYTEXT));
 		if (proveedor != null && proveedor.length() > TINYTEXT)
 			resultado.add(errorTamaño("Proveedor", TINYTEXT));
-			
+		
 		//Usando el o exclusivo != 
 		if ( (cedula == null || cedula.isEmpty()) != (nacionalidad == null)) {
 			resultado.add("Para agregar la 'Cédula del Docente' debe indicar" +
@@ -233,7 +236,7 @@ public class Docente extends ObjetoPersistente {
 		String sql_insercion = "insert into `canaima`.`docente` (" +				
 			" `idcolegio`, `idestado`, `idmunicipio`, `idparroquia`, `ciudad`, `nacionalidad`, `cedula`, `nombre`, " +
 			" `fecha_entrega`, `fecha_llegada`, `observacion`, `proveedor`, `idcreadopor`, `idcontrato` " +
-			" ) values (?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ? ) ";			
+			" ) values (?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?) ";			
 		PreparedStatement ps = con.prepareStatement(sql_insercion, PreparedStatement.RETURN_GENERATED_KEYS);
 		ps.setInt(1, idcolegio);
 		ps.setInt(2, idestado);
@@ -322,4 +325,79 @@ public class Docente extends ObjetoPersistente {
 	public int getID() {	
 		return getIddocente();
 	}
+	
+	/** Aunque no es una validacion en si misma la regla del negocio, implica que debe alertarse por 
+	 * docentes con misma cedula y mismo nombre  
+	 * @throws SQLException 
+	 * @throws ExcepcionValidaciones */
+	public void validarCedulaRepNombreDocente (Connection con) throws SQLException, ExcepcionValidaciones {
+		
+		if (getCedula() == null || getCedula().isEmpty())
+			return;
+		else {
+			if (getNombre() == null || getNombre().isEmpty())
+				return;
+		}		
+		String sqlNombreCedula = " select * from canaima.docente where activo " +
+				" and nacionalidad = ? and cedula = ? and nombre = ? and iddocente != ? " ;
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;
+		try {
+			ps = con.prepareStatement(sqlNombreCedula);
+			ps.setString(1, (getCedula() != null ) ? getNacionalidad().toString() : "");
+			ps.setString(2, getCedula());
+			ps.setString(3, getNombre());
+			ps.setInt(4, getIddocente());
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				Docente repetido = new Docente();
+				repetido.recargar(rs);
+				throw new ExcepcionValidaciones(
+						"El docente 'ID = " + repetido.getID() + "' <br>posee la misma cédula " +
+						"('" +	repetido.getNacionalidad() + "-" + repetido.getCedula()
+						+ "')<br> y nombre ('" + repetido.getNombre() + "') que el docente ingresado" +
+						"<br><br>El mismo fue almacenado, verifique y si hay alguna inconsistencia elimine el registro"
+					);
+			}
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}		
+	}
+	
+	/** Ultimos 20 docentes registrados
+	 *  
+	 * @throws SQLException 
+	 * @throws ExcepcionValidaciones */
+	public static ArrayList<Docente> getRecientes(Connection con) throws SQLException, ExcepcionValidaciones {
+			
+		ArrayList<Docente> recientes = new ArrayList<Docente>();
+		
+		String sql = " select * from canaima.docente " +
+								 "order by iddocente LIMIT 0, 20" ;
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;
+		Docente resultado = new Docente();
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				resultado.recargar(rs);	
+				recientes.add(resultado);
+				resultado = new Docente();
+			}
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}	
+		
+		return recientes;
+	}
+	
 }
