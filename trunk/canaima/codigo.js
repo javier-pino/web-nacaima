@@ -57,6 +57,23 @@ function validarValores(form){
 
 }
 
+function validarValoresDocente(form){
+	if ( (form.iddocente.value=="" || form.iddocente.value == null) 
+			&&(form.nombre.value=="" || form.nombre.value == null)
+			&&(form.cedula.value=="" || form.cedula.value == null)
+			&&(form.idestado.value == 0)
+			&&(form.idmunicipio.value == 0)
+			&&(form.idparroquia.value == 0)
+			&&(form.ciudad.value=="" || form.ciudad.value == null)
+			&&(form.idcolegio.value=="" || form.idcolegio.value == null)
+	)
+	{
+		alert("Introduzca al menos un campo");
+		return false;
+	} 
+
+}
+
 function validarValoresColegio(form){
 	if ( (form.idestado.value == 0) &&(form.idmunicipio.value == 0) &&(form.idparroquia.value == 0)
 			&&(form.idcolegioo.value == "" || form.idcolegioo.value == null)
@@ -225,22 +242,22 @@ function removeAttachmentElement(num_id) {
 
 function addAttachmentElement() {
 	var container = document.getElementById('attachment_container');
-	var counter = document.getElementById('attachment_counter').value;
+	var counter = document.getElementById('serial_contador').value;
 	counter++;
-	document.getElementById('attachment_counter').value = counter;
+	document.getElementById('serial_contador').value = counter;
 	var attachment_div = document.createElement('div');
 	attachment_div.setAttribute('id','attachment_'+counter);
 	attachment_div.setAttribute('class','attachment');
 	 
 		var attachment_label = document.createElement('label');
-		attachment_label.innerHTML = "Serial ";
+		attachment_label.innerHTML = "";
 		attachment_div.appendChild(attachment_label);
 	 
 		var attachment_input = document.createElement('input');
 		attachment_input.setAttribute('type','text');
-		attachment_input.setAttribute('size','14');
-		attachment_input.setAttribute('id','file_'+counter);
-	      attachment_input.setAttribute('name','file_'+counter);
+		attachment_input.setAttribute('size','24');
+		attachment_input.setAttribute('id','serial_'+counter);
+	      attachment_input.setAttribute('name','serial_'+counter);
 		attachment_div.appendChild(attachment_input);
 	 
 		var attachment_a2 = document.createElement('a');

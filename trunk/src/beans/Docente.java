@@ -7,12 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.ListIterator;
-
 import org.apache.commons.lang.StringEscapeUtils;
-
 import enums.NACIONALIDAD;
-
 import aplicacion.ExcepcionValidaciones;
 
 public class Docente extends ObjetoPersistente {
@@ -198,11 +194,6 @@ public class Docente extends ObjetoPersistente {
 		if (proveedor != null && proveedor.length() > TINYTEXT)
 			resultado.add(errorTamaño("Proveedor", TINYTEXT));
 		
-		//Usando el o exclusivo != 
-		if ( (cedula == null || cedula.isEmpty()) != (nacionalidad == null)) {
-			resultado.add("Para agregar la 'Cédula del Docente' debe indicar" +
-			" 'Nacionalidad' y 'Número'");
-		}
 		return resultado;
 	}
 
@@ -398,6 +389,124 @@ public class Docente extends ObjetoPersistente {
 		}	
 		
 		return recientes;
+	}
+	
+	/**  
+	 * @throws SQLException 
+	 * @throws ExcepcionValidaciones */
+	public static ArrayList<Docente> listarDocentes(Connection con,
+		int estado, 
+		int municipio, 
+		String ciudad,   
+		String nombre, 
+		String cedula,
+		int idDocente,
+		int idColegio,
+		int idParroquia
+		
+	) throws SQLException, ExcepcionValidaciones {
+		
+		final int ESTADO = 0, MUNICIPIO = 1, CIUDAD = 2,
+			NOMBRE = 3, CEDULA = 4, IDDOCENTE = 5, IDCOLEGIO = 6, IDPARROQUIA = 7;		
+		boolean [] parametrosPresentes = {false, false, false, false,
+				false, false, false, false};
+		
+		if (estado > 0)
+			parametrosPresentes[ESTADO] = true;
+		if (municipio> 0)
+			parametrosPresentes[MUNICIPIO] = true;
+		if (ciudad != null && !ciudad.isEmpty())
+			parametrosPresentes[CIUDAD] = true;
+		if (nombre != null && !nombre.isEmpty())
+			parametrosPresentes[NOMBRE] = true;
+		if (cedula != null && !cedula.isEmpty())
+			parametrosPresentes[CEDULA] = true;
+		if (idDocente > 0)
+			parametrosPresentes[IDDOCENTE] = true;
+		if (idColegio > 0)
+			parametrosPresentes[IDCOLEGIO] = true;
+		if (idParroquia > 0)
+			parametrosPresentes[IDPARROQUIA] = true;
+		
+		ArrayList<Docente> resultado = new ArrayList<Docente>();		
+		int parametrosUsados = 1;
+		
+		//Crear el string de búsqueda
+		String sqlDocentes = 
+			"select * from docente where activo ";
+		if (parametrosPresentes[ESTADO]) {
+			sqlDocentes += " and idestado = ? ";
+		}
+		if (parametrosPresentes[MUNICIPIO]) {
+			sqlDocentes += " and idmunicipio = ? ";
+		}
+		if (parametrosPresentes[CIUDAD]) {
+			sqlDocentes += " and ciudad like ? ";
+		}
+
+		if (parametrosPresentes[NOMBRE]) {
+			sqlDocentes += " and nombre like ? ";
+		}
+		if (parametrosPresentes[CEDULA]) {
+			sqlDocentes += " and cedula like ? ";
+		}
+		if (parametrosPresentes[IDDOCENTE]) {
+			sqlDocentes += " and iddocente = ?";
+		}
+		if (parametrosPresentes[IDCOLEGIO]) {
+			sqlDocentes += " and idcolegio = ?";
+		}
+		if (parametrosPresentes[IDPARROQUIA]) {
+			sqlDocentes += " and idparroquia = ?";
+		}
+		
+		
+		sqlDocentes += " order by nombre, ciudad, idcolegio";
+		
+		PreparedStatement ps =  null; 
+		ResultSet rs = null;		
+		try {
+			ps = con.prepareStatement(sqlDocentes);		
+			if (parametrosPresentes[ESTADO]) {
+				ps.setInt(parametrosUsados++, estado);				
+			}
+			if (parametrosPresentes[MUNICIPIO]) {
+				ps.setInt(parametrosUsados++, municipio);
+			}
+			if (parametrosPresentes[CIUDAD]) {
+				ps.setString(parametrosUsados++, "%"+ciudad+"%");
+			}	
+			if (parametrosPresentes[NOMBRE]) {
+				ps.setString(parametrosUsados++, "%"+nombre+"%");
+			}
+			if (parametrosPresentes[CEDULA]) {
+				ps.setString(parametrosUsados++, "%"+cedula+"%");
+			}
+			if (parametrosPresentes[IDDOCENTE]) {
+				ps.setInt(parametrosUsados++, idDocente);
+			}	
+			if (parametrosPresentes[IDCOLEGIO]) {
+				ps.setInt(parametrosUsados++, idColegio);
+			}
+			if (parametrosPresentes[IDPARROQUIA]) {
+				ps.setInt(parametrosUsados++, idParroquia);
+			}
+			
+			rs = ps.executeQuery();
+			Docente retornado = null;
+			while (rs.next()) {
+				retornado = new Docente();
+				retornado.recargar(rs);
+				resultado.add(retornado);
+			}
+		}
+		finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
+		return resultado;
 	}
 	
 }

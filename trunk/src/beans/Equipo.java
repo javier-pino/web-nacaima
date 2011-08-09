@@ -207,7 +207,7 @@ public class Equipo extends ObjetoPersistente {
 			parametrosPresentes[DOCENTE] = true;
 			sqlSerialUnico += " and iddocente = ? ";
 		}
-		if (serial == null || serial.isEmpty()) {
+		if (serial != null) {
 			parametrosPresentes[SERIAL] = true;
 			sqlSerialUnico += " and serial = ? ";
 		}

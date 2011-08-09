@@ -1,3 +1,4 @@
+<%@page import="beans.Equipo"%>
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.util.*" %>
 <%@page import="aplicacion.ExcepcionValidaciones" %>
@@ -33,7 +34,16 @@
 		 	//Se desactivan, porque decidimos que no se eliminan
 		 	docenteEliminado.setActivo(false);
 		 	canaima.actualizar(docenteEliminado);	
-		 			 			 
+		 	Connection con = canaima.solicitarConexion();
+		 	ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, 0 ,docenteEliminado.getID(), null);
+			Equipo equipoAsociado = null;
+			
+			for(int i=0; i<equiposAsociados.size(); i++){
+				equipoAsociado = equiposAsociados.get(i);
+				canaima.eliminarPorID(equipoAsociado);
+				
+			}
+			canaima.liberarConexion(con);		 			 
 	   		%>
 			 	<jsp:include page="/WEB-INF/jsp/GeneradorMensaje.jsp">
 					<jsp:param value="El Docente ha sido eliminado" name="titulo"/>				
