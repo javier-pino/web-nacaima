@@ -5,7 +5,6 @@
 <%@page import="aplicacion.Utilidades"%>
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.sql.Connection"%>
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 <!-- Iniciar Modelo -->
@@ -90,8 +89,8 @@
 		<p>&nbsp;</p>
 	</div>
 </div>
-<br>
-<br>
-<br>
-<br>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 </div>

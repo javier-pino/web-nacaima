@@ -6,7 +6,6 @@
 <%@page import="aplicacion.Utilidades"%>
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.sql.Connection"%>
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 <!-- Iniciar Modelo -->
@@ -14,6 +13,23 @@
 
 <!-- Incluir la cabecera -->
 <%@include file="/WEB-INF/jsp/GeneradorCabecera.jsp"%>
+
+<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
+<link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
+
+<script type="text/javascript">
+		$().ready(function() {;		
+			$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+				width: 460,
+				height: 500,
+				matchContains: true,
+				max: 30,
+				minChars: 2,
+				multiple: false
+			});
+		});
+		
+</script>
 
 <%!
 	public enum ESTADO {
@@ -43,12 +59,12 @@
 			<div class="Part">
 				<h2>Reporte de Canaima</h2>							
 				&nbsp; 
-				<div id = "estadisticas">				
+				<div id="CanaimaFiltro" >				
 				<form method="post">
 				<table align="left"">				
 					<tr class="a">
 						<td>Estado</td>
-						<td>Código DEA</td>
+						<td>Colegio</td>					
 						<td></td>											
 					</tr>				
 					<tr>						
@@ -70,7 +86,8 @@
 							</SELECT>
 						</td>					
 						<td>
-							<input tabindex="2" size="20" name="coddea"	maxlength="255" value="TODOS">
+							<input tabindex="2" type="text" size="71" name="colegiotexto" id="colegio" />
+							<input type="hidden" name="idcolegio" id="idcolegio" value="0"/>
 						</td>						
 						<td>
 							<input type="hidden" name = "estado" value = "<%=ESTADO.BUSCAR%>">							
@@ -93,8 +110,8 @@
 		<p>&nbsp;</p>
 	</div>
 </div>
-<br>
-<br>
-<br>
-<br>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 </div>
