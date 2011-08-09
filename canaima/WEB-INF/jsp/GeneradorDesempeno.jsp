@@ -134,8 +134,8 @@ java.awt.*" %>
 		}
 	}
 	canaima.liberarConexion(con, ps, rs);
-%>
-<%	
+	
+	Date actualDate = Utilidades.nuevaFecha();
 	DefaultCategoryDataset series = new DefaultCategoryDataset();
 	iterador = usuarios.iterator();
 	while (iterador.hasNext()) {
@@ -168,10 +168,12 @@ java.awt.*" %>
 	row = sheet.createRow(2);
 	row.createCell(1).setCellValue("Fecha Inicio");
 	row.createCell(2).setCellValue("Fecha Fin");
+	row.createCell(3).setCellValue("Fecha Solicitud");
 	
 	row = sheet.createRow(3);
 	row.createCell(1).setCellValue(fechaInicial);	
 	row.createCell(2).setCellValue(fechaFinal);
+	row.createCell(3).setCellValue(Utilidades.mostrarFecha(actualDate));
 	
 	style = wb.createCellStyle();	
 	style.setBorderTop((short) 6);	
@@ -213,8 +215,8 @@ java.awt.*" %>
 		row.createCell(0).setCellValue(aux.nombre);
 		row.createCell(1).setCellValue(aux.donatarios);
 		row.createCell(2).setCellValue(aux.contratos);
-		row.createCell(2).setCellValue(aux.docentes);		
-		row.createCell(3).setCellValue(aux.donatarios + aux.contratos + aux.docentes);		
+		row.createCell(3).setCellValue(aux.docentes);		
+		row.createCell(4).setCellValue(aux.donatarios + aux.contratos + aux.docentes);		
 	}	
 	sheet.autoSizeColumn((short) 0);
 	sheet.autoSizeColumn((short) 1);
@@ -241,8 +243,7 @@ java.awt.*" %>
 	File file = new File(canaima.DIRECTORIO_TEMPORAL, nombreExcel);	
 	FileOutputStream fileOut = new FileOutputStream(file);
 	wb.write(fileOut);
-	fileOut.close();
-	Date actualDate = Utilidades.nuevaFecha();
+	fileOut.close();	
 %>		
 
 	<div id="DesempeñoFecha">
@@ -296,7 +297,10 @@ java.awt.*" %>
 	</div>
 
 	<div id="DesempeñoImagen" >
-		<img alt="" src="<%=canaima.DIRECTORIO_TEMPORAL_SUFIJO + nombreImagen%>">		
+		<table align="left" border="0">			
+			<tr align="center"><td colspan="5" class = "a">GR&Aacute;FICO DE DESEMPE&Ntilde;O</td></tr>
+			<tr><td><img alt="Gr&aacute;fico de Desempe&ntilde;o" src="<%=canaima.DIRECTORIO_TEMPORAL_SUFIJO + nombreImagen%>"></td></tr>
+		</table>			
 	</div>
 	
 	<div id="DesempeñoExcel">
