@@ -215,6 +215,10 @@
 					}				
 			}
 			
+			
+			
+			
+			
 			if (equipos.size()<=0)
 				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
 			
@@ -306,6 +310,11 @@
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		} 
 	}
+	
+	
+	
+	
+	
 %>
 <body>
 <br>
@@ -319,6 +328,27 @@
 		
 		Docente docente = new Docente(); 
         canaima.buscarPorID(idDocente, docente);
+        
+        Contrato contrato = new Contrato();
+        canaima.buscarPorID( docente.getIdcontrato(), contrato);
+        
+        String nombre = "temp" + Calendar.getInstance().getTimeInMillis(), ext = ".pdf";
+    	
+    	//Generar el archivo temporal	    	
+    	File archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+    	synchronized (archivo) {
+    		while (archivo.exists()) {
+	    		nombre = "temp" + Calendar.getInstance().getTimeInMillis();
+	    		archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+	    	}
+    		Utilidades.guardarArchivo(canaima.DIRECTORIO_TEMPORAL, nombre, ext, contrato.getPdf());
+	    	canaima.setArchivoTemporal(nombre + ext);
+    	}	    	
+    	Lote lote = new Lote();
+    	canaima.buscarPorID(contrato.getIdlote(), lote);	    	    
+    	Caja caja = new Caja();
+    	canaima.buscarPorID(lote.getIdcaja(), caja);
+        
     %>
     <br><br>
     <table border="1">
@@ -448,7 +478,6 @@
     	</tr>
     	
     	<% 
-    	Contrato contrato = null;
     	if (docente.getIdcontrato() > 0) {
 				
 			contrato = new Contrato();
