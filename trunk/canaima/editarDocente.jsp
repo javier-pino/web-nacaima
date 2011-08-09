@@ -142,8 +142,10 @@
 						if (item.getString() != null)
 							docente.setIdparroquia(Integer.parseInt(item.getString()));
 					}else if (item.getFieldName().equals("idcolegio")) {
-						if (item.getString() != null)
+						if (item.getString() != null && !item.getString().trim().isEmpty())
 							docente.setIdcolegio(Integer.parseInt(item.getString()));
+						else
+							docente.setIdcolegio(0);
 					}else if (item.getFieldName().equals("proveedor")) {
 						if (item.getString() != null)
 							docente.setProveedor(item.getString());
@@ -204,7 +206,7 @@
 										+ "Debe ser del estilo: DIA-MES-AÑO");
 						}						
 					} else if (item.getFieldName().equals("observacion")) {
-						if (item.getString() != null && !item.getString().trim().isEmpty())
+						if (item.getString() != null )
 							docente.setObservacion(item.getString());
 					} else if (item.getFieldName().equals("numero")) {						
 						if (item.getString() != null && !item.getString().trim().isEmpty())
@@ -214,10 +216,7 @@
 					archivo = item;
 					}				
 			}
-			
-			
-			
-			
+			canaima.liberarConexion(con);
 			
 			if (equipos.size()<=0)
 				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
@@ -272,7 +271,10 @@
 				cont.validarContratoUnico(con);				
 				canaima.liberarConexion(con);				
 			}
-					
+			
+			if(cambiarContrato && (archivo!=null || archivo.getSize()==0 ))
+				throw new ExcepcionValidaciones("Si modifica el n&uacute;mero de contrato debe adjuntar un nuevo archivo .pdf");
+			
 			//Intentar guardar el archivo
 			if (archivo != null) {
 				if (archivo.getSize() > 0) {
@@ -285,7 +287,7 @@
 					viejo.delete();	
 													
 					//Crear la carpeta				
-					String directorio = canaima.DIRECTORIO_DONATARIO + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
+					String directorio = canaima.DIRECTORIO_DOCENTE + "Caja " + caja.getNumero() + "/Lote " + lote.getNumero();
 					Utilidades.crearDirectorio(directorio);								
 					File archivo_fisico = new File(directorio, cont.getNumero()+ ".pdf");								
 					archivo.write(archivo_fisico);				
@@ -301,20 +303,16 @@
 			}
 			idDocente = docente.getID(); 
 			
-			
+		
 		} catch (ExcepcionValidaciones val) {
 			request.setAttribute("validaciones", val.getValidacionesIncumplidas());
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);					
 		} catch (Exception exc) {					
+			exc.printStackTrace();
 			request.setAttribute("excepcion", exc);
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		} 
 	}
-	
-	
-	
-	
-	
 %>
 <body>
 <br>
@@ -476,7 +474,12 @@
     		<td class = "a">Observaciones:</td>
     		<td colspan="4"> <input tabindex="19" name="observacion" size="87" value="<%= (docente.getObservacion() != null) ? docente.getObservacion() : ""%>"></td>
     	</tr>
-    	
+    	<tr>
+    		<td class = "a">Caja:</td>
+    		<td><%= (caja != null) ? caja.getNumero() : ""%></td>
+    		<td class = "a">Lote:</td>
+    		<td><%= (lote != null) ? lote.getNumero() : ""%></td>
+    	</tr>
     	<% 
     	if (docente.getIdcontrato() > 0) {
 				

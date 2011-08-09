@@ -166,6 +166,9 @@
 			
 			docente.setIdcreadopor(canaima.getUsuarioActual().getID());
 			
+			if (equipos.size()<=0)
+				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
+			
 			//TODO VERIFICAR SERIALES REPETIDOS
 			Equipo equipo = null;
 			Connection con = canaima.solicitarConexion();
