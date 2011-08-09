@@ -195,13 +195,13 @@ body {
 	border-left-style: solid; 
 	border-bottom-style: solid;
 	border: 1px solid grey;    
-    margin-bottom: 50px;
+    margin-bottom: 10px;
     margin-left: 10px;
     margin-top: 10px;
 }
 #DesempeñoFecha{ 
 	width:53%; 
-	height:60px; 
+	height:80px; 
 	background-color:#F2F2F2; 
 	overflow:auto; 
 	border-top-style: solid; 
@@ -213,8 +213,7 @@ body {
     margin-bottom: 10px;
 }
 #DesempeñoTabla{ 
-	width:53%; 
-	height:180px; 
+	width:53%; 	
 	background-color:#F2F2F2; 
 	overflow:auto; 
 	border-top-style: solid; 
@@ -281,3 +280,4 @@ body {
 	border: 1px solid grey;
     margin-left: 10px;
 }
+
