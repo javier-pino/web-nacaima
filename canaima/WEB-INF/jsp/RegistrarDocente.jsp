@@ -66,10 +66,13 @@
 			ServletFileUpload fileUpload = new ServletFileUpload(new DiskFileItemFactory());
 			List<FileItem> listaItems = fileUpload.parseRequest(request);
 			FileItem item = null;
+			FileItem item_serial = null;
 			Iterator<FileItem> it = listaItems.iterator();
+			Iterator<FileItem> it_seriales = listaItems.iterator();
 			
 			//Se leen por completo los valores
-			it = listaItems.iterator();
+			ArrayList<String> equipos = new ArrayList<String>();
+			
 			while (it.hasNext()) {
 				item = (FileItem)it.next();
 				if (item.isFormField()) {
@@ -100,10 +103,9 @@
 					} else if (item.getFieldName().equals("cedula")) {
 						if (item.getString() != null && !item.getString().trim().isEmpty())
 							docente.setCedula(item.getString());						
-					} else if (item.getFieldName().equals("equipo_serial")) {
+					} else if (item.getFieldName().startsWith("serial_")) {
 						if (item.getString() != null && !item.getString().trim().isEmpty()) {
-							
-							//TODO EQUIPOS
+							equipos.add(item.getString());
 						}
 					} else if (item.getFieldName().equals("fecha_entrega")) {
 						if (item.getString() != null && !item.getString().trim().isEmpty()) {							
@@ -164,14 +166,33 @@
 			
 			docente.setIdcreadopor(canaima.getUsuarioActual().getID());
 			
+			//TODO VERIFICAR SERIALES REPETIDOS
+			Equipo equipo = null;
+			Connection con = canaima.solicitarConexion();
+			for(int i=0; i<equipos.size(); i++){
+				equipo = new Equipo();
+				equipo.setSerial(equipos.get(i));
+				equipo.validarSerialUnico(con);
+			}
+			canaima.liberarConexion(con);
+			
 			//Debe ser posible guardar los cambios						
 			canaima.guardar(docente);
+			
+			//Guardar Equipos
+			for(int i=0; i<equipos.size(); i++){
+				
+				equipo = new Equipo();
+				equipo.setIddocente(docente.getID());
+				equipo.setSerial(equipos.get(i));
+				canaima.guardar(equipo);
+			}
 			
 			if (numeroContrato == 0)
 				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro Contrato"));
 			
 			//Aqui se valida si no tiene el mismo nombre y cedula
-			Connection con = canaima.solicitarConexion();
+			con = canaima.solicitarConexion();
 			docente.validarCedulaRepNombreDocente(con);			
 			canaima.liberarConexion(con);
 						
@@ -407,7 +428,7 @@ autocomplete="off">
 <table id="fila_fechas">
 	<tr>
 		<td class = "a">Proveedor</td>
-    	<td class = "a">Fecha de Entrada:</td>
+    	<td class = "a">Fecha de Entrega:</td>
     	<td class = "a">Fecha de Llegada:</td>
     	<td class = "a">Observaciones:</td>
     </tr>
@@ -429,22 +450,12 @@ autocomplete="off">
 <br>
 <table id="fila_fechas">
     <tr>
-    	<td class = "a">Serial Equipo</td>
     	<td class = "a">Nro. Contrato</td>
     	<td class = "a">Archivo:</td>
     	<td class = "a"></td>
     </tr>
     <tr>
-    	<td>
-    	
- 			<div id="attachment_container">
-				<input type="hidden" value="1" id="attachment_counter" />
-    				<div id="attachment_1" class="attachment">
-    					<label>Serial </label><input type="text" size="14" id="file_1"/><a href="" onClick="removeAttachmentElement(1);return false;"><img id="RemoveButton_1" src="img/minusButton.png" onMouseDown="this.src='img/minusButtonDown.png';" onMouseUp="this.src='img/minusButton.png';" alt="Remove" /></a>
-    				</div>
-			</div>
-			<a href="" onClick="addAttachmentElement();return false;"><img id="AddButton_1" src="img/plusButton.png" onMouseDown="this.src='img/plusButtonDown.png';" onMouseUp="this.src='img/plusButton.png';" alt="Add" /></a>
-    	</td>
+
     	<td>
     		<input tabindex="6" size="20" name = "numero" value="">
     	</td>
@@ -456,6 +467,23 @@ autocomplete="off">
 			<INPUT tabindex="19" type="submit" value="Aceptar" name="aceptar">
 		</td> 
     </tr>
+</table>
+<br>
+<table id="fila_fechas">
+	<tr>
+		<td class = "a">Serial Equipo</td>
+	</tr>
+	<tr>
+		<td>
+ 			<div id="attachment_container">
+				<input type="hidden" value="1" id="serial_contador" />
+    				<div id="attachment_1" class="attachment">
+    					<input type="text" size="24" name="serial_1"/><a href="" onClick="removeAttachmentElement(1);return false;"><img id="RemoveButton_1" src="img/minusButton.png" onMouseDown="this.src='img/minusButtonDown.png';" onMouseUp="this.src='img/minusButton.png';" alt="Remove" /></a>
+    				</div>
+			</div>
+			<a href="" onClick="addAttachmentElement();return false;"><img id="AddButton_1" src="img/plusButton.png" onMouseDown="this.src='img/plusButtonDown.png';" onMouseUp="this.src='img/plusButton.png';" alt="Add" /></a>
+    	</td>
+	</tr>
 </table>
 </form>
 </div>

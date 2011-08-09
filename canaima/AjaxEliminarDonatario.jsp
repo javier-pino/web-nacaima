@@ -1,8 +1,7 @@
 <%@page import="enums.ROL_USUARIO"%>
 <%@page import="java.util.*" %>
 <%@page import="aplicacion.ExcepcionValidaciones" %>
-<%@page import="beans.Municipio"%>
-<%@page import="beans.Donatario"%>
+<%@page import="beans.*"%>
 <%@page import="enums.NACIONALIDAD"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.sql.Connection"%>
@@ -33,6 +32,17 @@
 		 	//Se desactivan, porque decidimos que no se eliminan
 		 	donatarioEliminado.setActivo(false);
 		 	canaima.actualizar(donatarioEliminado);	
+		 	
+		 	Connection con = canaima.solicitarConexion();
+		 	ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, donatarioEliminado.getID(), 0, null);
+			Equipo equipoAsociado = null;
+			
+			for(int i=0; i<equiposAsociados.size(); i++){
+				equipoAsociado = equiposAsociados.get(i);
+				canaima.eliminarPorID(equipoAsociado);
+				
+			}
+			canaima.liberarConexion(con);
 		 	
 		 	ArrayList<Donatario> recientes = canaima.getRecientes();
 		 	for (int i = 0; i < recientes.size(); i++) {
