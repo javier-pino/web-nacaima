@@ -76,8 +76,7 @@ java.awt.*" %>
 	
 	//Realizar la Búsqueda y Generación del archivo
 	Connection con = canaima.solicitarConexion();	
-	String sql =
-		
+	String sql =		
 		" select nombre, idusuario, id , sum(suma) total from " +
 		" (select u.idusuario, u.nombre as nombre, 1 as suma ,  1 as id " +
 		" from donatario d join usuario u on (d.idcreadopor = u.idusuario) " +
@@ -86,15 +85,21 @@ java.awt.*" %>
 		" select u.idusuario, u.nombre as nombre , 1 as suma, 2 as id " +
 		" from donatario d join usuario u on (d.idcreadopor = u.idusuario) join contrato c on (d.idcontrato = c.idcontrato) " +
 		" where date(d.fecha_carga) between ? and ? " +
+		" UNION ALL " +		
+		" select u.idusuario, u.nombre as nombre , 1 as suma, 3 as id " +
+		" from docente d join usuario u on (d.idcreadopor = u.idusuario ) " + 
+		" join contrato c on (d.idcontrato = c.idcontrato) " +
+		" where date(d.fecha_carga) between ? and ? " +
 		" ) alias " +
 		" group by nombre, idusuario, id " +
 		" order by nombre, id ";
-
 	PreparedStatement ps = con.prepareStatement(sql);
 	ps.setDate(1, inicialDate);
 	ps.setDate(2, finalDate);
 	ps.setDate(3, inicialDate);
 	ps.setDate(4, finalDate);
+	ps.setDate(5, inicialDate);
+	ps.setDate(6, finalDate);
 	ResultSet rs = ps.executeQuery();
 	ArrayList<UsuarioAuxiliar> usuarios = new ArrayList<UsuarioAuxiliar>();
 	Iterator<UsuarioAuxiliar> iterador = null;
@@ -108,8 +113,10 @@ java.awt.*" %>
 			if (aux.idusuario == rs.getInt("idusuario")) {
 				if (rs.getInt("id") == 1)
 					aux.donatarios = rs.getDouble("total"); 
-				else
-					aux.contratos = rs.getDouble("total");				
+				else if (rs.getInt("id") == 2) 
+					aux.contratos = rs.getDouble("total");
+				else 
+					aux.docentes = rs.getDouble("total");
 				encontrado = true;
 			}
 		}
@@ -119,24 +126,23 @@ java.awt.*" %>
 			nuevo.nombre = rs.getString("nombre");
 			if (rs.getInt("id") == 1)
 				nuevo.donatarios = rs.getDouble("total"); 
-			else
-				nuevo.contratos = rs.getDouble("total");
-			usuarios.add(nuevo);			
+			else if (rs.getInt("id") == 2) 
+				aux.contratos = rs.getDouble("total");
+			else 
+				aux.docentes = rs.getDouble("total");
+			usuarios.add(nuevo);
 		}
 	}
+	canaima.liberarConexion(con, ps, rs);
 %>
-
-
 <%	
-	
-	
-	
 	DefaultCategoryDataset series = new DefaultCategoryDataset();
 	iterador = usuarios.iterator();
 	while (iterador.hasNext()) {
 		aux = iterador.next();
 		series.setValue(aux.donatarios, "Donatarios", aux.nombre);
 		series.setValue(aux.contratos, "Contratos", aux.nombre);		
+		series.setValue(aux.contratos, "Docentes", aux.nombre);
 	}
 	
 	JFreeChart grafico = ChartFactory.createBarChart
@@ -148,7 +154,7 @@ java.awt.*" %>
 	FileOutputStream salidaImagen = new FileOutputStream(imagen);	
 	ChartUtilities.writeChartAsPNG(salidaImagen,grafico,800, 800);
 	salidaImagen.close();
-	canaima.liberarConexion(con, ps, rs);
+
 	
 	HSSFWorkbook wb = new HSSFWorkbook();
 	HSSFSheet sheet = wb.createSheet("Estadísticas de Desempeño");		
@@ -193,6 +199,9 @@ java.awt.*" %>
 	cell.setCellValue("Contratos Registrados");
 	cell.setCellStyle(style);
 	cell = row.createCell(3);
+	cell.setCellValue("Docentes");
+	cell.setCellStyle(style);
+	cell = row.createCell(4);
 	cell.setCellValue("Total");
 	cell.setCellStyle(style);
 	
@@ -204,13 +213,14 @@ java.awt.*" %>
 		row.createCell(0).setCellValue(aux.nombre);
 		row.createCell(1).setCellValue(aux.donatarios);
 		row.createCell(2).setCellValue(aux.contratos);
-		row.createCell(3).setCellValue(aux.donatarios + aux.contratos);		
-	}
-	
+		row.createCell(2).setCellValue(aux.docentes);		
+		row.createCell(3).setCellValue(aux.donatarios + aux.contratos + aux.docentes);		
+	}	
 	sheet.autoSizeColumn((short) 0);
 	sheet.autoSizeColumn((short) 1);
 	sheet.autoSizeColumn((short) 2);
 	sheet.autoSizeColumn((short) 3);
+	sheet.autoSizeColumn((short) 4);
 	
 	i += 2;		
 	sheet.createRow(i++).createCell(0);
@@ -220,7 +230,6 @@ java.awt.*" %>
     int pictureIdx = wb.addPicture(bytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
     is.close();    
     
-
     HSSFClientAnchor anchor = new HSSFClientAnchor(0,0,0,0, (short)0, i, (short)8, i + 45 );
     
     HSSFPatriarch patriarch=sheet.createDrawingPatriarch();
@@ -237,43 +246,49 @@ java.awt.*" %>
 %>		
 
 	<div id="DesempeñoFecha">
-		<table align="left">
+		<table align="left" >
 			<tr class="a">
 				<td>Fecha Inicio</td>
 				<td>Fecha Fin</td>
-				<td>Fecha de Solicitud</td>				
+				<td>Fecha de Solicitud</td>
+				<td></td>				
+				<td></td>
+				<td></td>
 			</tr>
-			<tr>
+			<tr class = "w">
 				<td><%= Utilidades.mostrarFecha(inicialDate) %></td>
 				<td><%= Utilidades.mostrarFecha(finalDate) %></td>
 				<td><%= Utilidades.mostrarFecha(actualDate)%>
-			</tr>				
-			<tr align="center">				
-				<td><input value = "Reporte Tabulado" id="botonTabla" type="button" ></td>				
-				<td><input value = "Exportar a Excel" id="botonExcel" type="button" ></td>
-				<td><input value = "Graficar Reporte" id="botonImagen" type="button" ></td>				
+				<td><input tabindex="1" value = "Reporte Tabulado" id="botonTabla" type="button" ></td>				
+				<td><input tabindex="2" value = "Exportar a Excel" id="botonExcel" type="button" ></td>
+				<td><input tabindex="3" value = "Graficar Reporte" id="botonImagen" type="button" ></td>				
 			</tr>		
 		</table>	
 	</div>
-
+	<br>
 	<div id="DesempeñoTabla">
-				<table align="left">			
-			<tr class="a">
-				<td>Usuario</td>
-				<td>Donatarios Registrados</td>
-				<td>Contratos Registrados </td>
-				<td>Total</td>
+		<table align="left" border="0">			
+			<tr align="center">
+				<td colspan="5" class = "a">TABLA DE DESEMPE&Ntilde;O</td>
+			</tr>
+			<tr class = "w" align="center">
+				<td class = "largo">Usuario</td>
+				<td class = "largo">Donatarios Registrados</td>
+				<td class = "largo">Contratos Registrados </td>
+				<td class = "largo">Docentes Registrados </td>
+				<td class = "largo">Total</td>
 			</tr>
 	<%
 		iterador = usuarios.iterator();
 		while (iterador.hasNext()) {
 			aux = iterador.next();
 	%>
-			<tr>
-				<td> <%= aux.nombre%></td>		
-				<td> <%= aux.donatarios.longValue() %></td>
-				<td> <%= aux.contratos.longValue() %></td>
-				<td> <%= (aux.contratos.longValue() + aux.donatarios.longValue()) %></td>				
+			<tr class = "largo">
+				<td class = "largo"> <%= aux.nombre%></td>		
+				<td class = "largo"> <%= aux.donatarios.longValue() %></td>
+				<td class = "largo"> <%= aux.contratos.longValue() %></td>
+				<td class = "largo"> <%= aux.docentes.longValue() %></td>
+				<td class = "largo"> <%= (aux.contratos.longValue() + aux.donatarios.longValue() + aux.docentes.longValue()) %></td>				
 			</tr>	
 	<% 	}	
 	%>
@@ -295,9 +310,9 @@ java.awt.*" %>
 	
 	<script>
 		$('#botonTabla').click(function() {
-			$('#DesempeñoTabla').hide('fast');
+			$('#DesempeñoTabla').show('fast');
 			$('#DesempeñoExcel').hide('fast');
-			$('#DesempeñoImagen').show('fast');
+			$('#DesempeñoImagen').hide('fast');
 			
 		});
 	</script>
@@ -320,13 +335,10 @@ java.awt.*" %>
 	private class UsuarioAuxiliar {
 		public int idusuario;
 		public String nombre;
-		public Double donatarios = 0.0, contratos = 0.0;
+		public Double donatarios = 0.0, contratos = 0.0, docentes = 0.0;
 		
 		public String toString () {
-			return "[" + idusuario + " " + nombre + " " + donatarios + " " + contratos + "]";
+			return "[" + idusuario + " " + nombre + " " + donatarios + " " + contratos + " " + docentes + "]";
 		}
-		
-		
 	}
-
 %>
