@@ -111,10 +111,12 @@
 					<td><input size="30" name = "ciudad"></td>
 					</tr>
 					<tr><td colspan="4" style="height: 8px; "></td></tr>
-					<tr align="center">
-					
-						<td colspan="7"><input value = "Aceptar" name = "Aceptar" style="width: 80px; height: 30px" type="submit" onclick="return validarValoresDocente(form)"></td>
-					
+					<tr align="center">					
+						<td colspan="7" align="center">
+							<input value = "Aceptar" name = "Aceptar" style="width: 80px; height: 30px" type="submit" onclick="return validarValoresDocente(form)">
+							<input type="button" value="Limpiar Colegio" name="limpiar" style="width: 100px; height: 30px" onclick="limpiarColegio(form)">
+						</td>
+						
 					</tr>
 				
 				</table>

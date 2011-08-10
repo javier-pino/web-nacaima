@@ -98,7 +98,12 @@
 			pageContext.include("/WEB-INF/jsp/GeneradorMensaje.jsp", true);
 		}		
 	}
+	//Tener la ultima informacion a la mano
 	Donatario ultimo = canaima.getUltimo();
+	Colegio colegio = new Colegio();
+	if (ultimo.getIdcolegio() > 0) {
+		canaima.buscarPorID(ultimo.getIdcolegio(), colegio);	
+	} 
 %>
 <div class="Part" >
 <h2>Registrar</h2>
@@ -190,10 +195,10 @@
 		<td>Direccion</td>
 	</tr>
 	<tr>
-
 		<td>
-				<input type="text" size="71" name="colegiotexto" id="colegio" />
-				<input type="hidden" name="idcolegio" id="idcolegio" />
+				<input type="text" size="71" name="colegiotexto" id="colegio" 
+					value ="<%=(colegio.getID() > 0) ? colegio.getCodigo_dea()+ " - " + colegio.getNombre() : "" %>"/>
+				<input type="hidden" name="idcolegio" id="idcolegio" value="<%= colegio.getID() %>"/>
 		</td>
 		
 		<td>
@@ -243,6 +248,7 @@
 		<td class="b">Nombre. Director</td>
 		<td class="b">Proveedor</td>
 		<td class="b"></td>
+		<td class="b"></td>
 	</tr>
 	<tr>
 		<td class="b" height="15" width="90">
@@ -266,6 +272,9 @@
 		<td align="center">
 		<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
 		<INPUT tabindex="19" type="submit" value="Aceptar" name="aceptar">
+		</td>
+		<td>
+		<INPUT tabindex="20" type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)">
 		</td>		
 	</tr>
 </table>
