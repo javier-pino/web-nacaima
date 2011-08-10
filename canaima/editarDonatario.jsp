@@ -19,13 +19,11 @@
 <link rel="stylesheet" type="text/css" href="css.css" >
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.5.2.js"></script>
 <script language="JavaScript" type="text/javascript" src="codigo.js"></script>
-
 <script type='text/javascript' src='js/jquery.autocomplete.js'></script>
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;
-		
+		$().ready(function() {;		
 		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
 				width: 460,
 				height: 500,
@@ -88,6 +86,16 @@
 					donatario.setCiudad(request.getParameter("ciudad"));
 					donatario.setDireccion(request.getParameter("direccion"));
 					donatario.setIdcolegio(Integer.valueOf(request.getParameter("idcolegio")));
+					
+					if (donatario.getIdcolegio() > 0) {
+						Colegio col = new Colegio();
+						canaima.buscarPorID(donatario.getIdcolegio(), col);
+						donatario.setIdestado(col.getIdestado());
+						donatario.setIdmunicipio(col.getIdmunicipio());
+						donatario.setIdparroquia(col.getIdparroquia());
+					}
+					
+					
 					donatario.setColegio(request.getParameter("colegio"));
 					donatario.setCodigo_dea(request.getParameter("codigo_dea"));
 					donatario.setAno_escolar(Integer.valueOf(request.getParameter("ano_escolar")));
@@ -159,6 +167,10 @@
 		
 		Donatario donatario = new Donatario(); 
         canaima.buscarPorID(idDonatario, donatario);
+        Colegio colegio = new Colegio();
+    	if (donatario.getIdcolegio() > 0) {
+    		canaima.buscarPorID(donatario.getIdcolegio(), colegio);	
+    	} 
     %>
     <br><br>
     <table border="1">
@@ -255,25 +267,11 @@
     		<td><input tabindex="9" size="28" name = "ciudad" value="<%= (donatario.getCiudad() != null) ? donatario.getCiudad() : ""%>"></td>
     	</tr>
     	<tr>
-    		<td class = "a">Colegio N:</td> 		
+    		<td class = "a">Colegio N:</td> 			
     		<td>
- 			
-			<%					
-			
-			if (donatario.getIdcolegio() > 0) {
-				
-				Colegio cole = new Colegio();
-				canaima.buscarPorID(donatario.getIdcolegio(), cole);
-				
-				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"" + cole.getNombre() + "\">");
-	    		out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\" value=\"" + cole.getIdcolegio() + "\">");
-				
-			} else {
-				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"\">");
-				out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\">");
-			}			
-			%>			
-    		
+				<input tabindex="10" size="28" type="text" name="colegiotexto" id="colegiotexto" 
+					value ="<%=(colegio.getID() > 0) ? colegio.getCodigo_dea()+ " - " + colegio.getNombre() : "" %>"/>
+				<input type="hidden" name="idcolegio" id="idcolegio" value="<%= colegio.getID() %>"/>
     		</td>
     		<td class = "a">Dirección:</td>
     		<td><input tabindex="10" size="28" name = "direccion" value="<%= (donatario.getDireccion() != null) ? donatario.getDireccion() : ""%>"></td>
@@ -341,7 +339,8 @@
     			<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
     			<INPUT type="hidden" value="<%= idDonatario %>" name="iddonatario">    			
     			<INPUT tabindex="20" type="submit" value="Aceptar Cambios"/>
-    			<INPUT tabindex="21" type="reset"  value="Eliminar Donatario" id= "botonEliminar" />
+    			<INPUT tabindex="21" type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)">
+    			<INPUT tabindex="22" type="reset"  value="Eliminar Donatario" id= "botonEliminar" />
     		</td>    
     	<tr>	
     </table>

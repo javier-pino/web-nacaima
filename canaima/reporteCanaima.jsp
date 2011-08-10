@@ -65,7 +65,8 @@
 					<tr class="a">
 						<td>Estado</td>
 						<td>Colegio</td>					
-						<td></td>											
+						<td></td>
+						<td></td>															
 					</tr>				
 					<tr>						
 						<td>
@@ -90,9 +91,10 @@
 							<input type="hidden" name="idcolegio" id="idcolegio" value="0"/>
 						</td>						
 						<td>
-							<input type="hidden" name = "estado" value = "<%=ESTADO.BUSCAR%>">							
-							<input value = "Aceptar" name = "Aceptar" type="submit">
-						</td>					
+							<input type="hidden" name = "estado" value = "<%=ESTADO.BUSCAR%>">
+							<input value = "Aceptar" name = "Aceptar" type="submit">							
+						</td>			
+						<td><INPUT tabindex="21" type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)"></td>		
 					</tr>				
 				</table>
 				</form>

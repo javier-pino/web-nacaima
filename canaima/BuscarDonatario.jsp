@@ -28,6 +28,26 @@
 	request.setAttribute("rolActual", canaima.getUsuarioActual().getRol());	
 	pageContext.include("/WEB-INF/jsp/GeneradorMenu.jsp", true);
 %>
+<head>
+<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
+<link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
+<script type="text/javascript">
+		$().ready(function() {;		
+		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
+				width: 460,
+				height: 500,
+				matchContains: true,
+				max: 30,
+				minChars: 2,
+				multiple: false
+			});
+		});
+		
+</script>
+
+</head>
+
+
 <jsp:include page="/WEB-INF/jsp/GeneradorMenuAnalista.jsp" flush="true"></jsp:include>
 <div id="Middle">
        <div id="Page">
@@ -50,20 +70,8 @@
 						<td><input size="28" name = "nombre" onkeypress="validarLetras(this)"></td>
 						<td><input size="20" maxlength="10" name = "representante_ci" onKeypress="validarNumero(this)"></td>
 						<td>
-							<SELECT tabindex="1" name="idcolegio" title="colegio" style="width: 150px;">
-						<%
-							int idColegio;
-							String nombreColegio = null;
-							Colegio colegio = new Colegio();
-							Connection conn = canaima.solicitarConexion();				
-							ArrayList<Colegio> colegios = Colegio.listarColegio(conn);
-							canaima.liberarConexion(conn);
-							out.write("<option value=\"" + 0 + "\">--Seleccione--</option>");
-							for (int i=0; i < colegios.size(); i++) {
-								out.write("<option value=\"" + colegios.get(i).getID() + "\" >" + colegios.get(i).getNombre()  + "</option>");
-				   			}
-			        	%>
-							</SELECT>
+							<input type="text" size="71" name="colegiotexto" id="colegiotexto" />
+							<input type="hidden" name="idcolegio" id="idcolegio" />
 						</td>				
 					</tr>
 					<tr><td colspan="4" style="height: 12px; "></td></tr>
@@ -109,8 +117,10 @@
 					<tr><td colspan="4" style="height: 8px; "></td></tr>
 					<tr align="center">
 					
-						<td colspan="7"><input value = "Aceptar" name = "Aceptar" type="submit" onclick="return validarValores(form)"></td>
-					
+						<td colspan="7">
+							<input value = "Aceptar" name = "Aceptar" type="submit" onclick="return validarValores(form)">
+							<INPUT type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)">
+							</td>
 					</tr>
 				
 				</table>
@@ -157,7 +167,7 @@
 			int idestado =  request.getParameter("idestado") != null && !(request.getParameter("idestado").equals("")) ? Integer.parseInt(request.getParameter("idestado")) : 0;
 			int idMunicip = request.getParameter("idmunicipio") != null && !(request.getParameter("idmunicipio").equals("")) ?	Integer.parseInt(request.getParameter("idmunicipio")) : 0;	
 			int idParroquia = request.getParameter("idparroquia") != null && !(request.getParameter("idparroquia").equals("")) ?	Integer.parseInt(request.getParameter("idparroquia")) : 0;	
-			idColegio = request.getParameter("idcolegio") != null && !(request.getParameter("idcolegio").equals("")) ?	Integer.parseInt(request.getParameter("idcolegio")) : 0;		
+			int idColegio = request.getParameter("idcolegio") != null && !(request.getParameter("idcolegio").equals("")) ?	Integer.parseInt(request.getParameter("idcolegio")) : 0;		
 			int grado = request.getParameter("grado") != null && !(request.getParameter("grado").equals("")) ? Integer.parseInt(request.getParameter("grado")) : 0;			
 			int idDonatario = request.getParameter("iddonatario") != null && !(request.getParameter("iddonatario").equals("")) ?	Integer.parseInt(request.getParameter("iddonatario")) : 0;			
 			Iterator<Donatario> donatarios = Donatario.listarDonatarios(

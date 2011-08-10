@@ -286,16 +286,13 @@ java.awt.*" %>
     con = canaima.solicitarConexion();
     
     //Crear la segunda hoja, que contiene información de las incidencias    		
-	sql = "select d.iddonatario, c.numero, " + 
+	sql = "select d.idestado, d.idcolegio, d.iddonatario, c.numero, " + 
 		" case when (d.nombre = '') then 'SIN NOMBRE' else d.nombre end nombre, tienefirma, tienecedula, tienepartida " +	  
 		" from donatario d join contrato c on (d.idcontrato = c.idcontrato) " + 		
-		" where d.idestado like ? and d.idcolegio like ? " +
-		" and not ( tienecedula and tienepartida and tienefirma) order " +
+		" where not ( tienecedula and tienepartida and tienefirma) order " +
 		" by d.iddonatario, c.numero ";
     
 	ps = con.prepareStatement(sql);
-	ps.setString(1, estado);
-	ps.setString(2, colegio);
 	rs = ps.executeQuery();
     sheet = wb.createSheet("Incidencias Reportadas");  	 	
 	sheet.createRow(0).createCell(0).setCellValue("Incidencias Reportadas");
@@ -323,6 +320,18 @@ java.awt.*" %>
     
 	i = 5;	
 	while (rs.next()) {	
+		
+		if (idestado != -1 ) {			
+			if (rs.getInt("idestado") != idestado) {
+				continue;
+			}			
+		}
+		if (idcolegio != 0) {
+			if (rs.getInt("idcolegio") != idcolegio) {
+				continue;
+			}
+		}
+		
 		row = sheet.createRow(i++);
 		j = 0;
 		row.createCell(j++).setCellValue(rs.getInt("iddonatario"));

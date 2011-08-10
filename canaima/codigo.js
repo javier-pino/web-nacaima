@@ -30,7 +30,10 @@ function cargarpagina(pagina_requerida, id_contenedor){
 		document.getElementById(id_contenedor).innerHTML=pagina_requerida.responseText;
 }
 
-
+function limpiarColegio(form) {
+	form.colegiotexto.value = '';
+	form.idcolegio.value = '0';
+}
 
 function validarNumero(form)
 {
@@ -47,8 +50,8 @@ function validarValores(form){
 			&&(form.idestado.value == 0)
 			&&(form.idmunicipio.value == 0)
 			&&(form.ciudad.value=="" || form.ciudad.value == null)
-			&&(form.idcolegio.value=="" || form.idcolegio.value == null)
-			&&(form.colegio.value=="" || form.colegio.value == null)
+			&&(form.idcolegio.value=="" || form.idcolegio.value=="0" || form.idcolegio.value == null)
+			&&(form.colegio.value=="" || form.colegio.value == null)			
 	)
 	{
 		alert("Introduzca al menos un campo");
@@ -65,7 +68,7 @@ function validarValoresDocente(form){
 			&&(form.idmunicipio.value == 0)
 			&&(form.idparroquia.value == 0)
 			&&(form.ciudad.value=="" || form.ciudad.value == null)
-			&&(form.idcolegio.value=="" || form.idcolegio.value == null)
+			&&(form.idcolegio.value=="" || form.idcolegio.value=="0" || form.idcolegio.value == null)
 	)
 	{
 		alert("Introduzca al menos un campo");

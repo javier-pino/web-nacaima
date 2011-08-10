@@ -23,7 +23,7 @@
 
 <script type="text/javascript">
 		$().ready(function() {;		
-			$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+			$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
 				width: 460,
 				height: 500,
 				matchContains: true,
@@ -158,6 +158,14 @@
 					if (!ext.equals(".pdf")) 
 						throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
 				}				
+			}
+			//Si el docente tiene un colegio no importa lo demas
+			if (docente.getIdcolegio() > 0) {
+				Colegio col = new Colegio();
+				canaima.buscarPorID(docente.getIdcolegio(), col);
+				docente.setIdestado(col.getIdestado());
+				docente.setIdmunicipio(col.getIdmunicipio());
+				docente.setIdparroquia(col.getIdparroquia());
 			}
 			
 			//Verificacion de la cedula del representante
@@ -412,7 +420,7 @@ autocomplete="off">
 	</tr>
 	<tr>
 		<td>
-				<input type="text" size="71" name="colegiotexto" id="colegio" />
+				<input type="text" size="71" name="colegiotexto" id="colegiotexto" />
 				<input type="hidden" name="idcolegio" id="idcolegio" />
 		</td>
 		<td class="b" height="15" width="90">
@@ -456,11 +464,12 @@ autocomplete="off">
     	<td class = "a">Nro. Contrato</td>
     	<td class = "a">Archivo:</td>
     	<td class = "a"></td>
+    	<td class = "a"></td>
     </tr>
     <tr>
 
     	<td>
-    		<input tabindex="6" size="20" name = "numero" value="">
+    		<input tabindex="6" size="20" name = "numero" value="" onKeypress="validarNumero(this)">
     	</td>
     	<td>
     		<input type="file" name = "pdf" tabindex="13">
@@ -468,6 +477,7 @@ autocomplete="off">
     	<td align="center">
 			<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
 			<INPUT tabindex="19" type="submit" value="Aceptar" name="aceptar">
+			<INPUT tabindex="20" type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)">
 		</td> 
     </tr>
 </table>

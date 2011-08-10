@@ -242,6 +242,17 @@
 				equipo.setSerial(equipos.get(i));
 				canaima.guardar(equipo);
 			}
+			
+			//Si el docente tiene un colegio no importa lo demas
+			if (docente.getIdcolegio() > 0) {
+				Colegio col = new Colegio();
+				canaima.buscarPorID(docente.getIdcolegio(), col);
+				docente.setIdestado(col.getIdestado());
+				docente.setIdmunicipio(col.getIdmunicipio());
+				docente.setIdparroquia(col.getIdparroquia());
+			}
+			
+			
 			//Debe ser posible guardar los cambios						
 			canaima.actualizar(docente);
 			Contrato cont = new Contrato();
@@ -346,6 +357,11 @@
     	canaima.buscarPorID(contrato.getIdlote(), lote);	    	    
     	Caja caja = new Caja();
     	canaima.buscarPorID(lote.getIdcaja(), caja);
+    	
+    	Colegio colegio = new Colegio();
+    	if (docente.getIdcolegio() > 0) {
+    		canaima.buscarPorID(docente.getIdcolegio(), colegio);	
+    	} 
         
     %>
     <br><br>
@@ -442,23 +458,9 @@
     	<tr>
     		<td class = "a">Colegio:</td> 		
     		<td>
- 			
-			<%					
-			
-			if (docente.getIdcolegio() > 0) {
-				
-				Colegio cole = new Colegio();
-				canaima.buscarPorID(docente.getIdcolegio(), cole);
-				
-				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"" + cole.getNombre() + "\">");
-	    		out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\" value=\"" + cole.getIdcolegio() + "\">");
-				
-			} else {
-				out.write("<input tabindex=\"11\" size=\"28\" id=\"colegiotexto\" name=\"colegiotexto\" value=\"\">");
-				out.write("<input type=\"hidden\" name=\"idcolegio\" id=\"idcolegio\">");
-			}			
-			%>			
-    		
+ 				<input tabindex="10" size="28" type="text" name="colegiotexto" id="colegiotexto" 
+					value ="<%=(colegio.getID() > 0) ? colegio.getCodigo_dea()+ " - " + colegio.getNombre() : "" %>"/>
+				<input type="hidden" name="idcolegio" id="idcolegio" value="<%= colegio.getID() %>"/>    		
     		</td>
     		<td class = "a">Fecha de Entrega:</td>
     		<td><input tabindex="9" size="28" name = "fecha_entrega" value="<%= (docente.getFecha_entrega() != null) ? Utilidades.mostrarFecha(docente.getFecha_entrega()) : ""%>" onclick="scwShow(this, event)"></td>
@@ -517,7 +519,7 @@
 		canaima.liberarConexion(con);
     %>		
     	</div>
-    				<a href="" onClick="addAttachmentElement();return false;"><img id="AddButton_1" src="img/plusButton.png" onMouseDown="this.src='img/plusButtonDown.png';" onMouseUp="this.src='img/plusButton.png';" alt="Add" /></a>
+    			<a href="" onClick="addAttachmentElement();return false;"><img id="AddButton_1" src="img/plusButton.png" onMouseDown="this.src='img/plusButtonDown.png';" onMouseUp="this.src='img/plusButton.png';" alt="Add" /></a>
     			</td>
     			<td class = "a">Documento:</td>
     			<td align="center">
@@ -544,7 +546,8 @@
     			<INPUT type="hidden" value="<%= ESTADO.POR_GUARDAR %>" name="estado">
     			<INPUT type="hidden" value="<%= idDocente %>" name="iddocente">    			
     			<INPUT tabindex="20" type="submit" value="Aceptar Cambios"/>
-    			<INPUT tabindex="21" type="reset"  value="Eliminar Docente" id= "botonEliminar" />
+    			<INPUT tabindex="21" type="button" value="Limpiar Colegio" name="limpiar" onclick="limpiarColegio(form)">
+    			<INPUT tabindex="22" type="reset"  value="Eliminar Docente" id= "botonEliminar" />
     		</td>    
     	</tr>	
     </table>
@@ -575,7 +578,7 @@
 	   	</tr>
 	   	<tr>
 		   	<td colspan="4" align="center">			   	
-				<INPUT tabindex="1" type="reset" value="Cancelar" id = "botonCancelar"/>
+				<INPUT tabindex="1" type="reset" value="Cancelar" id = "botonCancelar"/>				
 				<INPUT tabindex="2" type="submit" value="Eliminar Docente" />
 		   	</td>	  
 	   	</tr>    
