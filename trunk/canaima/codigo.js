@@ -194,13 +194,7 @@ function validarCerrarCaja(form){
 }
 
 function validarContrato(form){
-	if ((form.numero.value=="" || form.numero.value == null)||
-			(form.pdf.value=="" || form.pdf.value == null)
-	)
-	{
-		alert("No es posible Guardar, Falta Completar Nro. Contrato o debe Adjuntar un Contrato");
-		return false;
-	} 
+
 	return true;
 }
 
@@ -227,13 +221,7 @@ function validarContraseña(form){
 }
 
 function validarContratoActualizado(form, contrato){
-	if (contrato != form.numero.value) {
-		if (form.numero.value == "" || form.numero.value == null 
-				|| form.pdf.value=="" || form.pdf.value == null ) {
-			alert("No es posible Actualizar, Falta Completar Nro. Contrato o debe Adjuntar un Contrato");						
-			return false;
-		}
-	} 
+
 	return true;
 }
 

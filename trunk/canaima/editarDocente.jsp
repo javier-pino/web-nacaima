@@ -218,8 +218,8 @@
 			}
 			canaima.liberarConexion(con);
 			
-			if (equipos.size()<=0)
-				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
+			//if (equipos.size()<=0)
+				//throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
 			
 			Equipo equipo = null;
 			
@@ -260,8 +260,8 @@
 						
 			boolean cambiarContrato = false;	
 			if (numeroContrato !=  cont.getNumero()) {
-				if (numeroContrato == 0)
-					throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro Contrato"));
+				//if (numeroContrato == 0)
+					//throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro Contrato"));
 										
 				cont.setNumero(numeroContrato);
 				cambiarContrato = true;			
@@ -283,8 +283,8 @@
 				canaima.liberarConexion(con);				
 			}
 			
-			if(cambiarContrato && (archivo!=null || archivo.getSize()==0 ))
-				throw new ExcepcionValidaciones("Si modifica el n&uacute;mero de contrato debe adjuntar un nuevo archivo .pdf");
+			//if(cambiarContrato && (archivo!=null || archivo.getSize()==0 ))
+				//throw new ExcepcionValidaciones("Si modifica el n&uacute;mero de contrato debe adjuntar un nuevo archivo .pdf");
 			
 			//Intentar guardar el archivo
 			if (archivo != null) {
@@ -309,10 +309,11 @@
 					fi.close();
 					cont.setDireccion(directorio + "/" + cont.getNumero()+ ".pdf");
 					cont.setPdf(bytes);				
-					canaima.actualizar(cont);
 				} 
 			}
+			
 			idDocente = docente.getID(); 
+			canaima.actualizar(cont);
 			
 		
 		} catch (ExcepcionValidaciones val) {
@@ -344,15 +345,17 @@
         String nombre = "temp" + Calendar.getInstance().getTimeInMillis(), ext = ".pdf";
     	
     	//Generar el archivo temporal	    	
-    	File archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
-    	synchronized (archivo) {
-    		while (archivo.exists()) {
-	    		nombre = "temp" + Calendar.getInstance().getTimeInMillis();
-	    		archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
-	    	}
-    		Utilidades.guardarArchivo(canaima.DIRECTORIO_TEMPORAL, nombre, ext, contrato.getPdf());
-	    	canaima.setArchivoTemporal(nombre + ext);
-    	}	    	
+    	if(contrato.getPdf()!=null){
+	    	File archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+	    	synchronized (archivo) {
+	    		while (archivo.exists()) {
+		    		nombre = "temp" + Calendar.getInstance().getTimeInMillis();
+		    		archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+		    	}
+	    		Utilidades.guardarArchivo(canaima.DIRECTORIO_TEMPORAL, nombre, ext, contrato.getPdf());
+		    	canaima.setArchivoTemporal(nombre + ext);
+	    	}	
+    	}    	
     	Lote lote = new Lote();
     	canaima.buscarPorID(contrato.getIdlote(), lote);	    	    
     	Caja caja = new Caja();
@@ -506,10 +509,13 @@
 		ArrayList<Equipo> equiposAsociados = Equipo.buscarEquipos(con, 0 ,docente.getID(), null);
 		Equipo equipoAsociado = null;
 		
+		
+		if(equiposAsociados.size()==0)
+			%><input type="hidden" value="0" id="serial_contador" /><%
+		
 		for(int i=0; i<equiposAsociados.size(); i++){
 			equipoAsociado = equiposAsociados.get(i);	
 			%>
-				
 						<input type="hidden" value="<%= equiposAsociados.size() %>" id="serial_contador" />
     					<div id="attachment_<%= i+1 %>" class="attachment">
     						<input type="text" size="24" value= "<%= equipoAsociado.getSerial()  %>" name="serial_<%= i+1 %>"/><a href="" onClick="removeAttachmentElement(<%= i+1 %>);return false;"><img id="RemoveButton_<%= i+1 %>" src="img/minusButton.png" onMouseDown="this.src='img/minusButtonDown.png';" onMouseUp="this.src='img/minusButton.png';" alt="Remove" /></a>
@@ -538,7 +544,11 @@
 						});
 					});
 				</script>
-    			<%=aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"))%>
+    			<%
+    				if(contrato.getPdf()!=null){
+    					aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"));
+    				}
+    			%>
 				</td>	
     	</tr>
     	<tr>

@@ -188,9 +188,12 @@
 								numeroContrato = Integer.parseInt(item.getString());						
 					} else {
 						archivo = item;
-						String ext = "." + FilenameUtils.getExtension(archivo.getName());
-						if (!ext.equals(".pdf")) 
-							throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+						
+						if(archivo.getSize()>0){
+							String ext = "." + FilenameUtils.getExtension(archivo.getName());
+							if (!ext.equals(".pdf")) 
+								throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+						}
 				}				
 			}
 			//Verificacion de la cedula del representante
@@ -204,8 +207,8 @@
 			//Debe ser posible guardar los cambios						
 			canaima.actualizar(donatario);
 			
-			if (numeroContrato == 0)
-				throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
+			//if (numeroContrato == 0)
+				//throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
 			
 			//Aqui se valida si no tiene el mismo nombre y cedula
 			con = canaima.solicitarConexion();
@@ -305,14 +308,17 @@
 					fi.close();
 					contrato.setDireccion(directorio + "/" + contrato.getNumero()+ ".pdf");
 					contrato.setPdf(bytes);				
-					canaima.guardar(contrato);			
-					String nombreArchivo = "" + contrato.getNumero(), ext = ".pdf";			
-					donatario.setIdcontrato(contrato.getID());
-					canaima.actualizar(donatario);							
+								
 				} else {
-					throw new ExcepcionValidaciones(contrato.errorEsObligatorio("Archivo"));
+					//throw new ExcepcionValidaciones(contrato.errorEsObligatorio("Archivo"));
 				}
 			}
+			
+			canaima.guardar(contrato);			
+			String nombreArchivo = "" + contrato.getNumero(), ext = ".pdf";			
+			donatario.setIdcontrato(contrato.getID());
+			canaima.actualizar(donatario);	
+			
 			mostrar = false;
 			%>
 				<jsp:include page="/WEB-INF/jsp/GeneradorMensaje.jsp">

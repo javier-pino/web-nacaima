@@ -145,9 +145,11 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 				}
 			}	else {
 				archivo = item;
-				String ext = "." + FilenameUtils.getExtension(archivo.getName());
-				if (!ext.equals(".pdf")) 
-					throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+				if(archivo.getSize()>0){
+					String ext = "." + FilenameUtils.getExtension(archivo.getName());
+					if (!ext.equals(".pdf")) 
+						throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+				}
 			}				
 		}
 		
@@ -156,8 +158,8 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 		Contrato cont = new Contrato();
 		canaima.buscarPorID(donatario.getIdcontrato(), cont);
 		
-		if (numeroContrato == 0)
-			throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
+		//if (numeroContrato == 0)
+			//throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
 		if (numeroContrato !=  cont.getNumero()) {
 			cont.setNumero(numeroContrato);			
 		}
@@ -214,13 +216,13 @@ if (actual.equals(ESTADO.POR_GUARDAR)) {
 				fi.close();
 				cont.setDireccion(directorio + "/" + cont.getNumero()+ ".pdf");
 				cont.setPdf(bytes);				
-				canaima.actualizar(cont);													
+																	
 			} else {
-				throw new ExcepcionValidaciones(cont.errorEsObligatorio("Archivo"));
+				//throw new ExcepcionValidaciones(cont.errorEsObligatorio("Archivo"));
 			}
 		}
 		mostrar = false;
-		out.print("se actualizo");
+		canaima.actualizar(cont);
 				
 	} catch (ExcepcionValidaciones val) {
 		val.printStackTrace();
