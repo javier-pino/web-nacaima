@@ -154,9 +154,12 @@
 					}
 				}	else {
 					archivo = item;
-					String ext = "." + FilenameUtils.getExtension(archivo.getName());
-					if (!ext.equals(".pdf")) 
-						throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+
+					if(archivo.getSize()>0){
+						String ext = "." + FilenameUtils.getExtension(archivo.getName());
+						if (!ext.equals(".pdf")) 
+							throw new ExcepcionValidaciones("El archivo adjunto debe tener extensi&oacute;n .pdf");
+					}
 				}				
 			}
 			//Si el docente tiene un colegio no importa lo demas
@@ -174,8 +177,8 @@
 			
 			docente.setIdcreadopor(canaima.getUsuarioActual().getID());
 			
-			if (equipos.size()<=0)
-				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
+			//if (equipos.size()<=0)
+				//throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro de Serial de equipo > 0"));
 			
 			//TODO VERIFICAR SERIALES REPETIDOS
 			Equipo equipo = null;
@@ -199,8 +202,8 @@
 				canaima.guardar(equipo);
 			}
 			
-			if (numeroContrato == 0)
-				throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro Contrato"));
+			//if (numeroContrato == 0)
+				//throw new ExcepcionValidaciones(docente.errorEsObligatorio("Nro Contrato"));
 			
 			//Aqui se valida si no tiene el mismo nombre y cedula
 			con = canaima.solicitarConexion();
@@ -292,17 +295,22 @@
 					fi.close();
 					contrato.setDireccion(directorio + "/" + contrato.getNumero()+ ".pdf");
 					contrato.setPdf(bytes);				
-					canaima.guardar(contrato);			
+					//canaima.guardar(contrato);			
 					String nombreArchivo = "" + contrato.getNumero(), ext = ".pdf";			
-					docente.setIdcontrato(contrato.getID());
-					canaima.actualizar(docente);							
+					//docente.setIdcontrato(contrato.getID());
+					//canaima.actualizar(docente);							
 				} else {
-					throw new ExcepcionValidaciones(contrato.errorEsObligatorio("Archivo"));
+					//throw new ExcepcionValidaciones(contrato.errorEsObligatorio("Archivo"));
 				}
 			}
+			
+			canaima.guardar(contrato);
+			docente.setIdcontrato(contrato.getID());
+			canaima.actualizar(docente);
+			
 			%>		
 				<jsp:include page="/WEB-INF/jsp/GeneradorMensaje.jsp">
-					<jsp:param value="El Contrato ha sido Guardado" name="titulo"/>				
+					<jsp:param value="El Docente ha sido Guardado" name="titulo"/>				
 					<jsp:param value="Cierre esta ventana y continue Registrando" name= "texto"/>							
 				</jsp:include>						
 			<%

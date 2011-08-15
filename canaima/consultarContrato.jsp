@@ -237,8 +237,8 @@
 						
 			boolean cambiarContrato = false;	
 			if (numeroContrato !=  cont.getNumero()) {
-				if (numeroContrato == 0)
-					throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
+				//if (numeroContrato == 0)
+					//throw new ExcepcionValidaciones(donatario.errorEsObligatorio("Nro Contrato"));
 										
 				cont.setNumero(numeroContrato);
 				cambiarContrato = true;			
@@ -292,9 +292,9 @@
 					fi.close();
 					cont.setDireccion(directorio + "/" + cont.getNumero()+ ".pdf");
 					cont.setPdf(bytes);				
-					canaima.actualizar(cont);
 				} 
 			}
+			canaima.actualizar(cont);
 			idDonatario = donatario.getID();
 			numero = cont.getNumero();
 		
@@ -321,14 +321,16 @@
 	    	String nombre = "temp" + Calendar.getInstance().getTimeInMillis(), ext = ".pdf";
 	    	
 	    	//Generar el archivo temporal	    	
-	    	File archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
-	    	synchronized (archivo) {
-	    		while (archivo.exists()) {
-		    		nombre = "temp" + Calendar.getInstance().getTimeInMillis();
-		    		archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+	    	if(donCon.getContrato().getPdf()!=null){
+		    	File archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+		    	synchronized (archivo) {
+		    		while (archivo.exists()) {
+			    		nombre = "temp" + Calendar.getInstance().getTimeInMillis();
+			    		archivo = new File(canaima.DIRECTORIO_TEMPORAL, nombre + ext);
+			    	}
+		    		Utilidades.guardarArchivo(canaima.DIRECTORIO_TEMPORAL, nombre, ext, donCon.getContrato().getPdf());
+			    	canaima.setArchivoTemporal(nombre + ext);
 		    	}
-	    		Utilidades.guardarArchivo(canaima.DIRECTORIO_TEMPORAL, nombre, ext, donCon.getContrato().getPdf());
-		    	canaima.setArchivoTemporal(nombre + ext);
 	    	}	    	
 	    	Lote lote = new Lote();
 	    	canaima.buscarPorID(donCon.getContrato().getIdlote(), lote);	    	    
@@ -396,7 +398,11 @@
 						});
 					});
 				</script>
-				<%=aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"))%>
+				<%
+    				if(donCon.getContrato().getPdf()!=null){
+    					aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"));
+    				}
+    			%>
 				</td>
 				
 			</tr>
