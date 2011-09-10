@@ -1,3 +1,5 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 	
 <!doctype html public "-//W3C//DTD HTML 4.01//EN">
@@ -24,13 +26,27 @@
 	    <div id="Top">
 	    	    
 	        <div id="Header">
-	        <div id="RightHeader">
-	        <a href="visitante.jsp" id="home">Inicio</a>	        
-	        <a href="mailto:j.pinobetancourt@gmail.com" id="contacts">Desarrolladores: Javier Pino</a>
-	        <a href="mailto:wilker.diaz@gmail.com" id="contacts">Wilker Diaz</a>
+	        <div id="RightHeader">        
+	       <table>
+	       <tr>
+	       <td><h2> <font color="white"> Cooperativa Telgeclap r.s. </font></h2></td>
+	       <td rowspan="3"><img src="img/fotoTelg.png" class="foto" /></td>
+	       </tr>
+	       <tr>
+	       <td>
+	  
+	       </td>
+	       </tr>
+	       <tr>
+	       <td><span class="adress"><%= application.getInitParameter("servidorAplicacion") %></span></td>
+	       </tr>
+	       </table>
+	        
 	        </div>
-	        <span class="name">Canaima Intranet</span><br/>
-	        <span class="adress"><%= application.getInitParameter("servidorAplicacion") %></span>
+	        
+			<img src="img/fotoCanaima.png" class="foto" /> 
+			<br/>
+	        <span class="adress">cooptelgeclap@gmail.com.ve</span>
 
 	    	</div>	    	
 	    	<div id="Inter">

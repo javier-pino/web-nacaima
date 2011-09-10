@@ -7,7 +7,7 @@
 %>
   	 <div id="Menu">
 		<a class="" href="<%= response.encodeURL("visitante.jsp") %>"><span></span></a>		
-		<a class="" href="<%= response.encodeURL("visitante.jsp") %>"><span>Visitante</span></a>
+		<a class="" href="<%= response.encodeURL("visitante.jsp") %>" style="COLOR:BLACK"><span>Visitante</span></a>
    	</div>  	   	
 <% 
 	} else if (rol.equals(ROL_USUARIO.ANA)) {		
