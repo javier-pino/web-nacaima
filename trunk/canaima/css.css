@@ -7,14 +7,14 @@ body
 
 #WholePage
 {
-	width: 1440px;	
+	width: 100%;	
     background-color: white;
     float: center;
 }
 
 #Container
 {
-	width: 1440px;
+	width: 100%;
 	margin: 0px auto;	
 }
 
@@ -23,7 +23,7 @@ body
 	padding:0;
 	margin:0;
 	height: 302px;
-	background: url("img/main-picture.jpg") left 65px no-repeat ;
+	background: url("img/canaima.jpg") left 65px no-repeat ;
 }
 
 #Top *
@@ -36,7 +36,17 @@ body
 #Header
 {
 font-family: arial;
-height: 61px;
+height: 91px;
+padding-top: 10px;
+
+padding-left: 25px;
+	background: url('img/header-background.png') repeat-x left top;
+}
+
+#SubHeader
+{
+font-family: arial;
+height: 31px;
 padding-top: 10px;
 
 padding-left: 25px;
@@ -401,6 +411,10 @@ background-position: 0px -12px;
 #RightHeader a#home 
 {
 background-image: url('img/home-icon.png');
+}
+
+img.foto{
+border: 0px solid #000;
 }
 
 #RightHeader a#home:hover 

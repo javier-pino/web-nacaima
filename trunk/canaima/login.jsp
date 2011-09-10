@@ -45,19 +45,28 @@
 		<SCRIPT> javascript:history.go(1); </SCRIPT>
 	</head>
 	<body onLoad="document.FORMLOGIN.Login.focus();document.FORMLOGIN.Login.select();">
-	   <br><br><br><br>
+	   <div id="SubHeader">
+	   <table width="100%">
+	   		<tr>
+			   	<td><b>BIENVENIDO</b></td>
+			   	<td align="right"><b>CANAIMA VA A LA ESCUELA</b></td>
+	   		</tr>
+	   </table>
+	   <div align="right"></div>
+	   </div>
+	   <br><br><br>
 	   <FORM NAME=FORMLOGIN METHOD="POST" action="login.jsp">
 	      <TABLE ID=DATOS CELLSPACING=1 CELLPADDING=1 WIDTH="100%" BORDER=0>
 	         <TR><TD COLSPAN=4 HEIGHT=20>&nbsp;</TD></TR>
 	         <TR>
 	            <TD WIDTH="35%">&nbsp;</TD>
-	            <TD WIDTH="15%" VALIGN="MIDDLE" ALIGN="CENTER" BGCOLOR=#5c9510><SPAN style="FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial">Usuario</SPAN></TD>
+	            <TD WIDTH="15%" VALIGN="MIDDLE" ALIGN="CENTER" BGCOLOR=#00BFFF><SPAN style="FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial">Usuario</SPAN></TD>
 	            <TD WIDTH="15%" VALIGN=TOP WIDTH=20><INPUT TYPE="TEXT" Style="FONT-SIZE: 12pt; COLOR: #000000; FONT-FAMILY: Arial; TEXT-ALIGN: left;width=100%" maxLength=10 name="usuario" value=""></TD>
 	            <TD WIDTH="35"">&nbsp;</TD>
 	         </TR>
 	         <TR>
 	            <TD width="35%">&nbsp;</TD>
-	            <TD width="15%" vAlign="middle" align="center" bgColor=#5c9510><SPAN style="FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial">Clave</SPAN></TD>
+	            <TD width="15%" vAlign="middle" align="center" bgColor=#00BFFF><SPAN style="FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial">Clave</SPAN></TD>
 	            <TD width="15%" vAlign=top width=20><INPUT type="password" style="FONT-SIZE: 12pt; COLOR: #000000; FONT-FAMILY: Arial; TEXT-ALIGN: left;width=100%" maxLength=10 name=contrasena></TD>
 	            <TD width="35%">&nbsp;</TD>
 	         </TR>
