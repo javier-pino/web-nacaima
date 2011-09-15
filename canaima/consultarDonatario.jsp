@@ -192,26 +192,26 @@
 				canaima.buscarPorID(donatario.getIdestado(), estadoBuscado);
 				canaima.buscarPorID(donatario.getIdmunicipio(), municipioBuscado);				
 			%>
-				<tr class = "largo">
-				<td class = "largo"><%=aFancyBox(response,"" + donatario.getID(), donatario.getID())%></td>
-				<td class = "largo"><%=aFancyBox(response, donatario.getNombre(), donatario.getID())%></td>				
-				<%
-					if (donatario.getRepresentante_ci() != null && 
-							!donatario.getRepresentante_ci().isEmpty()) {		
-				%>		
-				<td class = "largo"><%=aFancyBox(response, donatario.getRepresentante_nac() + "-" +
-						donatario.getRepresentante_ci(), donatario.getID())%> </td>
-				<%
-					} else {
-				%>		
-				<td class = "largo"></td>
-				<% } %>				
-				<td class = "largo"><%=aFancyBox(response, donatario.getRepresentante_nombre(), donatario.getID())%> </td>
-				<td class = "largo"><%=(donatario.getIdestado() > 0 ? (aFancyBox(response, estadoBuscado.getNombre(), donatario.getID())) : "") %></td>				
-				<td class = "largo"><%=(donatario.getIdmunicipio() > 0 ? (aFancyBox(response, municipioBuscado.getNombre(), donatario.getID())) : "") %></td>				
-				<td class = "largo"><%=(donatario.getCiudad() != null ? (aFancyBox(response,donatario.getCiudad(), donatario.getID())) : "")%></td>
-				<td class = "largo"><%=(donatario.getColegio() != null ? (aFancyBox(response,donatario.getColegio(), donatario.getID())) : "")%></td>
-				<td class = "largo"><%=(donatario.getGrado() > 0 ? (aFancyBox(response,donatario.getGrado() + "&deg;", donatario.getID())) : "")%></td>				
+			<tr class = "largo">
+					<td class = "largo"><%=aFancyBox(response,"" + donatario.getID(), donatario.getID())%></td>
+					<td class = "largo"><%=aFancyBox(response, donatario.getNombre(), donatario.getID())%></td>				
+					<%
+						if (donatario.getRepresentante_ci() != null && 
+								!donatario.getRepresentante_ci().isEmpty()) {		
+					%>		
+					<td class = "largo"><%=aFancyBox(response, donatario.getRepresentante_nac() + "-" +
+							donatario.getRepresentante_ci(), donatario.getID())%> </td>
+					<%
+						} else {
+					%>		
+					<td class = "largo"></td>
+					<% } %>				
+					<td class = "largo"><%=aFancyBox(response, donatario.getRepresentante_nombre(), donatario.getID())%> </td>
+					<td class = "largo"><%=(donatario.getIdestado() > 0 ? (aFancyBox(response, estadoBuscado.getNombre(), donatario.getID())) : "") %></td>				
+					<td class = "largo"><%=(donatario.getIdmunicipio() > 0 ? (aFancyBox(response, municipioBuscado.getNombre(), donatario.getID())) : "") %></td>				
+					<td class = "largo"><%=(donatario.getCiudad() != null ? (aFancyBox(response,donatario.getCiudad(), donatario.getID())) : "")%></td>
+					<td class = "largo"><%=(donatario.getColegio() != null ? (aFancyBox(response,donatario.getColegio(), donatario.getID())) : "")%></td>
+					<td class = "largo"><%=(donatario.getGrado() > 0 ? (aFancyBox(response,donatario.getGrado() + "&deg;", donatario.getID())) : "")%></td>				
 			</tr>
 			<%		
 			}

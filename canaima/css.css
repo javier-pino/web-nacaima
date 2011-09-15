@@ -8,7 +8,7 @@ body
 #WholePage
 {
 	width: 100%;	
-    background-color: white;
+    background-color: #ececff;
     float: center;
 }
 
@@ -189,7 +189,7 @@ padding-bottom: 8px;
 .TopPart 
 {
 border: 0px;
-background-color: #5c9510 ;
+background-color: #4BBFFF ;
 height: 184px;
 width: 840px;
 padding: 16px;
@@ -253,7 +253,7 @@ list-style-type: none;
 #LeftMenu span
 {
 text-decoration: underline;
-color: #446d07;
+color: #1E90FF;
 font-size: 18px;
 }
 #LeftMenu a
@@ -320,7 +320,7 @@ padding-left: 10px;
 }
 .Part a
 {
-color: #4f8803;
+color: blue;
 }
 .Part ul
 {
