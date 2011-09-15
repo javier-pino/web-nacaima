@@ -123,5 +123,7 @@
 	<br>
 	<br>
 	<br>	
+	<p style=" position: absolute; bottom: 10; left:0 ; width:100%; right:100%; text-align:center;">Copy right-Derechos reservados Telgeclap r.s.
+	Desarrollado por: <A HREF="mailto:j.pinobetancourt@gmail.com">Javier Pino, </A><A HREF="mailto:josetrias@gmail.com">José Trías, </A><A HREF="mailto:wilker.diaz@gmail.com">Wilker Díaz</A></p>
 	</body>
 </HTML>
