@@ -30,8 +30,6 @@ public class Contrato extends ObjetoPersistente  implements Serializable {
 		ArrayList<String> resultado = new ArrayList<String>();		
 		if (idlote == 0)
 			resultado.add(errorEsObligatorioModelo("Lote"));
-		//if (numero == 0)
-			//resultado.add(errorEsObligatorio("Número de Contrato"));			
 		return resultado;
 	}
 

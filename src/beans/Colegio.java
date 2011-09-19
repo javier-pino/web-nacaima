@@ -251,19 +251,28 @@ public class Colegio extends ObjetoPersistente implements Serializable {
 		return resultado; 
 	}
 	
-	public static ArrayList<Colegio> listarColegioPorNombre (Connection con, String nombre) throws SQLException {
+	public static ArrayList<Colegio> listarColegios (Connection con, 
+			String nombre, 
+			String idestado,
+			String idmunicipio,
+			String idparroquia			
+			) throws SQLException {
 		ArrayList<Colegio> resultado = new ArrayList<Colegio>();
 		
 		String sql = "select * from `canaima`.`colegio` " +
-				     "where nombre like ? " +
-				     "OR codigo_dea like ? and activo " +
-				     "order by nombre asc LIMIT 0, 30";
+				     "where (nombre like ? " +
+				     " OR codigo_dea like ?)" +
+				     " and activo" +
+				     " and idestado like '" + (idestado.equals("0")? "%" : idestado) +
+				     "' and idmunicipio like '" + (idmunicipio.equals("0")? "%" : idmunicipio) +
+				     "' and idparroquia like '" + (idparroquia.equals("0")? "%" : idparroquia) +				     
+				     "' order by nombre asc LIMIT 0, 30";	
 		PreparedStatement ps = null;
 		ResultSet rs = null;		
 		try {
 			ps = con.prepareStatement(sql);
 			ps.setString(1, "%"+nombre+"%");
-			ps.setString(2, "%"+nombre+"%");
+			ps.setString(2, "%"+nombre+"%");			
 			rs = ps.executeQuery();
 			Colegio colegio = null;
 			while (rs.next()) {

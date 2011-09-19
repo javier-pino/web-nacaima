@@ -236,12 +236,10 @@
 			
 			int cajaActual = Caja.getUltimaCajaRegistrada(con, usuarioActual, CAJA_TIPO.DON);			
 			if (cajaActual == 0) {
-				synchronized (caja) {
-					caja.asignarNuevoNumeroACaja(con, CAJA_TIPO.DON);
+					caja.setTipo(CAJA_TIPO.DON);					
 					caja.setIdusuario(usuarioActual.getIdusuario());					
 					canaima.guardar(caja);
-					cajaActual = caja.getID();
-				}
+					cajaActual = caja.getID();				
 			} else {
 				canaima.buscarPorID(cajaActual, caja);				
 			}			
@@ -320,15 +318,17 @@
 			canaima.actualizar(donatario);	
 			
 			mostrar = false;
+			con = canaima.solicitarConexion();
 			%>
 				<jsp:include page="/WEB-INF/jsp/GeneradorMensaje.jsp">
 					<jsp:param value="El Contrato ha sido Guardado" name="titulo"/>				
 					<jsp:param value="Cierre esta ventana y continue Registrando" name= "texto"/>							
 				</jsp:include>				
 				<div id = scroll align="center">
-				`	<h1>Ubicaci&oacute;n Física del Contrato:   Caja = <%=caja.getNumero()%>; Lote = <%= lote.getNumero()%>.</h1>
+				`	<h2>Ubicaci&oacute;n Física del Contrato:   Caja = <%=caja.getNumero()%>; Lote = <%= lote.getNumero()%>; Documento = <%= Contrato.getNumeroDeContratos(con, lote.getID()) %>.</h2>
 				</div>								
 			<%
+			canaima.liberarConexion(con);
 		} catch (ExcepcionValidaciones val) {
 			val.printStackTrace();
 			request.setAttribute("validaciones", val.getValidacionesIncumplidas());

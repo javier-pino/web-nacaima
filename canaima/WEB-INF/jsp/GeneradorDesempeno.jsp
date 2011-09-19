@@ -12,8 +12,6 @@ java.awt.*" %>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.util.Hashtable"%>
-<%@page import="java.util.HashMap"%>
 <%@page import="java.util.Collections"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Iterator"%>
@@ -40,8 +38,8 @@ java.awt.*" %>
 	
 	String [] fechaInicialArreglo  = fechaInicial.trim().split("-");
 	String [] fechaFinalArreglo  = fechaFinal.trim().split("-");
-	Date inicialDate = null;
-	Date finalDate = null;
+	java.sql.Date inicialDate = null;
+	java.sql.Date finalDate = null;
 	
 	if (fechaInicialArreglo.length == 3){
 		int dia = 0, mes = 0, año = 0;
@@ -82,17 +80,18 @@ java.awt.*" %>
 		" from donatario d join usuario u on (d.idcreadopor = u.idusuario) " +
 		" where date(d.fecha_carga) between ? and ? " +
 		" UNION ALL" +
-		" select u.idusuario, u.nombre as nombre , 1 as suma, 2 as id " +
-		" from donatario d join usuario u on (d.idcreadopor = u.idusuario) join contrato c on (d.idcontrato = c.idcontrato) " +
-		" where date(d.fecha_carga) between ? and ? " +
+		" select u.idusuario, u.nombre as nombre , 1 as suma, 2 as id from contrato c join lote l on (l.idlote = c.idlote) " +
+		" join caja ca on ca.idcaja = l.idcaja join usuario u on (ca.idusuario = u.idusuario) " +
+		" where date(ca.creacion) between ? and ? " +
 		" UNION ALL " +		
 		" select u.idusuario, u.nombre as nombre , 1 as suma, 3 as id " +
 		" from docente d join usuario u on (d.idcreadopor = u.idusuario ) " + 
-		" join contrato c on (d.idcontrato = c.idcontrato) " +
+		" join contrato c on (d.idcontrato = c.idcontrato)" +
+		" left join equipo e on (e.iddocente = d.iddocente) \n"+
 		" where date(d.fecha_carga) between ? and ? " +
 		" ) alias " +
 		" group by nombre, idusuario, id " +
-		" order by nombre, id ";
+		" order by nombre, id ";	
 	PreparedStatement ps = con.prepareStatement(sql);
 	ps.setDate(1, inicialDate);
 	ps.setDate(2, finalDate);
@@ -127,14 +126,13 @@ java.awt.*" %>
 			if (rs.getInt("id") == 1)
 				nuevo.donatarios = rs.getDouble("total"); 
 			else if (rs.getInt("id") == 2) 
-				aux.contratos = rs.getDouble("total");
+				nuevo.contratos = rs.getDouble("total");
 			else 
-				aux.docentes = rs.getDouble("total");
+				nuevo.docentes = rs.getDouble("total");
 			usuarios.add(nuevo);
 		}
 	}
-	canaima.liberarConexion(con, ps, rs);
-	
+	canaima.liberarConexion(con, ps, rs);	
 	Date actualDate = Utilidades.nuevaFecha();
 	DefaultCategoryDataset series = new DefaultCategoryDataset();
 	iterador = usuarios.iterator();
@@ -142,7 +140,7 @@ java.awt.*" %>
 		aux = iterador.next();
 		series.setValue(aux.donatarios, "Donatarios", aux.nombre);
 		series.setValue(aux.contratos, "Contratos", aux.nombre);		
-		series.setValue(aux.contratos, "Docentes", aux.nombre);
+		series.setValue(aux.docentes, "Docentes", aux.nombre);
 	}
 	
 	JFreeChart grafico = ChartFactory.createBarChart

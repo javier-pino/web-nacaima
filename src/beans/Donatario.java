@@ -640,6 +640,7 @@ public class Donatario extends ObjetoPersistente {
 		int grado, 
 		String nombreDonatario, 
 		String cedulaRepresentante,
+		String nombreRepresentante,
 		int idDonatario,
 		int idCreadoPor,
 		int idColegio,
@@ -648,9 +649,10 @@ public class Donatario extends ObjetoPersistente {
 	) throws SQLException, ExcepcionValidaciones {
 		
 		final int ESTADO = 0, MUNICIPIO = 1, CIUDAD = 2, COLEGIO = 3,
-			GRADO = 4, NOMBREDONATARIO = 5, CEDULAREP = 6, IDDONATARIO = 7, IDCREADOPOR = 8, IDCOLEGIO = 9, IDPARROQUIA = 10;		
+			GRADO = 4, NOMBREDONATARIO = 5, CEDULAREP = 6, IDDONATARIO = 7, IDCREADOPOR = 8, 
+			IDCOLEGIO = 9, IDPARROQUIA = 10, NOMBREREPRESENTANTE = 11;		
 		boolean [] parametrosPresentes = {false, false, false, false,
-				false, false, false, false, true, false, false};
+				false, false, false, false, true, false, false, false};
 		
 		if (estado > 0)
 			parametrosPresentes[ESTADO] = true;
@@ -672,6 +674,8 @@ public class Donatario extends ObjetoPersistente {
 			parametrosPresentes[IDCOLEGIO] = true;
 		if (idParroquia > 0)
 			parametrosPresentes[IDPARROQUIA] = true;
+		if (nombreRepresentante != null && !nombreRepresentante.isEmpty())
+			parametrosPresentes[NOMBREREPRESENTANTE] = true;
 		
 		ArrayList<Donatario> resultado = new ArrayList<Donatario>();		
 		int parametrosUsados = 1;
@@ -713,7 +717,9 @@ public class Donatario extends ObjetoPersistente {
 		if (parametrosPresentes[IDPARROQUIA]) {
 			sqlDonatarios += " and idparroquia = ?";
 		}
-		
+		if (parametrosPresentes[NOMBREREPRESENTANTE]) {
+			sqlDonatarios += " and representante_nombre like ? ";
+		}
 		
 		sqlDonatarios += " order by ciudad, colegio, grado, nombre";
 		
@@ -755,7 +761,9 @@ public class Donatario extends ObjetoPersistente {
 			if (parametrosPresentes[IDPARROQUIA]) {
 				ps.setInt(parametrosUsados++, idParroquia);
 			}
-			
+			if (parametrosPresentes[NOMBREREPRESENTANTE]) {
+				ps.setString(parametrosUsados++, "%"+nombreRepresentante+"%");
+			}			
 			rs = ps.executeQuery();
 			Donatario retornado = null;
 			while (rs.next()) {

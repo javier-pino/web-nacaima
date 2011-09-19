@@ -367,8 +367,7 @@ public class Docente extends ObjetoPersistente {
 			
 		ArrayList<Docente> recientes = new ArrayList<Docente>();
 		
-		String sql = " select * from canaima.docente " +
-								 "order by iddocente desc LIMIT 0, 20" ;
+		String sql = " select * from canaima.docente LIMIT 0, 20" ;
 		PreparedStatement ps =  null; 
 		ResultSet rs = null;
 		Docente resultado = new Docente();

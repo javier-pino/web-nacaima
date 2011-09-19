@@ -47,6 +47,7 @@ function validarValores(form){
 	if ( (form.iddonatario.value=="" || form.iddonatario.value == null) 
 			&&(form.nombre.value=="" || form.nombre.value == null)
 			&&(form.representante_ci.value=="" || form.representante_ci.value == null)
+			&&(form.representante_nombre.value=="" || form.representante_nombre.value == null)
 			&&(form.idestado.value == 0)
 			&&(form.idmunicipio.value == 0)
 			&&(form.ciudad.value=="" || form.ciudad.value == null)

@@ -7,9 +7,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import joins.DocenteEquipo;
-import joins.DonatarioEquipo;
-
 import org.apache.commons.lang.StringEscapeUtils;
 
 import aplicacion.ExcepcionValidaciones;

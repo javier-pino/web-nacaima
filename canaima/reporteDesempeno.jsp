@@ -12,7 +12,9 @@
 
 <!-- Incluir la cabecera -->
 <%@include file="/WEB-INF/jsp/GeneradorCabecera.jsp"%>
-
+<%	
+	Utilidades.eliminarArchivosTemporales(canaima.DIRECTORIO_TEMPORAL);		
+%>  
 <%!
 	public enum ESTADO {
 		INICIAL,
@@ -94,3 +96,5 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 </div>
+
+

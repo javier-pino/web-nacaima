@@ -1,3 +1,4 @@
+<%@page import="aplicacion.Utilidades"%>
 <%@page import="aplicacion.ExcepcionValidaciones"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.io.FileDescriptor"%>
@@ -9,22 +10,7 @@
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 
 <%
-	Calendar actual = Calendar.getInstance(), archivo;
-	long diferencia = 24; 
-	diferencia *= 60; 	//Pasar horas a minutos
-	diferencia *= 60000; //Pasar minutos a milisegundos
-	File dir = new File(canaima.DIRECTORIO_TEMPORAL);	
-	if (dir.isDirectory())  {
-		File elemento; 
-		File [] elementos = dir.listFiles();
-		for (int i = 0 ; i < elementos.length ; i++) {
-			elemento = elementos[i];
-			if (actual.getTimeInMillis()-elemento.lastModified() > diferencia) {
-				elemento.delete();
-			}			
-		}
-	}
-		
+	Utilidades.eliminarArchivosTemporales(canaima.DIRECTORIO_TEMPORAL);		
 %>   
  
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

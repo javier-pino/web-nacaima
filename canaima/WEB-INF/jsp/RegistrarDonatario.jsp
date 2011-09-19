@@ -19,19 +19,28 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;		
-			$("#colegio").autocomplete("autocompletar_colegio.jsp", {
-				width: 460,
-				height: 500,
-				matchContains: true,
-				max: 30,
-				minChars: 2,
-				multiple: false
-			});
+	$().ready(function() {		
+		$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+			extraParams : {
+				idestado : function() {
+					return $("#idestado").val();
+				},
+				idmunicipio : function() {
+					return $("#idmunicipio").val();
+				},
+				idparroquia : function() {
+					return $("#idparroquia").val();
+				}
+			},
+			width : 460,			
+			height : 500,
+			max : 30,
+			minChars : 2,
+			matchSubset : false,
+			cacheLength : 0
 		});
-		
+	});
 </script>
-
 <%!
 	public enum ESTADO {
 		LISTADO,	
@@ -120,7 +129,7 @@
 	</tr>	
 	<tr >
 		<td>			
-			<SELECT tabindex="1" name="idestado" title="estado" style="width: 150px;"  onchange="javascript:mostrarMunicipios(this.value);">
+			<SELECT tabindex="1" name="idestado" id="idestado" title="estado" style="width: 150px;"  onchange="javascript:mostrarMunicipios(this.value);">
 			<%
 				int idEstado;
 				String nombreEstado = null;
@@ -159,7 +168,7 @@
 			</SELECT>
 		</td>
 		<td id= "parroquias">
-			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+			<SELECT tabindex="3" name="idparroquia" id="idparroquia" title="parroquia" style="width: 150px;" >
 			<%					
 			if (ultimo.getID() > 0 && ultimo.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();				

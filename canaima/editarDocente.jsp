@@ -32,18 +32,27 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;
-		
+	$().ready(function() {		
 		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
-				width: 460,
-				height: 500,
-				matchContains: true,
-				max: 30,
-				minChars: 2,
-				multiple: false
-			});
+			extraParams : {
+				idestado : function() {
+					return $("#idestado").val();
+				},
+				idmunicipio : function() {
+					return $("#idmunicipio").val();
+				},
+				idparroquia : function() {
+					return $("#idparroquia").val();
+				}
+			},
+			width : 460,			
+			height : 500,
+			max : 30,
+			minChars : 2,
+			matchSubset : false,
+			cacheLength : 0
 		});
-		
+	});
 </script>
 
 </head>
@@ -308,7 +317,7 @@
 					fi.read(bytes);
 					fi.close();
 					cont.setDireccion(directorio + "/" + cont.getNumero()+ ".pdf");
-					cont.setPdf(bytes);				
+					cont.setPdf(bytes);						
 				} 
 			}
 			
@@ -393,7 +402,7 @@
     	</tr>
     	<tr>
     		<td class = "a">Estado:</td>
-    		<td><SELECT tabindex="7" name="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
+    		<td><SELECT tabindex="7" name="idestado" id="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
 			<%
 				int idEstado;
 				String nombreEstado = null;
@@ -413,7 +422,7 @@
 			</td>
     		<td class = "a">Municipio:</td>
     		<td id= "municipios"> 
-    			<SELECT tabindex="8" name="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
+    			<SELECT tabindex="8" name="idmunicipio" id="idmunicipio" title="municipio" style="width: 150px;" onchange="javascript:mostrarParroquias(this.value);">
 				<%					
 					if (docente.getIdestado() > 0) {
 						con = canaima.solicitarConexion();				
@@ -436,7 +445,7 @@
     	<tr>
     		<td class = "a">Parroquia:</td>
     		<td id= "parroquias">
-			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+			<SELECT tabindex="3" name="idparroquia" id="idparroquia" title="parroquia" style="width: 150px;" >
 			<%					
 			if (docente.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();
@@ -485,14 +494,6 @@
     		<td class = "a">Lote:</td>
     		<td><%= (lote != null) ? lote.getNumero() : ""%></td>
     	</tr>
-    	<% 
-    	if (docente.getIdcontrato() > 0) {
-				
-			contrato = new Contrato();
-			canaima.buscarPorID(docente.getIdcontrato(), contrato);
-		}
-    	
-    	%>
     	<tr>
     		<td class = "a">Contrato:</td>
     		<td> <input tabindex="19" name="numero" size="28" value="<%= (contrato != null) ? contrato.getNumero() : ""%>"></td> 
@@ -526,9 +527,7 @@
     %>		
     	</div>
     			<a href="" onClick="addAttachmentElement();return false;"><img id="AddButton_1" src="img/plusButton.png" onMouseDown="this.src='img/plusButtonDown.png';" onMouseUp="this.src='img/plusButton.png';" alt="Add" /></a>
-    			</td>
-    			<td class = "a">Documento:</td>
-    			<td align="center">
+    			</td>    			
     			<script type="text/javascript">
 					$(document).ready(function() {
 						$("a.ar_link").fancybox({
@@ -544,11 +543,10 @@
 						});
 					});
 				</script>
-    			<%
-    				if(contrato.getPdf()!=null){
-    					aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"));
-    				}
-    			%>
+				<td class = "a">Documento:</td>
+    			<td align="center">
+    			
+    			<%= (contrato.getPdf() != null) ? aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp")) : ""%>
 				</td>	
     	</tr>
     	<tr>
