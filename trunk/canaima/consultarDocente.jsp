@@ -19,18 +19,27 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;
-		
+	$().ready(function() {		
 		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
-				width: 460,
-				height: 500,
-				matchContains: true,
-				max: 30,
-				minChars: 2,
-				multiple: false
-			});
+			extraParams : {
+				idestado : function() {
+					return $("#idestado").val();
+				},
+				idmunicipio : function() {
+					return $("#idmunicipio").val();
+				},
+				idparroquia : function() {
+					return $("#idparroquia").val();
+				}
+			},
+			width : 460,			
+			height : 500,
+			max : 30,
+			minChars : 2,
+			matchSubset : false,
+			cacheLength : 0
 		});
-		
+	});
 </script>
 
 <%
@@ -83,7 +92,7 @@
 					</tr>
 					<tr>
 						<td>			
-						<SELECT tabindex="1" name="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
+						<SELECT tabindex="1" id="idestado" name="idestado" title="estado" style="width: 150px;" onchange="javascript:mostrarMunicipios(this.value);">
 						<%
 							int idEstado;
 							String nombreEstado = null;
@@ -99,12 +108,12 @@
 						</SELECT>
 					</td>
 					<td id= "municipios">
-						<SELECT tabindex="2" name="idmunicipio" title="municipio" style="width: 150px;" >
+						<SELECT tabindex="2" id="idmunicipio" name="idmunicipio" title="municipio" style="width: 150px;" >
 							<option value="0">--Seleccione--</option>
 						</SELECT>
 					</td>
 					<td id= "parroquias">
-						<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+						<SELECT tabindex="3" id="idparroquia" name="idparroquia" title="parroquia" style="width: 150px;" >
 							<option value="0">--Seleccione--</option>
 						</SELECT>
 					</td>

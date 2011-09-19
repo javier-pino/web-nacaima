@@ -292,5 +292,24 @@ public class Utilidades {
 			canaima.liberarConexion(con);
 		}
 	}
+	
+	/** Elimina los archivos temporales del servidor */
+	public static synchronized void eliminarArchivosTemporales (String directorio) {
+		Calendar actual = Calendar.getInstance();
+		long diferencia = 24; 
+		diferencia *= 60; 	//Pasar horas a minutos
+		diferencia *= 60000; //Pasar minutos a milisegundos
+		File dir = new File(directorio);	
+		if (dir.isDirectory())  {
+			File elemento; 
+			File [] elementos = dir.listFiles();
+			for (int i = 0 ; i < elementos.length ; i++) {
+				elemento = elementos[i];
+				if (actual.getTimeInMillis()-elemento.lastModified() > diferencia) {
+					elemento.delete();
+				}			
+			}
+		}
+	}
 }
 

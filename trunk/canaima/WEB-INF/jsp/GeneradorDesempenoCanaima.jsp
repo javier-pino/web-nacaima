@@ -78,11 +78,12 @@ java.awt.*" %>
 	"	 left join colegio c on (c.idcolegio = d.idcolegio)	\n"+
 	"	 group by d.idestado, d.idcolegio, c.codigo_dea, c.nombre, d.ano_escolar, d.grado, d.seccion,id)	\n"+
 	"	UNION ALL	\n"+
-	"	(select d.idestado, d.idcolegio, c.codigo_dea, c.nombre, 0 ano_escolar, 0 grado, 0 seccion,	\n"+
+	"	(select d.idestado, d.idcolegio, c.codigo_dea, c.nombre, " +
+	" 'SIN AÑO' ano_escolar, 'SIN GRADO' grado, 'SIN SECCIÓN' seccion,	\n"+
 	"   0 as notienefirma, 0 as notienecedula, 0 notienepartida, count(*) as suma , 3 as id	\n"+
 	"	 from docente d	\n"+
 	"    join usuario u on (d.idcreadopor = u.idusuario)	\n"+
-    "	join equipo e on (e.iddocente = d.iddocente) \n"+
+    "	  left join equipo e on (e.iddocente = d.iddocente) \n"+
 	"     left join colegio c on (c.idcolegio = d.idcolegio)	\n"+
 	"	 group by d.idestado, d.idcolegio, c.codigo_dea, c.nombre, ano_escolar, grado, seccion,id)	\n"+
 	"	) alias	\n"+
@@ -95,13 +96,12 @@ java.awt.*" %>
 	"	 case when (alias.ano_escolar = 0 ) then 'SIN AÑO' ELSE CONCAT(alias.ano_escolar,'-',alias.ano_escolar + 1) end,	\n"+
 	" case when (alias.grado = 0 ) then 'SIN GRADO' ELSE CONCAT(alias.grado,'°') end, 	\n"+
 	" case when (alias.seccion = '' ) then 'SIN SECCIÓN' ELSE alias.seccion end, 	\n"+
-	" alias.id 		";
-	System.out.println(sql);
+	" alias.id 		";		
 	PreparedStatement ps = con.prepareStatement(sql);	
 	ResultSet rs = ps.executeQuery();
 	ArrayList<RegistroAuxiliar> registros = new ArrayList<RegistroAuxiliar>();
 	Iterator<RegistroAuxiliar> iterador = null;
-	RegistroAuxiliar nuevo = null, viejo = null, actual;
+	RegistroAuxiliar nuevo = null, viejo = null, actual, previo = null;
 	
 	//Esto almacena totales por estado	
 	ArrayList<String> estados = new ArrayList<String>();
@@ -121,7 +121,26 @@ java.awt.*" %>
 				continue;
 			}
 		}
-		if (rs.getInt("id") == 1) {
+		
+		//Ver si hace falta crear unpo nuevo
+		boolean crearNuevo = false;
+		if (registros.size() == 0) 
+			crearNuevo = true;		
+		else {
+			previo = registros.get(registros.size() -1);				
+			if (
+				!previo.seccion.equals(rs.getString("seccion")) ||
+				!previo.grado.equals(rs.getString("grado")) ||
+				!previo.año_escolar.equals(rs.getString("año")) ||				
+				!previo.coddea.equals(rs.getString("dea")) ||
+				!previo.colegio.equals(rs.getString("colegio")) ||
+				!previo.estado.equals(rs.getString("estado"))
+			) {
+				crearNuevo = true;			
+			}
+		}		
+		//Si es necesario crearlo
+		if (crearNuevo) {
 			nuevo = new RegistroAuxiliar();
 			nuevo.estado = rs.getString("estado");
 			nuevo.coddea = rs.getString("dea");
@@ -129,41 +148,49 @@ java.awt.*" %>
 			nuevo.año_escolar = rs.getString("año");
 			nuevo.grado = rs.getString("grado");
 			nuevo.seccion = rs.getString("seccion");
-			nuevo.donatarios = rs.getDouble("suma");
-			registros.add(nuevo);		
-			indice = estados.indexOf(nuevo.estado); 
-			if ( indice >= 0) {
-				donatarios.set(indice, donatarios.get(indice) + nuevo.donatarios);					
-			} else {
-				estados.add(nuevo.estado);
-				donatarios.add(nuevo.donatarios);
-				contratos.add(0.0);
-				docentes.add(0.0);
-			}	
-		} else {			
-			viejo = registros.get(registros.size() -1);
-			indice = estados.indexOf(viejo.estado);
-			if (rs.getInt("id") == 2) {
-				viejo.contratos = rs.getDouble("suma");
-				viejo.notienecedula = rs.getDouble("nocedula");
-				viejo.notienefirma = rs.getDouble("nofirma");
-				viejo.notienepartida = rs.getDouble("nopartida");
-				if ( indice >= 0) {
-					contratos.set(indice, contratos.get(indice) + viejo.contratos);
-				}
-			}  else {
-				viejo.docentes = rs.getDouble("suma");
-				if ( indice >= 0) {
-					docentes.set(indice, docentes.get(indice) + viejo.docentes);
-				}
-			}			
-		}		
+			registros.add(nuevo);			
+			
+		}
+		//Se actualiza el actual registro
+		actual = registros.get(registros.size() -1);
+		indice = estados.indexOf(actual.estado);
+		
+		//Si no contiene al estado se crea
+		if ( indice == -1) {						
+			estados.add(actual.estado);
+			donatarios.add(0.0);
+			contratos.add(0.0);
+			docentes.add(0.0);
+			indice = estados.size() -1;
+		}
+		
+		//Ahora se asignan los valores
+		switch (rs.getInt("id")) {
+			case 1 :  
+				actual.donatarios = rs.getDouble("suma");
+				donatarios.set(indice, donatarios.get(indice) + actual.donatarios);				
+				break;					
+			case 2 :				
+				actual.contratos = rs.getDouble("suma");
+				actual.notienecedula = rs.getDouble("nocedula");
+				actual.notienefirma = rs.getDouble("nofirma");
+				actual.notienepartida = rs.getDouble("nopartida");
+				contratos.set(indice, contratos.get(indice) + actual.contratos);
+				break;
+			case 3: 
+				actual.docentes = rs.getDouble("suma");
+				docentes.set(indice, docentes.get(indice) + actual.docentes);
+				break;		
+		}
 	}
 	canaima.liberarConexion( con, ps, rs);
 	
 	Date actualDate = Utilidades.nuevaFecha();
 	DefaultCategoryDataset series = new DefaultCategoryDataset();
 	for (int i = 0; i < estados.size() ; i++) {
+		
+		System.out.println("es " + estados.get(i) + " " + donatarios.get(i) + " " + 
+				+ contratos.get(i) + " " + docentes.get(i) );
 		series.setValue(donatarios.get(i), "Donatarios", estados.get(i));
 		series.setValue(contratos.get(i), "Contratos", estados.get(i));				
 		series.setValue(docentes.get(i), "Docentes", estados.get(i));

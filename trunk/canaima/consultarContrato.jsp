@@ -398,11 +398,9 @@
 						});
 					});
 				</script>
-				<%
-    				if(donCon.getContrato().getPdf()!=null){
-    					aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp"));
-    				}
-    			%>
+						
+				<%= (donCon.getContrato().getPdf() != null) ? aFancyBox(response, "Visualizar", response.encodeURL("mostrarArchivo.jsp")) : ""%>
+				
 				</td>
 				
 			</tr>

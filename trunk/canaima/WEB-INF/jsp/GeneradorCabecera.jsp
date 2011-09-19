@@ -1,6 +1,5 @@
 <%@page import="java.util.Calendar"%>
-<%@page import="java.util.Date"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 	
 <!doctype html public "-//W3C//DTD HTML 4.01//EN">
 <head>
@@ -148,7 +147,7 @@
 	        
 			<img src="img/fotoCanaima.png" class="foto" /> 
 			<br/>
-	        <span class="adress">cooptelgeclap@gmail.com.ve</span>
+	        <span class="adress"><a href="mailto:cooptelgeclap@gmail.com.ve">cooptelgeclap@gmail.com.ve</a></span>
 
 	    	</div>	    	
 	    	<div id="Inter">

@@ -22,7 +22,7 @@
     }	
 %>
 <td width="15" id= "municipios">
-	<SELECT tabindex="2" name="idmunicipio" title="municipio" onchange="javascript:mostrarParroquias(this.value);">
+	<SELECT tabindex="2" id="idmunicipio" name="idmunicipio" title="municipio" onchange="javascript:mostrarParroquias(this.value);">
 	<%
 		int idMunicipio;
 		String nombreMunicipio = null;  

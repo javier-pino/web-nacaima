@@ -70,9 +70,7 @@ public class Caja extends ObjetoPersistente {
 		if (idusuario == 0) 
 			resultado.add(validacion[0]);
 		if (incidencia != null && incidencia.length() > TEXT)
-			resultado.add(validacion[1]);
-		if (numero == 0)
-			resultado.add(validacion[2]);
+			resultado.add(validacion[1]);		
 		return resultado;
 	}
 

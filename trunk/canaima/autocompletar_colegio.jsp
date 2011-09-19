@@ -1,3 +1,7 @@
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.Collection"%>
+<%@page import="java.util.LinkedList"%>
+<%@page import="java.util.List"%>
 <%@page import="beans.Parroquia"%>
 <%@page import="beans.Municipio"%>
 <%@page import="beans.Estado"%>
@@ -8,9 +12,13 @@
 <%-- Iniciar Modelo --%>
 <%@include file="/WEB-INF/jsp/IniciarModelo.jsp"%>
 <%
-	String nombre = request.getParameter("q");
+	String nombre = request.getParameter("q"),
+		idestado =  request.getParameter("idestado"),
+		idmunicipio = request.getParameter("idmunicipio"),
+		idparroquia = request.getParameter("idparroquia"); 
+	
 	Connection con = canaima.solicitarConexion();
-	ArrayList<Colegio> colegios = Colegio.listarColegioPorNombre(con, nombre);
+	ArrayList<Colegio> colegios = Colegio.listarColegios(con, nombre, idestado, idmunicipio, idparroquia);	
 	canaima.liberarConexion(con);
 	
 	Estado estado = new Estado();
@@ -26,7 +34,7 @@
 		out.print(colegios.get(i).getCodigo_dea()+" - " + colegios.get(i).getNombre() +
 				"<br>(" + estado.getNombre());
 				
-				if(colegios.get(i).getIdparroquia()>0)
+				if(colegios.get(i).getIdmunicipio()>0)
 					out.print(", " + municipio.getNombre());
 				if(colegios.get(i).getIdparroquia()>0)
 					out.print(", " + parroquia.getNombre());

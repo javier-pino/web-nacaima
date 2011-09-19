@@ -22,17 +22,27 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;		
-			$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
-				width: 460,
-				height: 500,
-				matchContains: true,
-				max: 30,
-				minChars: 2,
-				multiple: false
-			});
+	$().ready(function() {		
+		$("#colegiotexto").autocomplete("autocompletar_colegio.jsp", {
+			extraParams : {
+				idestado : function() {
+					return $("#idestado").val();
+				},
+				idmunicipio : function() {
+					return $("#idmunicipio").val();
+				},
+				idparroquia : function() {
+					return $("#idparroquia").val();
+				}
+			},
+			width : 460,			
+			height : 500,
+			max : 30,
+			minChars : 2,
+			matchSubset : false,
+			cacheLength : 0
 		});
-		
+	});
 </script>
 
 <%!
@@ -221,14 +231,11 @@
 			con = canaima.solicitarConexion();
 			
 			int cajaActual = Caja.getUltimaCajaRegistrada(con, usuarioActual, CAJA_TIPO.DOC);			
-			if (cajaActual == 0) {
-				synchronized (caja) {
-					caja.asignarNuevoNumeroACaja(con, CAJA_TIPO.DOC);
-					caja.setTipo(CAJA_TIPO.DOC);
-					caja.setIdusuario(usuarioActual.getIdusuario());					
-					canaima.guardar(caja);
-					cajaActual = caja.getID();
-				}
+			if (cajaActual == 0) {									
+				caja.setTipo(CAJA_TIPO.DOC);
+				caja.setIdusuario(usuarioActual.getIdusuario());					
+				canaima.guardar(caja);
+				cajaActual = caja.getID();				
 			} else {
 				canaima.buscarPorID(cajaActual, caja);				
 			}			
@@ -250,13 +257,11 @@
 						caja.setIncidencia("Cerrada por máximo de lotes alcanzado");
 						caja.cerrarCaja(con);
 						
-						//Crear una caja y un lote nuevo
-						synchronized (caja) { 
-							caja.setIdusuario(usuarioActual.getID());						
-							caja.asignarNuevoNumeroACaja(con, CAJA_TIPO.DOC);
-							canaima.guardar(caja);
-							cajaActual = caja.getID();
-						}
+						//Crear una caja y un lote nuevo						
+						caja.setIdusuario(usuarioActual.getID());
+						caja.setTipo(CAJA_TIPO.DOC);						
+						canaima.guardar(caja);
+						cajaActual = caja.getID();						
 					}
 					//Crear un nuevo lote
 					lote.asignarNuevoNumeroALote(con,cajaActual);
@@ -333,12 +338,15 @@
 
 &nbsp;			
 	<%	if(mostrar){
+		Connection con = canaima.solicitarConexion();
 	%>
 				<div id ="estadisticas" align="center">
 					<br>
-					<h1>Ubicaci&oacute;n Física del Contrato:   Caja = <%=caja.getNumero()%>; Lote = <%= lote.getNumero()%>.</h1>
+					<h1>Ubicaci&oacute;n Física del Contrato:   Caja = <%=caja.getNumero()%>; Lote = <%= lote.getNumero()%>; Documento = <%= Contrato.getNumeroDeContratos(con, lote.getID()) %>. </h1>
 				</div>
-	<% 	}		
+	<% 	
+		canaima.liberarConexion(con);
+		}		
 	%>	
 
 &nbsp;  
@@ -355,7 +363,7 @@ autocomplete="off">
 	</tr>	
 	<tr >
 		<td>			
-			<SELECT tabindex="1" name="idestado" title="estado" style="width: 150px;"  onchange="javascript:mostrarMunicipios(this.value);">
+			<SELECT tabindex="1" name="idestado" id="idestado" title="estado" style="width: 150px;"  onchange="javascript:mostrarMunicipios(this.value);">
 			<%
 				int idEstado;
 				String nombreEstado = null;
@@ -394,7 +402,7 @@ autocomplete="off">
 			</SELECT>
 		</td>
 		<td id= "parroquias">
-			<SELECT tabindex="3" name="idparroquia" title="parroquia" style="width: 150px;" >
+			<SELECT tabindex="3" name="idparroquia" id="idparroquia" title="parroquia" style="width: 150px;" >
 			<%					
 			if (ultimo.getID() > 0 && ultimo.getIdmunicipio() > 0) {
 				con = canaima.solicitarConexion();				

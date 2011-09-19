@@ -1,6 +1,5 @@
 <%@page import="beans.Estado"%>
 <%@page import="beans.Donatario"%>
-<%@page import="java.sql.Date"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="aplicacion.Utilidades"%>
@@ -18,18 +17,36 @@
 <link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css" />
 
 <script type="text/javascript">
-		$().ready(function() {;		
-			$("#colegio").autocomplete("autocompletar_colegio.jsp", {
-				width: 460,
-				height: 500,
-				matchContains: true,
-				max: 30,
-				minChars: 2,
-				multiple: false
-			});
+	$().ready(function() {		
+		$("#colegio").autocomplete("autocompletar_colegio.jsp", {
+			extraParams : {
+				idestado : function() {
+					var id = $("#idestado").val(); 
+					if (id == "-1")						
+						return 0;
+					else if (id == "0")
+						return "-1";
+					else return id;
+				},
+				idmunicipio : function() {
+					return 0;
+				},
+				idparroquia : function() {
+					return 0;
+				}
+			},
+			width : 460,			
+			height : 500,
+			max : 30,
+			minChars : 2,
+			matchSubset : false,
+			cacheLength : 0
 		});
-		
+	});
 </script>
+<%	
+	Utilidades.eliminarArchivosTemporales(canaima.DIRECTORIO_TEMPORAL);		
+%>  
 
 <%!
 	public enum ESTADO {
@@ -70,7 +87,7 @@
 					</tr>				
 					<tr>						
 						<td>
-							<SELECT tabindex="1" name="idestado" title="estado" onchange="javascript:mostrarMunicipios(this.value);">
+							<SELECT tabindex="1" id = "idestado" name="idestado" title="estado" onchange="javascript:mostrarMunicipios(this.value);">
 							<%
 								int idEstado;
 								String nombreEstado = null;
